@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Level Up | Elite Performance</title>
+   
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   
+    <style>
+        :root {
+            --neon: #00ff9d;
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --gold: #ffc107;
+            --trust-blue: #00d4ff;
+            --danger: #ff4757;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container { width: 100%; max-width: 420px; padding: 20px; }
+
+        h1 { font-family: 'Orbitron', sans-serif; color: var(--neon); text-align: center; letter-spacing: 2px; margin-bottom: 5px; }
+        .subtitle { font-size: 0.65rem; color: #666; text-align: center; letter-spacing: 3px; margin-bottom: 25px; font-weight: bold; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        /* The Trust Meter Styling */
+        .trust-container { margin-bottom: 15px; }
+        .trust-label { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 600; color: #888; margin-bottom: 8px; }
+        .bar-bg { background: #111; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid #222; }
+        #trust-fill { background: linear-gradient(90deg, #706fd3, var(--trust-blue)); height: 100%; width: 0%; transition: 1.5s ease; }
+
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .metric-item { background: #252525; padding: 12px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .metric-label { font-size: 0.55rem; color: #777; text-transform: uppercase; margin-bottom: 5px; }
+        .metric-value { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: var(--neon); }
+
+        .nav-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .nav-bar button { flex: 1; padding: 12px; background: #252525; color: #888; border: 1px solid #333; border-radius: 10px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: 0.3s; }
+        .nav-bar button.active { background: var(--neon); color: #121212; border-color: var(--neon); }
+
+        input { width: 100%; padding: 14px; background: #181818; border: 1px solid #333; border-radius: 10px; color: white; margin-bottom: 12px; box-sizing: border-box; outline: none; font-size: 0.9rem; }
+        input:focus { border-color: var(--neon); }
+       
+        .primary-btn { width: 100%; padding: 15px; background: var(--neon); color: #121212; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-size: 0.85rem; }
+       
+        .guardian-btn { background: none; border: 1px solid var(--gold); color: var(--gold); margin-top: 12px; width: 100%; padding: 10px; border-radius: 10px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
+
+        .status-badge { position: absolute; top: 12px; right: 12px; font-size: 0.6rem; font-weight: bold; border: 1px solid currentColor; padding: 3px 8px; border-radius: 5px; }
+       
+        .hidden { display: none; }
+        #leader-table div { padding: 12px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>LEVEL UP</h1>
+        <p class="subtitle">PERFORMANCE DASHBOARD</p>
+    </header>
+
+    <section id="auth-section">
+        <div class="card">
+            <h2 style="text-align: center; margin-top: 0; font-family: 'Orbitron'; font-size: 1.2rem;">Player Login</h2>
+            <input type="text" id="login-email" placeholder="Nickname">
+            <input type="password" id="login-password" placeholder="Passcode (Optional)">
+            <button class="primary-btn" onclick="loginUser()">Sync Data</button>
+        </div>
+    </section>
+
+    <div id="app-content" class="hidden">
+        <nav class="nav-bar">
+            <button onclick="showSection('dash')" id="btn-dash" class="active">Dash</button>
+            <button onclick="showSection('quest')" id="btn-quest">Quest</button>
+            <button onclick="showSection('ranks')" id="btn-ranks">Ranks</button>
+            <button onclick="logout()" style="flex: 0.3; color: var(--danger);"><i class="fa-solid fa-power-off"></i></button>
+        </nav>
+
+        <section id="dash-section">
+            <div class="card">
+                <div class="trust-container">
+                    <div class="trust-label">
+                        <span>Accountability Level</span>
+                        <span id="trust-percent-text">0%</span>
+                    </div>
+                    <div class="bar-bg"><div id="trust-fill"></div></div>
+                </div>
+                <p id="trust-msg" style="font-size: 0.65rem; color: #666; margin: 0; text-align: center;">Independence Unlocks at Level 5</p>
+            </div>
+
+            <div class="card">
+                <div id="status-badge" class="status-badge hidden"></div>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">Level</div>
+                        <div class="metric-value" id="val-level">1</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Total XP</div>
+                        <div class="metric-value" id="val-mins">0</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Streak</div>
+                        <div class="metric-value" id="val-streak">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-top: 0; font-size: 1rem;">Log Work Minutes</h3>
+                <input type="number" id="input-mins" placeholder="Minutes">
+                <button class="primary-btn" onclick="addXP()">Submit XP</button>
+                <button id="guardian-toggle-btn" class="guardian-btn" onclick="toggleGuardian()">
+                    <i class="fa-solid fa-shield-halved"></i> Enable Guardian Mode
+                </button>
+            </div>
+        </section>
+
+        <section id="quest-section" class="hidden">
+            <div class="card">
+                <h3>Daily Quest</h3>
+                <p id="quest-display" style="color: var(--neon); font-weight: bold; font-size: 1.1rem; padding: 10px 0;"></p>
+                <button class="primary-btn" onclick="finishQuest()">Complete</button>
+            </div>
+        </section>
+
+        <section id="ranks-section" class="hidden">
+            <div class="card">
+                <h3 style="margin-top: 0;">Leaderboard</h3>
+                <div id="leader-table"></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    let currentEmail = "";
+    let userData = {
+        username: "", password: "", totalMinutes: 0, streak: 0,
+        lastDate: "", guardianMode: false, isTrusted: false
+    };
+
+    const npcData = [{ name: "Apex_User", mins: 1400 }, { name: "Nova_Track", mins: 900 }];
+    const quests = ["Read for 15 minutes", "Clean your workspace", "Organize your backpack", "Drink 2 glasses of water", "Plan tomorrow's goals"];
+
+    function loginUser() {
+        const e = document.getElementById("login-email").value.trim().toLowerCase();
+        const p = document.getElementById("login-password").value;
+        if(!e) return alert("Nickname required");
+       
+        let saved = JSON.parse(localStorage.getItem("user_" + e));
+        if(!saved) {
+            userData.username = e; userData.password = p;
+            localStorage.setItem("user_" + e, JSON.stringify(userData));
+        } else {
+            userData = saved;
+        }
+       
+        if(userData.password === p) {
+            currentEmail = e;
+            document.getElementById("auth-section").classList.add("hidden");
+            document.getElementById("app-content").classList.remove("hidden");
+            refreshUI();
+        } else {
+            alert("Wrong passcode.");
+        }
+    }
+
+    function refreshUI() {
+        const level = Math.floor(userData.totalMinutes / 100) + 1;
+        document.getElementById('val-level').innerText = level;
+        document.getElementById('val-mins').innerText = userData.totalMinutes;
+        document.getElementById('val-streak').innerText = userData.streak;
+
+        const trustProgress = Math.min((level / 5) * 100, 100);
+        document.getElementById('trust-fill').style.width = trustProgress + "%";
+        document.getElementById('trust-percent-text').innerText = Math.floor(trustProgress) + "%";
+
+        const badge = document.getElementById('status-badge');
+        if(level >= 5) {
+            userData.isTrusted = true; userData.guardianMode = false;
+            badge.innerText = "INDEPENDENT"; badge.style.color = "var(--trust-blue)";
+            badge.classList.remove('hidden');
+            document.getElementById('guardian-toggle-btn').classList.add('hidden');
+            document.getElementById('trust-msg').innerText = "Status: Accountability Proven.";
+        } else if(userData.guardianMode) {
+            badge.innerText = "GUARDIAN ACTIVE"; badge.style.color = "var(--gold)";
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+        save();
+    }
+
+    function addXP() {
+        const val = parseInt(document.getElementById('input-mins').value);
+        if(!val || val <= 0) return;
+        if(userData.guardianMode && !userData.isTrusted) {
+            if(prompt("Parent PIN (Default: 1234):") !== "1234") return alert("Unauthorized");
+        }
+        userData.totalMinutes += val;
+        document.getElementById('input-mins').value = "";
+        refreshUI();
+    }
+
+    function toggleGuardian() {
+        if(userData.guardianMode) {
+            if(prompt("Enter PIN to disable:") === "1234") userData.guardianMode = false;
+        } else { userData.guardianMode = true; }
+        refreshUI();
+    }
+
+    function showSection(id) {
+        document.getElementById('dash-section').classList.toggle('hidden', id !== 'dash');
+        document.getElementById('quest-section').classList.toggle('hidden', id !== 'quest');
+        document.getElementById('ranks-section').classList.toggle('hidden', id !== 'ranks');
+       
+        document.querySelectorAll('.nav-bar button').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + id).classList.add('active');
+
+        if(id === 'quest') document.getElementById('quest-display').innerText = quests[Math.floor(Math.random()*quests.length)];
+        if(id === 'ranks') {
+            const combined = [...npcData, {name: userData.username, mins: userData.totalMinutes}].sort((a,b)=>b.mins-a.mins);
+            document.getElementById('leader-table').innerHTML = combined.map(p => `<div><span>${p.name.toUpperCase()}</span><span>${p.mins} XP</span></div>`).join('');
+        }
+    }
+
+    function finishQuest() {
+        const today = new Date().toLocaleDateString();
+        if(userData.lastDate === today) return alert("Already completed today!");
+        userData.streak++; userData.lastDate = today;
+        alert("Quest Success! Streak +1"); refreshUI();
+    }
+
+    function save() { if(currentEmail) localStorage.setItem("user_" + currentEmail, JSON.stringify(userData)); }
+    function logout() { location.reload(); }
+</script>
+</body>
+</html>

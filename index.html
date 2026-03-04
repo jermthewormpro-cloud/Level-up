@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Level Up! Tracker</title>
+    <title>Level Up! Tracker - Ultimate Edition</title>
     
     <link rel="icon" href="https://img.icons8.com/fluency/96/level-up.png">
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/96/level-up.png">
@@ -12,54 +12,56 @@
     
     <style>
         :root { 
-            --neon: #00ff9d; --bg: #121212; --card-bg: #1e1e1e; 
-            --gold: #ffc107; --red: #ff4757; --orange: #ffa502; --sidebar-w: 260px; 
+            --neon: #00ff9d; --bg: #0d0d0d; --card-bg: #161616; 
+            --gold: #ffc107; --red: #ff4757; --orange: #ffa502; --blue: #00d4ff; --sidebar-w: 260px; 
         }
-        body { background: linear-gradient(135deg, var(--bg) 0%, #1a1a1a 100%); color: #e0e0e0; font-family: 'Inter', sans-serif; text-align: center; padding: 0; min-height: 100vh; margin: 0; overflow-x: hidden; }
-        h1, h2, h3 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-        h1 { color: var(--neon); text-shadow: 0 0 15px rgba(0, 255, 157, 0.4); margin: 0; font-size: 1.2rem; }
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        h1, h2, h3, h4 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+        h1 { color: var(--neon); font-size: 1.1rem; }
 
-        /* Sidebar UI */
-        .sidebar { position: fixed; left: calc(-1 * var(--sidebar-w)); top: 0; width: var(--sidebar-w); height: 100%; background: #111; border-right: 1px solid #333; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; padding-top: 60px; text-align: left; }
+        /* Sidebar Navigation */
+        .sidebar { position: fixed; left: calc(-1 * var(--sidebar-w)); top: 0; width: var(--sidebar-w); height: 100%; background: #111; border-right: 1px solid #333; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; padding-top: 60px; }
         .sidebar.open { left: 0; }
-        .nav-item { padding: 18px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #222; font-family: 'Orbitron'; font-size: 0.75rem; color: #888; transition: 0.2s; }
-        .nav-item:hover { background: #1a1a1a; color: var(--neon); }
+        .nav-item { padding: 18px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #222; font-family: 'Orbitron'; font-size: 0.75rem; color: #888; }
         .nav-active { color: var(--neon); background: #1a1a1a; border-left: 4px solid var(--neon); }
 
         header { padding: 15px 20px; display: flex; align-items: center; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 999; border-bottom: 1px solid #222; }
         .menu-btn { font-size: 1.4rem; color: var(--neon); cursor: pointer; margin-right: 20px; }
         
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background-color: var(--card-bg); border-radius: 16px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-        .highlight-card { border: 1px solid var(--neon); }
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
+        .card { background-color: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #222; }
         
-        /* Impact Feedback Styles */
-        .feedback-box { padding: 15px; border-radius: 10px; margin-top: 15px; font-weight: 600; font-size: 0.85rem; border: 1px solid transparent; text-align: left; line-height: 1.4; }
+        /* Stats & Progress */
+        .stat-val { font-family: 'Orbitron'; color: var(--neon); font-size: 1.6rem; display: block; font-weight: 700; }
+        .progress-bar { height: 10px; background: #000; border-radius: 5px; margin-top: 8px; overflow: hidden; border: 1px solid #333; }
+        #trust-fill { height: 100%; background: var(--blue); width: 0%; transition: 1s; }
+
+        /* Feedback Zones */
+        .feedback-box { padding: 15px; border-radius: 12px; margin-top: 15px; font-weight: 600; font-size: 0.85rem; text-align: left; line-height: 1.4; border: 1px solid transparent; }
         .green-zone { border-color: var(--neon); color: var(--neon); background: rgba(0, 255, 157, 0.05); }
         .orange-zone { border-color: var(--orange); color: var(--orange); background: rgba(255, 165, 2, 0.05); }
         .red-zone { border-color: var(--red); color: var(--red); background: rgba(255, 71, 87, 0.05); }
 
-        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .metric-value { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: var(--neon); font-weight: 700; }
+        /* Buttons & Inputs */
+        button, .btn-label { padding: 14px; border-radius: 12px; border: none; cursor: pointer; font-weight: 700; background: var(--neon); color: #000; font-family: 'Orbitron'; text-transform: uppercase; font-size: 0.75rem; width: 100%; display: block; margin-top: 10px; text-align: center; }
+        button:disabled { opacity: 0.3; cursor: not-allowed; }
+        input { padding: 14px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; width: 100%; box-sizing: border-box; margin-bottom: 10px; text-align: center; }
         
-        button { padding: 12px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; background-color: var(--neon); color: #121212; transition: 0.3s; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-size: 0.75rem; width: 100%; margin-top: 5px; }
-        input { padding: 12px; border-radius: 8px; border: 1px solid #333; background: #252525; color: white; width: 100%; box-sizing: border-box; margin-bottom: 10px; text-align: center; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; }
+        #proof-preview { width: 100%; border-radius: 12px; display: none; margin-top: 15px; border: 2px solid var(--neon); }
         .hidden { display: none; }
-        .status-msg { font-size: 0.8rem; padding: 10px; border-radius: 8px; background: #332b00; color: var(--gold); border: 1px solid var(--gold); margin-bottom: 10px; }
-        .danger-btn { background: #ff4757; color: white; margin-top: 10px; font-size: 0.6rem; }
     </style>
 </head>
 <body>
 
 <div id="sidebar" class="sidebar">
-    <div class="nav-item nav-active" id="nav-dashboard" onclick="showSection('dashboard')"><i class="fa-solid fa-gamepad"></i> Dashboard</div>
-    <div class="nav-item" id="nav-mission" onclick="showSection('mission')"><i class="fa-solid fa-scroll"></i> Daily Quest</div>
-    <div class="nav-item" id="nav-history" onclick="showSection('history')"><i class="fa-solid fa-calendar-days"></i> Activity Logs</div>
-    <div class="nav-item" id="nav-parent" onclick="showSection('parent')" style="color:var(--gold)"><i class="fa-solid fa-user-shield"></i> Parent Portal</div>
-    <div class="nav-item" onclick="location.reload()" style="margin-top:20px; color:#ff4757;"><i class="fa-solid fa-power-off"></i> Logout</div>
+    <div class="nav-item nav-active" id="nav-dash" onclick="showTab('dash')"><i class="fa-solid fa-gamepad"></i> Dashboard</div>
+    <div class="nav-item" id="nav-rewards" onclick="showTab('rewards')"><i class="fa-solid fa-trophy"></i> Reward Shop</div>
+    <div class="nav-item" id="nav-parent" onclick="showTab('parent')" style="color:var(--gold)"><i class="fa-solid fa-user-shield"></i> Parent Portal</div>
+    <div class="nav-item" onclick="location.reload()" style="margin-top:40px; color:var(--red);"><i class="fa-solid fa-power-off"></i> Logout</div>
 </div>
 
-<header><i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i><h1>Level Up! Tracker</h1></header>
+<header><i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i><h1>LEVEL UP! TRACKER</h1></header>
 
 <div class="container">
     <section id="auth-section">
@@ -73,112 +75,82 @@
     </section>
 
     <div id="app-content" class="hidden">
-        <div id="dashboard-section">
+        <section id="tab-dash">
+            <div class="card" style="text-align: center;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr;">
+                    <div><span style="font-size:0.6rem; color:#888;">LEVEL</span><span id="display-level" class="stat-val">1</span></div>
+                    <div><span style="font-size:0.6rem; color:#888;">TOTAL XP</span><span id="display-xp" class="stat-val">0</span></div>
+                </div>
+                <div class="progress-bar"><div id="trust-fill"></div></div>
+            </div>
+
             <div class="card">
-                <h2 id="welcome-msg">Ready to Level Up?</h2>
-                <div class="metrics-grid">
-                    <div><p style="font-size:0.6rem; color:#888;">Level</p><p class="metric-value" id="user-level">1</p></div>
-                    <div><p style="font-size:0.6rem; color:#888;">Streak</p><p class="metric-value" id="user-streak">0</p></div>
-                    <div><p style="font-size:0.6rem; color:#888;">Today's XP</p><p class="metric-value" id="user-today-xp">0</p></div>
+                <h3><i class="fa-solid fa-brain"></i> Impact Coach</h3>
+                <div id="ai-feedback" class="feedback-box">Logging your first session...</div>
+                
+                <div id="log-controls" style="margin-top:20px;">
+                    <input type="number" id="xp-input-mins" placeholder="Minutes Worked/Played">
+                    <label for="camera-input" class="btn-label" style="background:#222; color:var(--neon); border:1px dashed var(--neon);">
+                        <i class="fa-solid fa-camera"></i> Snap Proof
+                    </label>
+                    <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
+                    <img id="proof-preview">
+                    <button id="vouch-btn" onclick="vouchForXP()" disabled>Vouch for XP</button>
                 </div>
             </div>
+        </section>
 
-            <div class="card highlight-card" id="log-card">
-                <div id="locked-msg" class="status-msg">⚠️ LINK REQUIRED: Parent must link to: <b id="display-email"></b></div>
-                <div id="log-controls" class="hidden">
-                    <h3>Impact AI Coach</h3>
-                    <div id="ai-feedback" class="feedback-box">Ready to track your balance.</div>
-                    <input type="number" id="log-input" placeholder="Minutes Played" style="margin-top:15px">
-                    <button onclick="vouchForXP()">Log Session</button>
-                </div>
+        <section id="tab-rewards" class="hidden">
+            <div class="card">
+                <h3><i class="fa-solid fa-gift"></i> Reward Shop</h3>
+                <div id="reward-display-list"></div>
             </div>
-        </div>
+        </section>
 
-        <div id="mission-section" class="hidden">
-            <div class="card highlight-card">
-                <h3>Daily Quest</h3>
-                <p id="quest-text" style="background:#252525; padding:15px; border-radius:8px; border-left:4px solid var(--neon); margin: 20px 0; font-weight:600;">Loading...</p>
-                <button onclick="completeQuest()" style="background:var(--gold);">Finish Quest</button>
-            </div>
-        </div>
-
-        <div id="parent-section" class="hidden">
-            <div id="parent-link-account" class="card">
-                <h3>Link Child Account</h3>
-                <input type="email" id="link-child-email" placeholder="Child's Email Address">
-                <button onclick="linkToChild()" style="background:var(--gold);">Find & Link</button>
-            </div>
-            
-            <div id="parent-lock-screen" class="card hidden" style="border-color: var(--gold);">
+        <section id="tab-parent" class="hidden">
+            <div id="parent-lock-screen" class="card" style="border: 2px solid var(--gold); text-align:center;">
                 <h3>Parent Access</h3>
                 <input type="password" id="parent-pin-entry" placeholder="Enter PIN">
-                <button onclick="verifyParent()" style="background:var(--gold);">Unlock Portal</button>
+                <button style="background:var(--gold)" onclick="verifyParent()">Unlock Portal</button>
             </div>
 
             <div id="parent-admin-panel" class="hidden">
-                <div class="card">
-                    <h4 style="color:var(--gold)">Admin Dashboard</h4>
-                    <p id="pending-display">Pending: 0 XP</p>
-                    <button onclick="approveXP()" style="background:var(--gold); margin-bottom:10px;">Approve Pending Minutes</button>
-                    
-                    <div style="border-top: 1px solid #444; margin-top: 15px; padding-top: 15px;">
-                        <p style="font-size:0.7rem; color:#888;">Set Daily Limit (Minutes)</p>
-                        <input type="number" id="parent-limit-input">
-                        <button onclick="updateDailyLimit()" style="background:#555; color:white;">Save Limit</button>
-                    </div>
-
-                    <button onclick="showSection('parent')" style="background:#444; color:white; margin-top:20px; font-size:0.6rem;">Lock Portal</button>
+                <div class="card" style="border: 1px solid var(--gold);">
+                    <h4 style="color:var(--gold)">Approve Claim</h4>
+                    <span id="admin-pending-val" class="stat-val" style="color:var(--gold)">0 XP</span>
+                    <div id="admin-image-review"></div>
+                    <button style="background:var(--gold)" onclick="approveXP()">Approve XP</button>
                 </div>
-            </div>
-        </div>
+                
+                <div class="card">
+                    <h4 style="color:var(--gold)">Redeem Rewards</h4>
+                    <div id="admin-claims-list"></div>
+                </div>
 
-        <div id="history-section" class="hidden">
-            <div class="card"><h3>Verified History</h3><div id="log-list" style="font-size:0.8rem; text-align: left;"></div></div>
-        </div>
+                <div class="card">
+                    <h4 style="color:var(--gold)">Settings</h4>
+                    <p style="font-size:0.7rem; color:#888;">Daily Play Limit (Mins)</p>
+                    <input type="number" id="parent-limit-input">
+                    <button style="background:white; color:black;" onclick="updateDailyLimit()">Save Settings</button>
+                </div>
+                <button style="background:#333; color:white;" onclick="lockParent()">Lock Portal</button>
+            </div>
+        </section>
     </div>
 </div>
 
 <script>
-// Database & State Initialization
+// Data State
 let currentEmail = "";
 let isRegMode = false;
 let userData = { 
-    username: "", password: "", parentPin: "0000", active: false, 
-    totalMinutes: 0, streak: 0, lastDate: "", history: [], 
-    pendingXP: 0, dailyLimit: 120, todayMins: 0 
+    username: "", password: "", parentPin: "1234", active: false, 
+    totalXP: 0, pendingXP: 0, dailyLimit: 120, todayMins: 0, 
+    proofImg: null, rewards: [{name: "1hr Gaming", cost: 100}], claims: [] 
 };
 
-const quests = ["15 Jumping Jacks", "Drink a Full Glass of Water", "5 Minute Stretch", "Organize your desk", "Read for 10 minutes"];
-
-// Navigation Functions
+// --- AUTH & NAVIGATION ---
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-
-function showSection(id) {
-    document.querySelectorAll('[id$="-section"]').forEach(s => s.classList.add('hidden'));
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('nav-active'));
-    document.getElementById(id + "-section").classList.remove('hidden');
-    document.getElementById("nav-" + id).classList.add('nav-active');
-    
-    if(id==='parent') {
-        const lastLinked = localStorage.getItem("last_linked_child");
-        if (lastLinked) {
-            currentEmail = lastLinked;
-            userData = JSON.parse(localStorage.getItem("user_" + lastLinked));
-            document.getElementById('parent-link-account').classList.add('hidden');
-            document.getElementById('parent-lock-screen').classList.remove('hidden');
-            document.getElementById('parent-limit-input').value = userData.dailyLimit;
-        } else {
-            document.getElementById('parent-link-account').classList.remove('hidden');
-            document.getElementById('parent-lock-screen').classList.add('hidden');
-            document.getElementById('parent-admin-panel').classList.add('hidden');
-        }
-    }
-    if(id==='mission') renderQuest();
-    if(id==='history') renderHistory();
-    if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
-}
-
-// Auth & Database Logic
 function toggleAuthMode() {
     isRegMode = !isRegMode;
     document.getElementById('auth-title').innerText = isRegMode ? "Register Player" : "Player Login";
@@ -186,104 +158,151 @@ function toggleAuthMode() {
     document.getElementById('toggle-text').innerText = isRegMode ? "Already have an account? Login." : "New player? Register here.";
 }
 
+function showTab(t) {
+    document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('nav-active'));
+    document.getElementById('tab-'+t).classList.remove('hidden');
+    document.getElementById('nav-'+(t==='dash'?'dash':t)).classList.add('nav-active');
+    if(t === 'rewards') renderRewards();
+    if(t === 'parent') {
+        const lastLinked = localStorage.getItem("last_linked_child");
+        if(lastLinked) { currentEmail = lastLinked; loadData(); }
+    }
+    toggleSidebar();
+}
+
+// --- CORE PLAYER LOGIC ---
+function handlePhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('proof-preview').src = e.target.result;
+            document.getElementById('proof-preview').style.display = 'block';
+            userData.proofImg = e.target.result;
+            document.getElementById('vouch-btn').disabled = false;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function vouchForXP() {
+    const mins = parseInt(document.getElementById('xp-input-mins').value);
+    if(!mins) return alert("Enter minutes!");
+    userData.pendingXP = mins;
+    save();
+    alert("Photo & XP sent to Parent Portal!");
+    document.getElementById('xp-input-mins').value = "";
+    document.getElementById('proof-preview').style.display = 'none';
+    document.getElementById('vouch-btn').disabled = true;
+}
+
+// --- REWARDS LOGIC ---
+function renderRewards() {
+    const list = document.getElementById('reward-display-list');
+    list.innerHTML = "";
+    userData.rewards.forEach(r => {
+        const d = document.createElement('div'); d.className = "item-row";
+        const canAfford = userData.totalXP >= r.cost;
+        d.innerHTML = `<div><b>${r.name}</b><br><small>${r.cost} XP</small></div>
+                       <button style="width:auto; margin:0; padding:8px 15px;" 
+                       onclick="buyReward('${r.name}', ${r.cost})" ${!canAfford?'disabled':''}>Buy</button>`;
+        list.appendChild(d);
+    });
+}
+
+function buyReward(name, cost) {
+    if(userData.totalXP >= cost) {
+        userData.totalXP -= cost;
+        userData.claims.push(name);
+        save(); updateUI(); renderRewards();
+        alert("Purchased! Ask parent to fulfill claim.");
+    }
+}
+
+// --- PARENT PORTAL LOGIC ---
+function verifyParent() {
+    if(document.getElementById('parent-pin-entry').value === userData.parentPin) {
+        document.getElementById('parent-lock-screen').classList.add('hidden');
+        document.getElementById('parent-admin-panel').classList.remove('hidden');
+        renderParentAdmin();
+    } else alert("Invalid PIN");
+}
+
+function renderParentAdmin() {
+    document.getElementById('admin-pending-val').innerText = userData.pendingXP + " XP";
+    document.getElementById('admin-image-review').innerHTML = userData.proofImg ? `<img src="${userData.proofImg}" style="width:100%; border-radius:10px; margin-top:10px;">` : "<p style='color:#666'>No photo proof provided.</p>";
+    document.getElementById('parent-limit-input').value = userData.dailyLimit;
+    
+    const cList = document.getElementById('admin-claims-list');
+    cList.innerHTML = userData.claims.length ? "" : "<p style='color:#444'>No rewards waiting.</p>";
+    userData.claims.forEach((c, i) => {
+        const d = document.createElement('div'); d.className = "item-row";
+        d.innerHTML = `<span>${c}</span><button onclick="clearClaim(${i})" style="width:auto; background:var(--gold); border:none; border-radius:5px; padding:5px 10px;">Done</button>`;
+        cList.appendChild(d);
+    });
+}
+
+function approveXP() {
+    userData.todayMins += userData.pendingXP;
+    userData.totalXP += userData.pendingXP;
+    userData.pendingXP = 0;
+    userData.proofImg = null;
+    save(); updateUI(); renderParentAdmin();
+    alert("XP Approved!");
+}
+
+function clearClaim(i) { userData.claims.splice(i, 1); save(); renderParentAdmin(); }
+
+function updateDailyLimit() {
+    userData.dailyLimit = parseInt(document.getElementById('parent-limit-input').value) || 120;
+    save(); alert("Settings Saved!");
+}
+
+function lockParent() { 
+    document.getElementById('parent-lock-screen').classList.remove('hidden'); 
+    document.getElementById('parent-admin-panel').classList.add('hidden'); 
+    showTab('dash'); 
+}
+
+// --- AUTH & DATA CORE ---
 function handleAuth() {
     const e = document.getElementById("login-email").value.trim().toLowerCase();
     const p = document.getElementById("login-password").value.trim();
-    if(!e || !p) return alert("Fill all fields!");
     if(isRegMode) {
         if(localStorage.getItem("user_" + e)) return alert("User exists!");
-        userData = {...userData, username: e.split('@')[0], password: p};
+        userData.username = e.split('@')[0]; userData.password = p;
         localStorage.setItem("user_" + e, JSON.stringify(userData));
-        alert("Account created! Now tell your parent to link via Parent Portal.");
-        toggleAuthMode();
+        localStorage.setItem("last_linked_child", e);
+        alert("Registered!"); toggleAuthMode();
     } else {
         let stored = JSON.parse(localStorage.getItem("user_" + e));
         if(stored && stored.password === p) {
             currentEmail = e; userData = stored;
             document.getElementById("auth-section").classList.add("hidden");
             document.getElementById("app-content").classList.remove("hidden");
-            document.getElementById("display-email").innerText = currentEmail;
-            refreshUI();
-        } else alert("Invalid login.");
+            updateUI();
+        } else alert("Login failed.");
     }
 }
 
-// Player Features
-function vouchForXP() { 
-    userData.pendingXP = parseInt(document.getElementById("log-input").value) || 0; 
-    save(); alert("Sent to Parent Portal!"); document.getElementById("log-input").value = ""; 
-}
-
-function renderQuest() { document.getElementById("quest-text").innerText = quests[Math.floor(Math.random()*quests.length)]; }
-
-function completeQuest() { 
-    const today = new Date().toLocaleDateString(); 
-    if(userData.lastDate !== today) { 
-        userData.streak++; userData.totalMinutes += 10; userData.lastDate = today; 
-        save(); refreshUI(); alert("+10 XP for your health!"); 
-    } else alert("Quest already completed today!");
-}
-
-// Parent Control Features
-function linkToChild() {
-    const targetEmail = document.getElementById('link-child-email').value.trim().toLowerCase();
-    if(localStorage.getItem("user_" + targetEmail)) {
-        localStorage.setItem("last_linked_child", targetEmail);
-        userData.active = true; save();
-        showSection('parent');
-    } else alert("Child email not found in database!");
-}
-
-function verifyParent() {
-    if(document.getElementById('parent-pin-entry').value === userData.parentPin) {
-        document.getElementById('parent-lock-screen').classList.add('hidden');
-        document.getElementById('parent-admin-panel').classList.remove('hidden');
-        document.getElementById('pending-display').innerText = `Child is claiming: ${userData.pendingXP} XP`;
-    } else alert("Invalid Parent PIN.");
-}
-
-function approveXP() { 
-    userData.todayMins += userData.pendingXP; 
-    userData.totalMinutes += userData.pendingXP;
-    userData.history.push({date: new Date().toLocaleDateString(), mins: userData.pendingXP}); 
-    userData.pendingXP = 0; save(); refreshUI(); alert("Minutes Synced!"); 
-}
-
-function updateDailyLimit() {
-    const val = parseInt(document.getElementById('parent-limit-input').value);
-    if(val > 0) { userData.dailyLimit = val; save(); alert("New limit saved!"); }
-}
-
-// UI Rendering & Data Persistence
-function renderHistory() { 
-    document.getElementById("log-list").innerHTML = userData.history.map(h => `<div style="border-bottom:1px solid #333; padding:8px;">🗓️ ${h.date}: <b>${h.mins} XP</b></div>`).join(''); 
-}
-
-function refreshUI() {
-    document.getElementById("user-level").innerText = Math.floor(userData.totalMinutes / 100) + 1;
-    document.getElementById("user-streak").innerText = userData.streak;
-    document.getElementById("user-today-xp").innerText = userData.todayMins;
-    document.getElementById("welcome-msg").innerText = "Ready, " + userData.username + "?";
+function updateUI() {
+    document.getElementById('display-xp').innerText = userData.totalXP;
+    const lvl = Math.floor(userData.totalXP / 100) + 1;
+    document.getElementById('display-level').innerText = lvl;
+    document.getElementById('trust-fill').style.width = Math.min((lvl/10)*100, 100) + "%";
     
-    if(userData.active) { 
-        document.getElementById('locked-msg').classList.add('hidden'); 
-        document.getElementById('log-controls').classList.remove('hidden'); 
-    }
-    
-    // Impact Feedback Logic
     const fb = document.getElementById('ai-feedback');
     const percent = (userData.todayMins / userData.dailyLimit) * 100;
     fb.className = "feedback-box";
-    if(percent < 50) { 
-        fb.innerHTML = "✨ <b>Green Zone:</b> You're doing great. Plenty of time for balance!"; fb.classList.add('green-zone'); 
-    } else if(percent < 90) { 
-        fb.innerHTML = "⚠️ <b>Orange Zone:</b> Time to use the 20-20-20 rule to rest your eyes!"; fb.classList.add('orange-zone'); 
-    } else { 
-        fb.innerHTML = "🛑 <b>Red Zone:</b> Limit reached. Time to level up your day offline."; fb.classList.add('red-zone'); 
-    }
+    if(percent < 50) { fb.innerHTML = "✨ <b>Green Zone:</b> Perfect balance!"; fb.classList.add('green-zone'); }
+    else if(percent < 90) { fb.innerHTML = "⚠️ <b>Orange Zone:</b> Getting close! Rest your eyes."; fb.classList.add('orange-zone'); }
+    else { fb.innerHTML = "🛑 <b>Red Zone:</b> Limit reached. Go outside!"; fb.classList.add('red-zone'); }
 }
 
 function save() { localStorage.setItem("user_" + currentEmail, JSON.stringify(userData)); }
+function loadData() { let stored = localStorage.getItem("user_" + currentEmail); if(stored) userData = JSON.parse(stored); updateUI(); }
+
+updateUI();
 </script>
 </body>
 </html>

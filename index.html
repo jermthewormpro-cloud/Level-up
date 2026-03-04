@@ -5,47 +5,232 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>level-up-your-day</title>
     
+    <link rel="icon" href="https://img.icons8.com/fluency/96/level-up.png">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/96/level-up.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { 
-            --neon: #00ff9d; --purple: #a29bfe; --bg: #121212; --card-bg: #1e1e1e; 
-            --gold: #ffc107; --blue: #00d4ff; --sidebar-w: 260px;
-        }
-
-        body { 
-            background: linear-gradient(135deg, var(--bg) 0%, #1a1a1a 100%); 
-            color: #e0e0e0; font-family: 'Inter', sans-serif; text-align: center; 
-            padding: 0; min-height: 100vh; margin: 0; overflow-x: hidden; 
-        }
-
+        :root { --neon: #00ff9d; --bg: #121212; --card-bg: #1e1e1e; --gold: #ffc107; --sidebar-w: 260px; }
+        body { background: linear-gradient(135deg, var(--bg) 0%, #1a1a1a 100%); color: #e0e0e0; font-family: 'Inter', sans-serif; text-align: center; padding: 0; min-height: 100vh; margin: 0; overflow-x: hidden; }
         h1, h2, h3 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
         h1 { color: var(--neon); text-shadow: 0 0 15px rgba(0, 255, 157, 0.4); margin: 0; font-size: 1.2rem; }
-
-        /* SIDEBAR */
-        .sidebar { 
-            position: fixed; left: calc(-1 * var(--sidebar-w)); top: 0; 
-            width: var(--sidebar-w); height: 100%; background: #111; 
-            border-right: 1px solid #333; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            z-index: 1000; padding-top: 60px; text-align: left;
-        }
+        .sidebar { position: fixed; left: calc(-1 * var(--sidebar-w)); top: 0; width: var(--sidebar-w); height: 100%; background: #111; border-right: 1px solid #333; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; padding-top: 60px; text-align: left; }
         .sidebar.open { left: 0; }
-        .nav-item { 
-            padding: 18px 25px; cursor: pointer; display: flex; align-items: center; 
-            gap: 15px; border-bottom: 1px solid #222; font-family: 'Orbitron'; 
-            font-size: 0.75rem; color: #888; transition: 0.2s;
-        }
+        .nav-item { padding: 18px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #222; font-family: 'Orbitron'; font-size: 0.75rem; color: #888; transition: 0.2s; }
         .nav-item:hover { background: #1a1a1a; color: var(--neon); }
         .nav-active { color: var(--neon); background: #1a1a1a; border-left: 4px solid var(--neon); }
-
-        /* HEADER */
-        header { 
-            padding: 15px 20px; display: flex; align-items: center; 
-            background: rgba(0,0,0,0.9); position: sticky; top: 0; 
-            z-index: 999; border-bottom: 1px solid #222;
-        }
+        header { padding: 15px 20px; display: flex; align-items: center; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 999; border-bottom: 1px solid #222; }
         .menu-btn { font-size: 1.4rem; color: var(--neon); cursor: pointer; margin-right: 20px; }
-
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background-
+        .card { background-color: var(--card-bg); border-radius: 16px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .highlight-card { border: 1px solid var(--neon); box-shadow: 0 0 15px rgba(0, 255, 157, 0.1); }
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .metric-value { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: var(--neon); font-weight: 700; }
+        button { padding: 12px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; background-color: var(--neon); color: #121212; transition: 0.3s; font-family: 'Orbitron', sans-serif; text-transform: uppercase; font-size: 0.75rem; width: 100%; }
+        input { padding: 12px; border-radius: 8px; border: 1px solid #333; background: #252525; color: white; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+        .hidden { display: none; }
+        .status-msg { font-size: 0.8rem; padding: 10px; border-radius: 8px; background: #332b00; color: var(--gold); border: 1px solid var(--gold); margin-bottom: 10px; }
+        .danger-btn { background: #ff4757; color: white; margin-top: 10px; font-size: 0.6rem; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar" class="sidebar">
+    <div class="nav-item nav-active" id="nav-dashboard" onclick="showSection('dashboard')"><i class="fa-solid fa-gamepad"></i> Dashboard</div>
+    <div class="nav-item" id="nav-mission" onclick="showSection('mission')"><i class="fa-solid fa-scroll"></i> Daily Quest</div>
+    <div class="nav-item" id="nav-history" onclick="showSection('history')"><i class="fa-solid fa-calendar-days"></i> Activity Logs</div>
+    <div class="nav-item" id="nav-parent" onclick="showSection('parent')" style="color:var(--gold)"><i class="fa-solid fa-user-shield"></i> Parent Portal</div>
+    <div class="nav-item" onclick="location.reload()" style="margin-top:20px; color:#ff4757;"><i class="fa-solid fa-power-off"></i> Logout</div>
+</div>
+
+<header><i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i><h1>level-up-your-day</h1></header>
+
+<div class="container">
+    <section id="auth-section">
+        <div class="card">
+            <h2 id="auth-title">Player Login</h2>
+            <input type="email" id="login-email" placeholder="Email Address">
+            <input type="password" id="login-password" placeholder="Password">
+            <button id="auth-btn" onclick="handleAuth()">Enter Game</button>
+            <p id="toggle-text" style="font-size: 0.7rem; margin-top: 15px; cursor: pointer; text-decoration: underline;" onclick="toggleAuthMode()">New player? Register here.</p>
+        </div>
+    </section>
+
+    <div id="app-content" class="hidden">
+        <div id="dashboard-section">
+            <div class="card">
+                <h2 id="welcome-msg">Welcome</h2>
+                <div class="metrics-grid">
+                    <div><p style="font-size:0.6rem; color:#888;">Level</p><p class="metric-value" id="user-level">1</p></div>
+                    <div><p style="font-size:0.6rem; color:#888;">Streak</p><p class="metric-value" id="user-streak">0</p></div>
+                    <div><p style="font-size:0.6rem; color:#888;">XP</p><p class="metric-value" id="user-total-mins">0</p></div>
+                </div>
+            </div>
+            <div class="card highlight-card" id="log-card">
+                <div id="locked-msg" class="status-msg">⚠️ LINK REQUIRED: Tell your parent to link to: <b id="display-email"></b></div>
+                <div id="log-controls" class="hidden">
+                    <h3>Log Playtime</h3>
+                    <input type="number" id="log-input" placeholder="Minutes">
+                    <button onclick="vouchForXP()">Log Minutes</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mission-section" class="hidden">
+            <div class="card highlight-card">
+                <h3>Daily Quest</h3>
+                <p id="quest-text" style="background:#252525; padding:15px; border-radius:8px; border-left:4px solid var(--neon); margin: 20px 0; font-weight:600;">Loading...</p>
+                <button onclick="completeQuest()" style="background:var(--gold);">Finish Quest</button>
+            </div>
+        </div>
+
+        <div id="parent-section" class="hidden">
+            <div id="parent-link-account" class="card">
+                <h3>Link Child Account</h3>
+                <input type="email" id="link-child-email" placeholder="Child's Email Address">
+                <button onclick="linkToChild()" style="background:var(--gold);">Find & Link</button>
+            </div>
+            <div id="parent-setup" class="card hidden" style="border-color: var(--gold);">
+                <h3>Set Control PIN</h3>
+                <p id="setup-msg" style="font-size: 0.7rem; color: #888;"></p>
+                <input type="password" id="setup-pin" placeholder="Create 4-Digit PIN" maxlength="4">
+                <button onclick="setupParentPin()" style="background:var(--gold);">Activate Account</button>
+                <button onclick="unlink()" class="danger-btn">Cancel & Unlink</button>
+            </div>
+            <div id="parent-lock-screen" class="card hidden" style="border-color: var(--gold);">
+                <h3>Parent Access</h3>
+                <input type="password" id="parent-pin-entry" placeholder="Enter PIN">
+                <button onclick="verifyParent()" style="background:var(--gold);">Unlock Portal</button>
+                <button onclick="unlink()" class="danger-btn">Unlink This Account</button>
+            </div>
+            <div id="parent-admin-panel" class="hidden">
+                <div class="card">
+                    <h4 style="color:var(--gold)">Approve Minutes</h4>
+                    <p id="pending-display">No pending minutes.</p>
+                    <button onclick="approveXP()" style="background:var(--gold);">Approve</button>
+                    <button onclick="showSection('parent')" style="background:#444; color:white; margin-top:10px; font-size:0.6rem;">Lock Portal</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="history-section" class="hidden">
+            <div class="card"><h3>Logs</h3><div id="log-list" style="font-size:0.8rem;"></div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentEmail = "";
+let isRegMode = false;
+let userData = { username: "", password: "", parentPin: "", active: false, totalMinutes: 0, streak: 0, lastDate: "", history: [], pendingXP: 0 };
+const quests = ["10 Pushups", "Drink Water", "Stretch", "Clean Room", "Read"];
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+function toggleAuthMode() {
+    isRegMode = !isRegMode;
+    document.getElementById('auth-title').innerText = isRegMode ? "Register Player" : "Player Login";
+    document.getElementById('auth-btn').innerText = isRegMode ? "Create Account" : "Enter Game";
+    document.getElementById('toggle-text').innerText = isRegMode ? "Already have an account? Login." : "New player? Register here.";
+}
+
+function showSection(id) {
+    document.querySelectorAll('[id$="-section"]').forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('nav-active'));
+    document.getElementById(id + "-section").classList.remove('hidden');
+    document.getElementById("nav-" + id).classList.add('nav-active');
+    
+    if(id==='parent') {
+        const lastLinked = localStorage.getItem("last_linked_child");
+        if (lastLinked) {
+            currentEmail = lastLinked;
+            userData = JSON.parse(localStorage.getItem("user_" + lastLinked));
+            document.getElementById('parent-link-account').classList.add('hidden');
+            if(!userData.parentPin) {
+                document.getElementById('setup-msg').innerText = "Linking to: " + lastLinked;
+                document.getElementById('parent-setup').classList.remove('hidden');
+            } else {
+                document.getElementById('parent-lock-screen').classList.remove('hidden');
+            }
+        } else {
+            document.getElementById('parent-link-account').classList.remove('hidden');
+            document.getElementById('parent-setup').classList.add('hidden');
+            document.getElementById('parent-lock-screen').classList.add('hidden');
+            document.getElementById('parent-admin-panel').classList.add('hidden');
+        }
+    }
+    if(id==='mission') renderQuest();
+    if(id==='history') renderHistory();
+    if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
+}
+
+function handleAuth() {
+    const e = document.getElementById("login-email").value.trim().toLowerCase();
+    const p = document.getElementById("login-password").value.trim();
+    if(!e || !p) return alert("Fill all fields!");
+    if(isRegMode) {
+        if(localStorage.getItem("user_" + e)) return alert("User already exists!");
+        userData = {...userData, username: e.split('@')[0], password: p};
+        localStorage.setItem("user_" + e, JSON.stringify(userData));
+        alert("Registered! A parent must link to your email.");
+        toggleAuthMode();
+    } else {
+        let stored = JSON.parse(localStorage.getItem("user_" + e));
+        if(stored && stored.password === p) {
+            currentEmail = e; userData = stored;
+            document.getElementById("auth-section").classList.add("hidden");
+            document.getElementById("app-content").classList.remove("hidden");
+            document.getElementById("display-email").innerText = currentEmail;
+            refreshUI();
+        } else alert("Invalid login.");
+    }
+}
+
+function linkToChild() {
+    const targetEmail = document.getElementById('link-child-email').value.trim().toLowerCase();
+    if(localStorage.getItem("user_" + targetEmail)) {
+        localStorage.setItem("last_linked_child", targetEmail);
+        showSection('parent');
+    } else alert("Child email not found!");
+}
+
+function setupParentPin() {
+    const pin = document.getElementById('setup-pin').value.trim();
+    if(pin.length === 4) {
+        userData.parentPin = pin; userData.active = true; save();
+        alert("Account Active!");
+        showSection('parent');
+    } else alert("4 digits required.");
+}
+
+function verifyParent() {
+    if(document.getElementById('parent-pin-entry').value === userData.parentPin) {
+        document.getElementById('parent-lock-screen').classList.add('hidden');
+        document.getElementById('parent-admin-panel').classList.remove('hidden');
+        document.getElementById('pending-display').innerText = `Pending: ${userData.pendingXP} XP`;
+    } else alert("Wrong PIN.");
+}
+
+function unlink() {
+    localStorage.removeItem("last_linked_child");
+    alert("Unlinked.");
+    showSection('parent');
+}
+
+function vouchForXP() { userData.pendingXP = parseInt(document.getElementById("log-input").value) || 0; save(); alert("Logged!"); document.getElementById("log-input").value = ""; }
+function approveXP() { userData.totalMinutes += userData.pendingXP; userData.history.push({date: new Date().toLocaleDateString(), mins: userData.pendingXP}); userData.pendingXP = 0; save(); refreshUI(); alert("Approved!"); }
+function renderQuest() { document.getElementById("quest-text").innerText = quests[Math.floor(Math.random()*quests.length)]; }
+function completeQuest() { const today = new Date().toLocaleDateString(); if(userData.lastDate !== today) { userData.streak++; userData.totalMinutes += 10; userData.lastDate = today; save(); refreshUI(); alert("Success!"); } }
+function renderHistory() { document.getElementById("log-list").innerHTML = userData.history.map(h => `<div>• ${h.date}: ${h.mins} XP</div>`).join(''); }
+
+function refreshUI() {
+    document.getElementById("user-level").innerText = Math.floor(userData.totalMinutes / 100) + 1;
+    document.getElementById("user-streak").innerText = userData.streak;
+    document.getElementById("user-total-mins").innerText = userData.totalMinutes;
+    document.getElementById("welcome-msg").innerText = "Welcome, " + userData.username;
+    if(userData.active) { document.getElementById('locked-msg').classList.add('hidden'); document.getElementById('log-controls').classList.remove('hidden'); }
+}
+function save() { localStorage.setItem("user_" + currentEmail, JSON.stringify(userData)); }
+</script>
+</body>
+</html>

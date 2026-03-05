@@ -12,6 +12,8 @@
     
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d0d0d">
 
     <style>
         :root { 
@@ -145,14 +147,20 @@
 <script>
 let currentEmail = "";
 let isRegMode = false;
+
+// Default structured data
 let userData = { 
-    username: "", password: "", parentPin: "1234", 
-    totalXP: 0, pendingXP: 0, 
-    lastLogDate: null, streak: 0,
-    proofImg: null, rewards: [{name: "1hr Gaming", cost: 100}]
+    username: "", 
+    password: "", 
+    parentPin: "1234", 
+    totalXP: 0, 
+    pendingXP: 0, 
+    lastLogDate: null, 
+    streak: 0,
+    proofImg: null, 
+    rewards: [{name: "1hr Gaming", cost: 100}]
 };
 
-// --- LEVEL UP SOUND ---
 const levelUpSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
 
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
@@ -188,65 +196,70 @@ function runVisionSearch() {
     if(!q) return;
     out.innerHTML = "🌀 Vision AI is computing...";
     setTimeout(() => {
-        out.innerHTML = `<b>Vision AI:</b> Logic analysis of "${q.substring(0,30)}..." suggests a high probability of success if you apply step-by-step iteration.`;
+        out.innerHTML = `<b>Vision AI:</b> Iteration analysis complete. Level Up progress is looking optimal!`;
     }, 1200);
 }
 
-// --- AUTH & CORE ---
+// --- CORE LOGIC ---
 function handleAuth() {
     const e = document.getElementById("login-email").value.trim().toLowerCase();
     const p = document.getElementById("login-password").value.trim();
     if(isRegMode) {
-        userData.username = e; userData.password = p;
-        localStorage.setItem("user_" + e, JSON.stringify(userData));
+        let newPlayer = {...userData, username: e, password: p, totalXP: 0, streak: 0};
+        localStorage.setItem("user_" + e, JSON.stringify(newPlayer));
         alert("Account Created!"); toggleAuthMode();
     } else {
         let stored = JSON.parse(localStorage.getItem("user_" + e));
         if(stored && stored.password === p) {
-            currentEmail = e; userData = stored;
+            currentEmail = e; 
+            userData = {...userData, ...stored}; 
             document.getElementById("auth-section").classList.add("hidden");
             document.getElementById("app-content").classList.remove("hidden");
             checkStreak();
             updateUI();
+        } else {
+            alert("Login failed.");
         }
     }
 }
 
 function checkStreak() {
+    if (!userData.streak) userData.streak = 0;
     const today = new Date().toDateString();
     if (userData.lastLogDate) {
         const lastDate = new Date(userData.lastLogDate);
         const diffDays = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
-        
-        if (diffDays === 1) { /* Streak continues */ } 
-        else if (diffDays > 1) { userData.streak = 0; }
+        if (diffDays > 1) userData.streak = 0;
     }
     document.getElementById('streak-display').innerText = `🔥 ${userData.streak} Days`;
 }
 
 function vouchForXP() {
-    userData.pendingXP = parseInt(document.getElementById('xp-input-mins').value) || 0;
+    const val = parseInt(document.getElementById('xp-input-mins').value);
+    if(isNaN(val)) return alert("Enter a number!");
+    userData.pendingXP = val;
     save();
-    alert("Vouched! Waiting for Parent Approval.");
+    if (navigator.vibrate) navigator.vibrate(50);
+    alert("Vouched!");
     document.getElementById('xp-input-mins').value = "";
 }
 
 function approveXP() {
-    const oldLevel = Math.floor(userData.totalXP / 100) + 1;
-    userData.totalXP += userData.pendingXP;
+    const xp = userData.totalXP || 0;
+    const oldLevel = Math.floor(xp / 100) + 1;
+    userData.totalXP = xp + (userData.pendingXP || 0);
     userData.pendingXP = 0;
     
-    // Streak Logic
     const today = new Date().toDateString();
     if (userData.lastLogDate !== today) {
-        userData.streak++;
+        userData.streak = (userData.streak || 0) + 1;
         userData.lastLogDate = today;
     }
 
     const newLevel = Math.floor(userData.totalXP / 100) + 1;
     if (newLevel > oldLevel) {
         levelUpSound.play();
-        alert("🎉 LEVEL UP!");
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     }
 
     save(); updateUI(); lockParent();
@@ -258,11 +271,11 @@ function toggleAuthMode() {
 }
 
 function updateUI() {
-    document.getElementById('display-xp').innerText = userData.totalXP;
-    document.getElementById('display-level').innerText = Math.floor(userData.totalXP / 100) + 1;
-    // Progress bar fix: min 5% width for visual polish
-    document.getElementById('trust-fill').style.width = Math.max((userData.totalXP % 100), 5) + "%";
-    document.getElementById('streak-display').innerText = `🔥 ${userData.streak} Days`;
+    const xp = userData.totalXP || 0;
+    document.getElementById('display-xp').innerText = xp;
+    document.getElementById('display-level').innerText = Math.floor(xp / 100) + 1;
+    document.getElementById('trust-fill').style.width = Math.max((xp % 100), 5) + "%";
+    document.getElementById('streak-display').innerText = `🔥 ${userData.streak || 0} Days`;
 }
 
 function handlePhoto(input) {
@@ -278,10 +291,10 @@ function handlePhoto(input) {
 }
 
 function verifyParent() {
-    if(document.getElementById('parent-pin-entry').value === userData.parentPin) {
+    if(document.getElementById('parent-pin-entry').value === (userData.parentPin || "1234")) {
         document.getElementById('parent-lock-screen').classList.add('hidden');
         document.getElementById('parent-admin-panel').classList.remove('hidden');
-        document.getElementById('admin-pending-val').innerText = userData.pendingXP + " XP";
+        document.getElementById('admin-pending-val').innerText = (userData.pendingXP || 0) + " XP";
     }
 }
 

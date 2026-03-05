@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Level Up! Tracker</title>
+    <title>Level Up! Home</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,291 +13,224 @@
             --neon: #00ff9d; --bg: #0d0d0d; --card-bg: #161616; 
             --gold: #ffc107; --red: #ff4757; --blue: #00d4ff; 
         }
-        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 50px; }
         
-        /* SIDEBAR */
-        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1001; top: 0; left: 0; background-color: #0a0a0a; overflow-x: hidden; transition: 0.4s; padding-top: 60px; border-right: 1px solid #333; }
-        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1rem; color: #aaa; display: flex; align-items: center; gap: 15px; font-family: 'Orbitron'; cursor: pointer; border-bottom: 1px solid #1a1a1a; }
-        .sidebar a:hover { color: var(--neon); background: #111; }
-        .sidebar .closebtn { position: absolute; top: 10px; right: 20px; font-size: 30px; color: var(--neon); cursor: pointer; }
-
-        /* TOP NAV */
         .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #111; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 900; }
-        .menu-icon { font-size: 1.4rem; color: var(--neon); cursor: pointer; }
         .logo { font-family: 'Orbitron'; font-weight: 700; color: var(--neon); font-size: 1.1rem; letter-spacing: 1px; }
 
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background-color: #161616; border-radius: 18px; padding: 25px; margin-bottom: 20px; border: 1px solid #2a2a2a; text-align: center; }
+        .container { max-width: 500px; margin: 0 auto; padding: 15px; }
+        .card { background-color: #161616; border-radius: 18px; padding: 20px; margin-bottom: 20px; border: 1px solid #2a2a2a; }
 
-        /* STATS */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        /* MISSION & TASK STYLING */
+        .mission-header { font-family: 'Orbitron'; color: #fff; font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .task-container { background: #222; border-radius: 12px; padding: 15px; border-left: 5px solid var(--red); margin-bottom: 15px; }
+        .task-row { display: flex; align-items: center; gap: 12px; }
+        .checkbox { width: 22px; height: 22px; border: 2px solid var(--red); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .checkbox.checked { background: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+        .checkbox.checked i { color: #000; display: block !important; }
+
+        /* CALENDAR & STATS */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
         .stat-value { font-family: 'Orbitron'; color: var(--neon); font-size: 1.4rem; }
         .stat-label { font-size: 0.65rem; color: #777; text-transform: uppercase; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
+        .cal-day { font-size: 0.75rem; padding: 8px 0; border-radius: 6px; background: #222; text-align: center; }
+        .goal-met { background: var(--neon) !important; color: #000 !important; font-weight: bold; }
+        .goal-missed { background: var(--red) !important; }
 
-        /* INPUTS & BUTTONS */
-        .log-container { display: flex; gap: 10px; margin-top: 15px; }
-        input, textarea { padding: 12px; border-radius: 10px; border: 1px solid #333; background: #080808; color: white; font-family: 'Orbitron'; outline: none; width: 100%; box-sizing: border-box; }
-        .log-btn { background: var(--neon); color: #000; border: none; padding: 12px 20px; border-radius: 10px; font-family: 'Orbitron'; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .log-btn:active { transform: scale(0.95); }
+        /* BUTTONS */
+        .action-btn { background: var(--neon); color: #000; border: none; padding: 12px; border-radius: 10px; font-family: 'Orbitron'; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; }
+        input, textarea { padding: 12px; border-radius: 10px; border: 1px solid #333; background: #080808; color: white; width: 100%; box-sizing: border-box; outline: none; font-family: 'Orbitron'; }
 
-        /* CALENDAR */
-        .cal-header { font-family: 'Orbitron'; color: #fff; margin-bottom: 20px; font-size: 1.2rem; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .day-label { color: var(--neon); font-size: 0.65rem; font-weight: 700; padding-bottom: 10px; }
-        .cal-day { font-size: 0.85rem; padding: 10px 0; border-radius: 8px; background: #222; color: #fff; }
-        .goal-met { background: var(--neon) !important; color: #000 !important; font-weight: bold; box-shadow: 0 0 10px var(--neon); }
-        .goal-missed { background: var(--red) !important; color: white !important; }
-
-        /* HISTORY */
-        .history-list { text-align: left; margin-top: 15px; }
-        .history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
-        .history-date { color: #888; }
-        .history-mins { color: var(--neon); font-family: 'Orbitron'; }
-
+        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1001; top: 0; left: 0; background-color: #0a0a0a; overflow-x: hidden; transition: 0.4s; padding-top: 60px; border-right: 1px solid #333; }
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1rem; color: #aaa; display: flex; align-items: center; gap: 15px; font-family: 'Orbitron'; cursor: pointer; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div id="mySidebar" class="sidebar">
-    <span class="closebtn" onclick="closeNav()">&times;</span>
-    <a onclick="showTab('dash'); closeNav()"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a onclick="showTab('cal'); closeNav()"><i class="fa-solid fa-calendar-check" style="color: var(--neon)"></i> Goal Tracker</a>
-    <a onclick="showTab('mission'); closeNav()"><i class="fa-solid fa-bullseye" style="color: var(--red)"></i> Missions</a>
-    <a onclick="showTab('ai'); closeNav()"><i class="fa-solid fa-robot" style="color: var(--blue)"></i> AI Helper</a>
-    <a onclick="showTab('parent'); closeNav()"><i class="fa-solid fa-user-shield" style="color: var(--gold)"></i> Parent Portal</a>
-    <a onclick="logout()" style="margin-top: 50px; color: var(--red); border: none;"><i class="fa-solid fa-power-off"></i> Reset Data</a>
+    <span style="position:absolute;top:10px;right:20px;font-size:30px;color:var(--neon);cursor:pointer;" onclick="closeNav()">&times;</span>
+    <a onclick="showSection('home')"><i class="fa-solid fa-house"></i> Home</a>
+    <a onclick="showSection('parent')"><i class="fa-solid fa-user-shield" style="color:var(--gold)"></i> Parent Portal</a>
 </div>
 
-<div id="app-content">
-    <div class="top-nav">
-        <i class="fa-solid fa-bars menu-icon" onclick="openNav()"></i>
-        <div class="logo">LEVEL UP</div>
-        <div style="width:24px"></div>
+<div class="top-nav">
+    <i class="fa-solid fa-bars" style="color:var(--neon); cursor:pointer;" onclick="openNav()"></i>
+    <div class="logo">LEVEL UP</div>
+    <div style="width:24px"></div>
+</div>
+
+<div class="container">
+    
+    <div id="section-home">
+        <div class="card">
+            <div class="stat-grid">
+                <div class="stat-box"><span class="stat-label">7-Day Avg</span><br><span class="stat-value" id="avg-display">0m</span></div>
+                <div class="stat-box"><span class="stat-label">Streak</span><br><span class="stat-value" id="streak-display">0d</span></div>
+            </div>
+        </div>
+
+        <div class="card" style="border: 1px solid var(--neon);">
+            <div style="font-family:'Orbitron'; font-size:0.9rem; margin-bottom:10px;"><i class="fa-solid fa-clock"></i> Log Playtime</div>
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="mins-input" placeholder="Minutes">
+                <button class="action-btn" style="margin:0; width:auto; padding:0 20px;" onclick="logTime()">LOG</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="mission-header"><i class="fa-solid fa-bullseye" style="color:var(--red)"></i> Current Mission</div>
+            
+            <div class="task-container">
+                <div class="task-row">
+                    <div id="task-check" class="checkbox" onclick="toggleTask()">
+                        <i class="fa-solid fa-check hidden"></i>
+                    </div>
+                    <div>
+                        <span class="stat-label" style="color:var(--red)">Active Task:</span>
+                        <p id="task-display" style="margin:2px 0; font-weight:600; font-size:0.9rem;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #1a1a1a; padding: 12px; border-radius: 10px; border: 1px dashed #444;">
+                <div style="font-family:'Orbitron'; font-size:0.7rem; color:var(--gold); margin-bottom:5px;">
+                    <i class="fa-solid fa-lightbulb"></i> Gaming Fact
+                </div>
+                <p id="fact-display" style="font-size:0.8rem; font-style:italic; color:#bbb; margin:0; line-height:1.4;"></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-family:'Orbitron'; font-size:0.9rem; margin-bottom:10px;"><i class="fa-solid fa-calendar-days" style="color:var(--neon)"></i> Goal Tracker</div>
+            <div class="cal-grid" id="calendar-days">
+                <div style="color:var(--neon); font-size:0.6rem; text-align:center;">S</div>
+                <div style="color:var(--neon); font-size:0.6rem; text-align:center;">M</div>
+                <div style="color:var(--neon); font-size:0.6rem; text-align:center;">T</div>
+                <div style="color:var(--neon); font-size:0.6rem; text-align:center;">W</div>
+                <div style="color:var(--neon); font-size:0.6rem; text-align:center;">T</div>
+                <div style="color:var(--neon); font-size:0.6rem; text-align:center;">F</div>
+                <div style="color:var(--neon); font-size:0.6rem; text-align:center;">S</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="font-family:'Orbitron'; font-size:0.9rem; margin-bottom:10px;"><i class="fa-solid fa-robot" style="color:var(--blue)"></i> AI Tutor</div>
+            <textarea id="ai-input" rows="2" placeholder="Ask a question..."></textarea>
+            <button class="action-btn" style="background:var(--blue); color:white;" onclick="askAI()">ASK BRAIN</button>
+            <p id="ai-response" style="font-size:0.8rem; color:#ccc; margin-top:10px;"></p>
+        </div>
     </div>
 
-    <div class="container">
-        
-        <section id="tab-dash">
-            <h2 style="font-family:'Orbitron'; text-align:center; font-size:1.2rem; margin-bottom:20px;">Welcome Back</h2>
-
-            <div class="card">
-                <div style="font-family:'Orbitron'; color:#fff;"><i class="fa-solid fa-star" style="color:var(--gold)"></i> Performance Stats</div>
-                <div class="stat-grid">
-                    <div class="stat-box"><span class="stat-label">7-Day Avg</span><br><span class="stat-value" id="avg-display">0m</span></div>
-                    <div class="stat-box"><span class="stat-label">Goal Streak</span><br><span class="stat-value" id="streak-display">0d</span></div>
-                </div>
+    <div id="section-parent" class="hidden">
+        <div class="card">
+            <div style="font-family:'Orbitron'; margin-bottom:15px;">Parent Access</div>
+            <div id="parent-lock">
+                <input type="password" id="pin" placeholder="Enter PIN">
+                <button class="action-btn" style="background:var(--gold);" onclick="unlockParent()">Unlock</button>
             </div>
-
-            <div class="card" style="border: 1px solid var(--neon);">
-                <div style="font-family:'Orbitron'; color:#fff;"><i class="fa-solid fa-clock"></i> Log Playtime</div>
-                <div class="log-container">
-                    <input type="number" id="mins-input" placeholder="Minutes">
-                    <button class="log-btn" onclick="vouchXP()">LOG</button>
-                </div>
+            <div id="parent-controls" class="hidden">
+                <span class="stat-label">Daily Goal (Min)</span>
+                <input type="number" id="goal-input" style="margin-bottom:15px;">
+                <button class="action-btn" onclick="setGoal()">Update Goal</button>
+                <p id="pending-msg" style="color:var(--neon); margin: 20px 0; font-family:'Orbitron';"></p>
+                <button class="action-btn" style="background:white;" onclick="approve()">Approve Session</button>
             </div>
-
-            <div class="card">
-                <div style="font-family:'Orbitron'; color:#fff;">History (Last 7)</div>
-                <div id="history-container" class="history-list"></div>
-            </div>
-        </section>
-
-        <section id="tab-cal" class="hidden">
-            <div class="card">
-                <div class="cal-header">MARCH 2026</div>
-                <div class="cal-grid" id="calendar-days">
-                    <div class="day-label">SU</div><div class="day-label">MO</div><div class="day-label">TU</div><div class="day-label">WE</div><div class="day-label">TH</div><div class="day-label">FR</div><div class="day-label">SA</div>
-                </div>
-                <p style="font-size: 0.7rem; color: #555; margin-top: 15px;">Daily Goal: <span id="cal-goal-display">120</span> min</p>
-            </div>
-        </section>
-
-        <section id="tab-mission" class="hidden">
-            <div class="card">
-                <div style="font-family:'Orbitron'; font-size:1.2rem; color:#fff;"><i class="fa-solid fa-hourglass-start"></i> Ready to Start?</div>
-                <p id="mission-goal-text" style="color:#888; font-size:0.9rem; margin-top:10px;">Goal: 120 min limit!</p>
-            </div>
-            <div class="card">
-                <div style="font-family:'Orbitron'; font-size:1rem; color:var(--neon);"><i class="fa-solid fa-lightbulb"></i> Gaming Fact</div>
-                <p id="fact-text" style="font-size:0.85rem; font-style:italic; margin-top:10px;"></p>
-            </div>
-        </section>
-
-        <section id="tab-ai" class="hidden">
-            <div class="card">
-                <h3 style="color:var(--blue); font-family:'Orbitron';">AI Helper</h3>
-                <textarea id="ai-input" rows="3" placeholder="Ask a question..."></textarea>
-                <button class="log-btn" style="background:var(--blue); color:white; width:100%;" onclick="askAI()">ASK BRAIN</button>
-                <div id="ai-response" style="margin-top:15px; font-size:0.9rem; color:#ccc; line-height: 1.4;"></div>
-            </div>
-        </section>
-
-        <section id="tab-parent" class="hidden">
-            <div class="card">
-                <h3 style="font-family:'Orbitron';">Parent Access</h3>
-                <div id="parent-lock">
-                    <input type="password" id="pin" placeholder="Enter PIN">
-                    <button class="log-btn" style="width:100%; margin-top:10px; background:var(--gold);" onclick="unlockParent()">Unlock</button>
-                </div>
-                <div id="parent-controls" class="hidden">
-                    <div style="margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 20px;">
-                        <span class="stat-label">Set Daily Goal (Min)</span>
-                        <div class="log-container">
-                            <input type="number" id="goal-setting" placeholder="e.g. 120">
-                            <button class="log-btn" onclick="updateGoal()">SET</button>
-                        </div>
-                    </div>
-                    <p id="pending-info" style="color:var(--neon); font-family: 'Orbitron';"></p>
-                    <button class="log-btn" style="width:100%;" onclick="approveEntry()">Approve & Log</button>
-                </div>
-            </div>
-        </section>
-
+        </div>
     </div>
 </div>
 
 <script>
-// INITIAL DATA
-const facts = [
-    "Gaming improves multi-tasking skills.",
-    "The first video game was created in 1958.",
-    "Pro gamers have faster reaction times than average.",
-    "Playing puzzles games can increase brain flexibility."
-];
-
-let userData = JSON.parse(localStorage.getItem("levelUpData")) || { 
-    logs: [], 
-    pendingXP: 0, 
-    calData: {}, 
-    dailyGoal: 120,
-    streak: 0
+let data = JSON.parse(localStorage.getItem("levelUpData")) || {
+    logs: [], pending: 0, cal: {}, goal: 120, streak: 0, taskDone: false
 };
 
-// NAVIGATION
-function openNav() { document.getElementById("mySidebar").style.width = "260px"; }
-function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
+const missionPool = [
+    { task: "Go outside for a bit and breathe fresh air.", fact: "Nature resets your attention span, making you better at strategy games." },
+    { task: "Drink a full glass of water.", fact: "Dehydration causes brain fog. Water keeps your reaction time fast." },
+    { task: "Stretch your wrists and back for 2 minutes.", fact: "Pro gamers stretch to avoid injury and stay in the game longer." },
+    { task: "Look at something 20 feet away for 20 seconds.", fact: "This prevents 'Gamer Eye' strain and keeps your vision sharp." }
+];
 
-function showTab(t) {
-    document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
-    document.getElementById('tab-' + t).classList.remove('hidden');
-    if(t === 'dash') updateDashboard();
-    if(t === 'cal') renderCalendar();
-    if(t === 'mission') updateMissions();
+function openNav() { document.getElementById("mySidebar").style.width = "250px"; }
+function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
+function showSection(s) {
+    closeNav();
+    document.getElementById('section-home').classList.toggle('hidden', s !== 'home');
+    document.getElementById('section-parent').classList.toggle('hidden', s !== 'parent');
 }
 
-// PLAYER ACTIONS
-function vouchXP() {
-    const mins = document.getElementById('mins-input').value;
-    if(!mins) return;
-    userData.pendingXP = parseInt(mins);
+function toggleTask() {
+    data.taskDone = !data.taskDone;
+    document.getElementById('task-check').classList.toggle('checked', data.taskDone);
     save();
-    alert("Playtime sent to Parent Portal!");
+}
+
+function logTime() {
+    let val = document.getElementById('mins-input').value;
+    if(!val) return;
+    data.pending = parseInt(val);
+    save();
+    alert("Sent to Parent Portal!");
     document.getElementById('mins-input').value = "";
 }
 
-function askAI() {
-    const input = document.getElementById('ai-input').value;
-    if(!input) return;
-    document.getElementById('ai-response').innerText = "Analyzing your request... (Standard AI Logic active)";
-}
-
-// PARENT ACTIONS
 function unlockParent() {
     if(document.getElementById('pin').value === "1234") {
         document.getElementById('parent-lock').classList.add('hidden');
         document.getElementById('parent-controls').classList.remove('hidden');
-        document.getElementById('pending-info').innerText = `Pending Session: ${userData.pendingXP} min`;
-        document.getElementById('goal-setting').value = userData.dailyGoal;
-    } else { alert("Wrong PIN"); }
-}
-
-function updateGoal() {
-    const newGoal = document.getElementById('goal-setting').value;
-    if(newGoal > 0) {
-        userData.dailyGoal = parseInt(newGoal);
-        save();
-        alert("Daily Goal updated to " + newGoal + "m");
+        document.getElementById('goal-input').value = data.goal;
+        document.getElementById('pending-msg').innerText = "Pending: " + data.pending + "m";
     }
 }
 
-function approveEntry() {
-    if(userData.pendingXP <= 0) return alert("Nothing to approve.");
-    
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const fullDate = now.toISOString().split('T')[0];
-
-    // Check Goal
-    const isMet = (userData.pendingXP >= userData.dailyGoal);
-    userData.calData[fullDate] = isMet ? "met" : "missed";
-    
-    // Update Streak
-    if(isMet) userData.streak += 1;
-    else userData.streak = 0;
-
-    // History
-    userData.logs.unshift({ date: dateStr, mins: userData.pendingXP });
-    if(userData.logs.length > 7) userData.logs.pop();
-
-    userData.pendingXP = 0;
+function setGoal() {
+    data.goal = parseInt(document.getElementById('goal-input').value);
     save();
-    alert("Approved! Calendar updated.");
-    location.reload(); 
+    location.reload();
 }
 
-// UI RENDERING
-function updateDashboard() {
-    const container = document.getElementById('history-container');
-    container.innerHTML = userData.logs.length ? '' : '<p style="color:#444;">No sessions approved yet.</p>';
-    
+function approve() {
+    if(data.pending <= 0) return;
+    const today = new Date().toISOString().split('T')[0];
+    const isMet = data.pending >= data.goal;
+    data.logs.unshift({date: new Date().toLocaleDateString('en-US',{month:'short', day:'numeric'}), mins: data.pending});
+    data.cal[today] = isMet ? "met" : "missed";
+    data.streak = isMet ? (data.streak + 1) : 0;
+    data.pending = 0;
+    data.taskDone = false; // Reset task for next session
+    save();
+    location.reload();
+}
+
+function render() {
+    document.getElementById('streak-display').innerText = data.streak + "d";
     let total = 0;
-    userData.logs.forEach(log => {
-        total += log.mins;
-        const div = document.createElement('div');
-        div.className = 'history-item';
-        div.innerHTML = `<span class="history-date">${log.date}</span><span class="history-mins">${log.mins} min</span>`;
-        container.appendChild(div);
-    });
+    data.logs.forEach(l => total += l.mins);
+    document.getElementById('avg-display').innerText = data.logs.length ? Math.round(total/data.logs.length) + "m" : "0m";
 
-    document.getElementById('avg-display').innerText = userData.logs.length ? Math.round(total/userData.logs.length) + "m" : "0m";
-    document.getElementById('streak-display').innerText = (userData.streak || 0) + "d";
-}
-
-function renderCalendar() {
-    const grid = document.getElementById('calendar-days');
-    grid.innerHTML = '<div class="day-label">SU</div><div class="day-label">MO</div><div class="day-label">TU</div><div class="day-label">WE</div><div class="day-label">TH</div><div class="day-label">FR</div><div class="day-label">SA</div>';
-    
+    const cal = document.getElementById('calendar-days');
     for(let i=1; i<=31; i++) {
-        let dateKey = `2026-03-${i.toString().padStart(2, '0')}`;
-        let day = document.createElement('div');
-        day.className = 'cal-day';
-        day.innerText = i;
-        
-        if(userData.calData[dateKey] === "met") day.classList.add('goal-met');
-        else if(userData.calData[dateKey] === "missed") day.classList.add('goal-missed');
-        
-        grid.appendChild(day);
+        let d = document.createElement('div');
+        d.className = 'cal-day';
+        d.innerText = i;
+        let key = `2026-03-${i.toString().padStart(2,'0')}`;
+        if(data.cal[key] === "met") d.classList.add('goal-met');
+        if(data.cal[key] === "missed") d.classList.add('goal-missed');
+        cal.appendChild(d);
     }
-    document.getElementById('cal-goal-display').innerText = userData.dailyGoal;
+
+    const mission = missionPool[Math.floor(Math.random() * missionPool.length)];
+    document.getElementById('task-display').innerText = mission.task;
+    document.getElementById('fact-display').innerText = mission.fact;
+    if(data.taskDone) document.getElementById('task-check').classList.add('checked');
 }
 
-function updateMissions() {
-    document.getElementById('mission-goal-text').innerText = "Goal: " + userData.dailyGoal + " min limit!";
-    document.getElementById('fact-text').innerText = facts[Math.floor(Math.random() * facts.length)];
-}
+function askAI() { document.getElementById('ai-response').innerText = "AI Brain is thinking..."; }
+function save() { localStorage.setItem("levelUpData", JSON.stringify(data)); }
 
-function logout() {
-    if(confirm("Clear all game data?")) {
-        localStorage.removeItem("levelUpData");
-        location.reload();
-    }
-}
-
-function save() { localStorage.setItem("levelUpData", JSON.stringify(userData)); }
-
-// Start
-updateDashboard();
+render();
 </script>
 </body>
 </html>

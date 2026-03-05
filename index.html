@@ -35,21 +35,16 @@
         
         .stat-val { font-family: 'Orbitron'; color: var(--neon); font-size: 1.6rem; display: block; font-weight: 700; }
         .progress-bar { height: 10px; background: #000; border-radius: 5px; margin-top: 8px; overflow: hidden; border: 1px solid #333; }
-        #trust-fill { height: 100%; background: var(--blue); width: 0%; transition: 1s; }
+        #trust-fill { height: 100%; background: var(--blue); width: 5%; transition: 1s; box-shadow: 0 0 10px var(--blue); }
 
         .feedback-box { padding: 15px; border-radius: 12px; margin-top: 15px; font-weight: 600; font-size: 0.85rem; text-align: left; line-height: 1.4; border: 1px solid transparent; }
-        .green-zone { border-color: var(--neon); color: var(--neon); background: rgba(0, 255, 157, 0.05); }
-        .orange-zone { border-color: var(--orange); color: var(--orange); background: rgba(255, 165, 2, 0.05); }
-        .red-zone { border-color: var(--red); color: var(--red); background: rgba(255, 71, 87, 0.05); }
-
+        
         button, .btn-label { padding: 14px; border-radius: 12px; border: none; cursor: pointer; font-weight: 700; background: var(--neon); color: #000; font-family: 'Orbitron'; text-transform: uppercase; font-size: 0.75rem; width: 100%; display: block; margin-top: 10px; text-align: center; }
         button:disabled { opacity: 0.3; cursor: not-allowed; }
         input { padding: 14px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; width: 100%; box-sizing: border-box; margin-bottom: 10px; text-align: center; outline: none; }
-        input:focus { border-color: var(--neon); }
-        
-        .item-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; }
-        #proof-preview { width: 100%; border-radius: 12px; display: none; margin-top: 15px; border: 2px solid var(--neon); }
         .hidden { display: none; }
+        
+        .streak-badge { font-size: 0.7rem; color: var(--orange); border: 1px solid var(--orange); padding: 2px 8px; border-radius: 20px; margin-left: 10px; }
     </style>
 </head>
 <body>
@@ -62,7 +57,10 @@
     <div class="nav-item" onclick="location.reload()" style="margin-top:40px; color:var(--red);"><i class="fa-solid fa-power-off"></i> Logout</div>
 </div>
 
-<header><i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i><h1>LEVEL UP!</h1></header>
+<header>
+    <i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i>
+    <h1>LEVEL UP! <span id="streak-display" class="streak-badge">🔥 0 Days</span></h1>
+</header>
 
 <div class="container">
     <section id="auth-section">
@@ -76,7 +74,6 @@
     </section>
 
     <div id="app-content" class="hidden">
-        
         <section id="tab-dash">
             <div class="card" style="text-align: center;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr;">
@@ -88,14 +85,13 @@
 
             <div class="card">
                 <h3><i class="fa-solid fa-bolt"></i> Activity Log</h3>
-                <div id="ai-feedback" class="feedback-box">Ready for your next quest?</div>
                 <div id="log-controls" style="margin-top:20px;">
                     <input type="number" id="xp-input-mins" placeholder="Minutes Worked">
                     <label for="camera-input" class="btn-label" style="background:#222; color:var(--neon); border:1px dashed var(--neon);">
                         <i class="fa-solid fa-camera"></i> Snap Proof
                     </label>
                     <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
-                    <img id="proof-preview">
+                    <img id="proof-preview" style="width:100%; border-radius:12px; display:none; margin-top:15px; border:2px solid var(--neon);">
                     <button id="vouch-btn" onclick="vouchForXP()" disabled>Vouch for XP</button>
                 </div>
             </div>
@@ -105,15 +101,15 @@
             <div class="card" style="border: 1px solid var(--blue);">
                 <h3 style="color:var(--blue)"><i class="fa-solid fa-microchip"></i> Vision AI Tutor</h3>
                 <div id="tutor-output" class="feedback-box" style="border-color: var(--blue); color: #fff; background: rgba(0, 212, 255, 0.05);">
-                    Scan your notes or ask a question to break down complex logic.
+                    Ready to scan.
                 </div>
                 <div style="margin-top:20px;">
                     <input type="text" id="user-query" placeholder="Ask anything..." style="border-color:var(--blue)">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <label for="vision-camera" class="btn-label" style="background:#111; color:var(--blue); border:1px solid var(--blue);">
-                            <i class="fa-solid fa-camera"></i> Scan Notes
+                            <i class="fa-solid fa-camera"></i> Take Photo
                         </label>
-                        <input type="file" id="vision-camera" accept="image/*" style="display:none" onchange="handleVisionOCR(this)">
+                        <input type="file" id="vision-camera" accept="image/*" capture="environment" style="display:none" onchange="handleVisionOCR(this)">
                         <button onclick="runVisionSearch()" style="background:var(--blue); color:#000;">Ask AI</button>
                     </div>
                 </div>
@@ -138,13 +134,11 @@
                 <div class="card" style="border: 1px solid var(--gold);">
                     <h4 style="color:var(--gold)">Approve XP</h4>
                     <span id="admin-pending-val" class="stat-val" style="color:var(--gold)">0 XP</span>
-                    <div id="admin-image-review"></div>
                     <button style="background:var(--gold)" onclick="approveXP()">Approve</button>
                 </div>
                 <button style="background:#333; color:white;" onclick="lockParent()">Lock Portal</button>
             </div>
         </section>
-
     </div>
 </div>
 
@@ -153,11 +147,14 @@ let currentEmail = "";
 let isRegMode = false;
 let userData = { 
     username: "", password: "", parentPin: "1234", 
-    totalXP: 0, pendingXP: 0, dailyLimit: 120, todayMins: 0, 
-    proofImg: null, rewards: [{name: "1hr Gaming", cost: 100}], claims: [] 
+    totalXP: 0, pendingXP: 0, 
+    lastLogDate: null, streak: 0,
+    proofImg: null, rewards: [{name: "1hr Gaming", cost: 100}]
 };
 
-// --- NAVIGATION ---
+// --- LEVEL UP SOUND ---
+const levelUpSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
 function showTab(t) {
@@ -167,20 +164,20 @@ function showTab(t) {
     const navBtn = document.getElementById('nav-'+t) || document.getElementById('nav-dash');
     navBtn.classList.add('nav-active');
     toggleSidebar();
-    if(t === 'rewards') renderRewards();
+    if(t === 'vision') setTimeout(() => document.getElementById('user-query').focus(), 300);
 }
 
-// --- VISION AI LOGIC ---
+// --- VISION LOGIC ---
 async function handleVisionOCR(input) {
     const status = document.getElementById('vision-ocr-status');
     const output = document.getElementById('tutor-output');
     if (input.files && input.files[0]) {
-        status.innerText = "🌀 Scanning text...";
+        status.innerText = "🌀 Processing image...";
         try {
             const { data: { text } } = await Tesseract.recognize(input.files[0], 'eng');
             document.getElementById('user-query').value = text;
             status.innerText = "✅ Scan complete!";
-            output.innerHTML = "<b>Scanned:</b><br>" + text;
+            output.innerHTML = "<b>Analyzed Text:</b><br>" + text;
         } catch (err) { status.innerText = "❌ Scan failed."; }
     }
 }
@@ -189,53 +186,95 @@ function runVisionSearch() {
     const q = document.getElementById('user-query').value;
     const out = document.getElementById('tutor-output');
     if(!q) return;
-    out.innerHTML = "🌀 Vision is thinking...";
+    out.innerHTML = "🌀 Vision AI is computing...";
     setTimeout(() => {
-        out.innerHTML = `<b>Vision AI:</b> I've analyzed "${q}". Focus on the fundamental steps before proceeding. You're close to Level ${Math.floor(userData.totalXP/100)+2}!`;
-    }, 1000);
+        out.innerHTML = `<b>Vision AI:</b> Logic analysis of "${q.substring(0,30)}..." suggests a high probability of success if you apply step-by-step iteration.`;
+    }, 1200);
 }
 
-// --- CORE APP LOGIC ---
-function handlePhoto(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            document.getElementById('proof-preview').src = e.target.result;
-            document.getElementById('proof-preview').style.display = 'block';
-            userData.proofImg = e.target.result;
-            document.getElementById('vouch-btn').disabled = false;
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function vouchForXP() {
-    userData.pendingXP = parseInt(document.getElementById('xp-input-mins').value) || 0;
-    save(); alert("Sent to Parent Portal!");
-    showTab('dash');
-}
-
+// --- AUTH & CORE ---
 function handleAuth() {
     const e = document.getElementById("login-email").value.trim().toLowerCase();
     const p = document.getElementById("login-password").value.trim();
     if(isRegMode) {
         userData.username = e; userData.password = p;
         localStorage.setItem("user_" + e, JSON.stringify(userData));
-        alert("Registered!"); toggleAuthMode();
+        alert("Account Created!"); toggleAuthMode();
     } else {
         let stored = JSON.parse(localStorage.getItem("user_" + e));
         if(stored && stored.password === p) {
             currentEmail = e; userData = stored;
             document.getElementById("auth-section").classList.add("hidden");
             document.getElementById("app-content").classList.remove("hidden");
+            checkStreak();
             updateUI();
         }
     }
 }
 
+function checkStreak() {
+    const today = new Date().toDateString();
+    if (userData.lastLogDate) {
+        const lastDate = new Date(userData.lastLogDate);
+        const diffDays = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) { /* Streak continues */ } 
+        else if (diffDays > 1) { userData.streak = 0; }
+    }
+    document.getElementById('streak-display').innerText = `🔥 ${userData.streak} Days`;
+}
+
+function vouchForXP() {
+    userData.pendingXP = parseInt(document.getElementById('xp-input-mins').value) || 0;
+    save();
+    alert("Vouched! Waiting for Parent Approval.");
+    document.getElementById('xp-input-mins').value = "";
+}
+
+function approveXP() {
+    const oldLevel = Math.floor(userData.totalXP / 100) + 1;
+    userData.totalXP += userData.pendingXP;
+    userData.pendingXP = 0;
+    
+    // Streak Logic
+    const today = new Date().toDateString();
+    if (userData.lastLogDate !== today) {
+        userData.streak++;
+        userData.lastLogDate = today;
+    }
+
+    const newLevel = Math.floor(userData.totalXP / 100) + 1;
+    if (newLevel > oldLevel) {
+        levelUpSound.play();
+        alert("🎉 LEVEL UP!");
+    }
+
+    save(); updateUI(); lockParent();
+}
+
 function toggleAuthMode() {
     isRegMode = !isRegMode;
     document.getElementById('auth-title').innerText = isRegMode ? "Register" : "Login";
+}
+
+function updateUI() {
+    document.getElementById('display-xp').innerText = userData.totalXP;
+    document.getElementById('display-level').innerText = Math.floor(userData.totalXP / 100) + 1;
+    // Progress bar fix: min 5% width for visual polish
+    document.getElementById('trust-fill').style.width = Math.max((userData.totalXP % 100), 5) + "%";
+    document.getElementById('streak-display').innerText = `🔥 ${userData.streak} Days`;
+}
+
+function handlePhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('proof-preview').src = e.target.result;
+            document.getElementById('proof-preview').style.display = 'block';
+            document.getElementById('vouch-btn').disabled = false;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
 }
 
 function verifyParent() {
@@ -246,12 +285,6 @@ function verifyParent() {
     }
 }
 
-function approveXP() {
-    userData.totalXP += userData.pendingXP;
-    userData.pendingXP = 0;
-    save(); updateUI(); lockParent();
-}
-
 function lockParent() {
     document.getElementById('parent-lock-screen').classList.remove('hidden');
     document.getElementById('parent-admin-panel').classList.add('hidden');
@@ -259,11 +292,6 @@ function lockParent() {
 }
 
 function save() { localStorage.setItem("user_" + currentEmail, JSON.stringify(userData)); }
-function updateUI() {
-    document.getElementById('display-xp').innerText = userData.totalXP;
-    document.getElementById('display-level').innerText = Math.floor(userData.totalXP / 100) + 1;
-    document.getElementById('trust-fill').style.width = (userData.totalXP % 100) + "%";
-}
 </script>
 </body>
 </html>

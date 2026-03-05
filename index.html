@@ -10,6 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+
     <style>
         :root { 
             --neon: #00ff9d; --bg: #0d0d0d; --card-bg: #161616; 
@@ -19,7 +22,6 @@
         h1, h2, h3, h4 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
         h1 { color: var(--neon); font-size: 1.1rem; }
 
-        /* Sidebar Navigation */
         .sidebar { position: fixed; left: calc(-1 * var(--sidebar-w)); top: 0; width: var(--sidebar-w); height: 100%; background: #111; border-right: 1px solid #333; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; padding-top: 60px; }
         .sidebar.open { left: 0; }
         .nav-item { padding: 18px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #222; font-family: 'Orbitron'; font-size: 0.75rem; color: #888; }
@@ -31,21 +33,19 @@
         .container { max-width: 480px; margin: 0 auto; padding: 20px; }
         .card { background-color: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #222; }
         
-        /* Stats & Progress */
         .stat-val { font-family: 'Orbitron'; color: var(--neon); font-size: 1.6rem; display: block; font-weight: 700; }
         .progress-bar { height: 10px; background: #000; border-radius: 5px; margin-top: 8px; overflow: hidden; border: 1px solid #333; }
         #trust-fill { height: 100%; background: var(--blue); width: 0%; transition: 1s; }
 
-        /* Feedback Zones */
         .feedback-box { padding: 15px; border-radius: 12px; margin-top: 15px; font-weight: 600; font-size: 0.85rem; text-align: left; line-height: 1.4; border: 1px solid transparent; }
         .green-zone { border-color: var(--neon); color: var(--neon); background: rgba(0, 255, 157, 0.05); }
         .orange-zone { border-color: var(--orange); color: var(--orange); background: rgba(255, 165, 2, 0.05); }
         .red-zone { border-color: var(--red); color: var(--red); background: rgba(255, 71, 87, 0.05); }
 
-        /* Buttons & Inputs */
         button, .btn-label { padding: 14px; border-radius: 12px; border: none; cursor: pointer; font-weight: 700; background: var(--neon); color: #000; font-family: 'Orbitron'; text-transform: uppercase; font-size: 0.75rem; width: 100%; display: block; margin-top: 10px; text-align: center; }
         button:disabled { opacity: 0.3; cursor: not-allowed; }
-        input { padding: 14px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; width: 100%; box-sizing: border-box; margin-bottom: 10px; text-align: center; }
+        input { padding: 14px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; width: 100%; box-sizing: border-box; margin-bottom: 10px; text-align: center; outline: none; }
+        input:focus { border-color: var(--neon); }
         
         .item-row { display: flex; justify-content: space-between; align-items: center; background: #222; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; }
         #proof-preview { width: 100%; border-radius: 12px; display: none; margin-top: 15px; border: 2px solid var(--neon); }
@@ -56,12 +56,13 @@
 
 <div id="sidebar" class="sidebar">
     <div class="nav-item nav-active" id="nav-dash" onclick="showTab('dash')"><i class="fa-solid fa-gamepad"></i> Dashboard</div>
+    <div class="nav-item" id="nav-vision" onclick="showTab('vision')" style="color:var(--blue)"><i class="fa-solid fa-brain"></i> Vision AI Tutor</div>
     <div class="nav-item" id="nav-rewards" onclick="showTab('rewards')"><i class="fa-solid fa-trophy"></i> Reward Shop</div>
     <div class="nav-item" id="nav-parent" onclick="showTab('parent')" style="color:var(--gold)"><i class="fa-solid fa-user-shield"></i> Parent Portal</div>
     <div class="nav-item" onclick="location.reload()" style="margin-top:40px; color:var(--red);"><i class="fa-solid fa-power-off"></i> Logout</div>
 </div>
 
-<header><i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i><h1>LEVEL UP! TRACKER</h1></header>
+<header><i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i><h1>LEVEL UP!</h1></header>
 
 <div class="container">
     <section id="auth-section">
@@ -75,6 +76,7 @@
     </section>
 
     <div id="app-content" class="hidden">
+        
         <section id="tab-dash">
             <div class="card" style="text-align: center;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr;">
@@ -85,11 +87,10 @@
             </div>
 
             <div class="card">
-                <h3><i class="fa-solid fa-brain"></i> Impact Coach</h3>
-                <div id="ai-feedback" class="feedback-box">Logging your first session...</div>
-                
+                <h3><i class="fa-solid fa-bolt"></i> Activity Log</h3>
+                <div id="ai-feedback" class="feedback-box">Ready for your next quest?</div>
                 <div id="log-controls" style="margin-top:20px;">
-                    <input type="number" id="xp-input-mins" placeholder="Minutes Worked/Played">
+                    <input type="number" id="xp-input-mins" placeholder="Minutes Worked">
                     <label for="camera-input" class="btn-label" style="background:#222; color:var(--neon); border:1px dashed var(--neon);">
                         <i class="fa-solid fa-camera"></i> Snap Proof
                     </label>
@@ -100,9 +101,29 @@
             </div>
         </section>
 
+        <section id="tab-vision" class="hidden">
+            <div class="card" style="border: 1px solid var(--blue);">
+                <h3 style="color:var(--blue)"><i class="fa-solid fa-microchip"></i> Vision AI Tutor</h3>
+                <div id="tutor-output" class="feedback-box" style="border-color: var(--blue); color: #fff; background: rgba(0, 212, 255, 0.05);">
+                    Scan your notes or ask a question to break down complex logic.
+                </div>
+                <div style="margin-top:20px;">
+                    <input type="text" id="user-query" placeholder="Ask anything..." style="border-color:var(--blue)">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <label for="vision-camera" class="btn-label" style="background:#111; color:var(--blue); border:1px solid var(--blue);">
+                            <i class="fa-solid fa-camera"></i> Scan Notes
+                        </label>
+                        <input type="file" id="vision-camera" accept="image/*" style="display:none" onchange="handleVisionOCR(this)">
+                        <button onclick="runVisionSearch()" style="background:var(--blue); color:#000;">Ask AI</button>
+                    </div>
+                </div>
+                <div id="vision-ocr-status" style="font-size: 0.7rem; color: var(--blue); margin-top: 10px; text-align: center;"></div>
+            </div>
+        </section>
+
         <section id="tab-rewards" class="hidden">
             <div class="card">
-                <h3><i class="fa-solid fa-gift"></i> Reward Shop</h3>
+                <h3><i class="fa-solid fa-trophy"></i> Rewards</h3>
                 <div id="reward-display-list"></div>
             </div>
         </section>
@@ -113,65 +134,68 @@
                 <input type="password" id="parent-pin-entry" placeholder="Enter PIN">
                 <button style="background:var(--gold)" onclick="verifyParent()">Unlock Portal</button>
             </div>
-
             <div id="parent-admin-panel" class="hidden">
                 <div class="card" style="border: 1px solid var(--gold);">
-                    <h4 style="color:var(--gold)">Approve Claim</h4>
+                    <h4 style="color:var(--gold)">Approve XP</h4>
                     <span id="admin-pending-val" class="stat-val" style="color:var(--gold)">0 XP</span>
                     <div id="admin-image-review"></div>
-                    <button style="background:var(--gold)" onclick="approveXP()">Approve XP</button>
-                </div>
-                
-                <div class="card">
-                    <h4 style="color:var(--gold)">Redeem Rewards</h4>
-                    <div id="admin-claims-list"></div>
-                </div>
-
-                <div class="card">
-                    <h4 style="color:var(--gold)">Settings</h4>
-                    <p style="font-size:0.7rem; color:#888;">Daily Play Limit (Mins)</p>
-                    <input type="number" id="parent-limit-input">
-                    <button style="background:white; color:black;" onclick="updateDailyLimit()">Save Settings</button>
+                    <button style="background:var(--gold)" onclick="approveXP()">Approve</button>
                 </div>
                 <button style="background:#333; color:white;" onclick="lockParent()">Lock Portal</button>
             </div>
         </section>
+
     </div>
 </div>
 
 <script>
-// Data State
 let currentEmail = "";
 let isRegMode = false;
 let userData = { 
-    username: "", password: "", parentPin: "1234", active: false, 
+    username: "", password: "", parentPin: "1234", 
     totalXP: 0, pendingXP: 0, dailyLimit: 120, todayMins: 0, 
     proofImg: null, rewards: [{name: "1hr Gaming", cost: 100}], claims: [] 
 };
 
-// --- AUTH & NAVIGATION ---
+// --- NAVIGATION ---
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-function toggleAuthMode() {
-    isRegMode = !isRegMode;
-    document.getElementById('auth-title').innerText = isRegMode ? "Register Player" : "Player Login";
-    document.getElementById('auth-btn').innerText = isRegMode ? "Create Account" : "Enter Game";
-    document.getElementById('toggle-text').innerText = isRegMode ? "Already have an account? Login." : "New player? Register here.";
-}
 
 function showTab(t) {
     document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('nav-active'));
     document.getElementById('tab-'+t).classList.remove('hidden');
-    document.getElementById('nav-'+(t==='dash'?'dash':t)).classList.add('nav-active');
-    if(t === 'rewards') renderRewards();
-    if(t === 'parent') {
-        const lastLinked = localStorage.getItem("last_linked_child");
-        if(lastLinked) { currentEmail = lastLinked; loadData(); }
-    }
+    const navBtn = document.getElementById('nav-'+t) || document.getElementById('nav-dash');
+    navBtn.classList.add('nav-active');
     toggleSidebar();
+    if(t === 'rewards') renderRewards();
 }
 
-// --- CORE PLAYER LOGIC ---
+// --- VISION AI LOGIC ---
+async function handleVisionOCR(input) {
+    const status = document.getElementById('vision-ocr-status');
+    const output = document.getElementById('tutor-output');
+    if (input.files && input.files[0]) {
+        status.innerText = "🌀 Scanning text...";
+        try {
+            const { data: { text } } = await Tesseract.recognize(input.files[0], 'eng');
+            document.getElementById('user-query').value = text;
+            status.innerText = "✅ Scan complete!";
+            output.innerHTML = "<b>Scanned:</b><br>" + text;
+        } catch (err) { status.innerText = "❌ Scan failed."; }
+    }
+}
+
+function runVisionSearch() {
+    const q = document.getElementById('user-query').value;
+    const out = document.getElementById('tutor-output');
+    if(!q) return;
+    out.innerHTML = "🌀 Vision is thinking...";
+    setTimeout(() => {
+        out.innerHTML = `<b>Vision AI:</b> I've analyzed "${q}". Focus on the fundamental steps before proceeding. You're close to Level ${Math.floor(userData.totalXP/100)+2}!`;
+    }, 1000);
+}
+
+// --- CORE APP LOGIC ---
 function handlePhoto(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -186,93 +210,17 @@ function handlePhoto(input) {
 }
 
 function vouchForXP() {
-    const mins = parseInt(document.getElementById('xp-input-mins').value);
-    if(!mins) return alert("Enter minutes!");
-    userData.pendingXP = mins;
-    save();
-    alert("Photo & XP sent to Parent Portal!");
-    document.getElementById('xp-input-mins').value = "";
-    document.getElementById('proof-preview').style.display = 'none';
-    document.getElementById('vouch-btn').disabled = true;
+    userData.pendingXP = parseInt(document.getElementById('xp-input-mins').value) || 0;
+    save(); alert("Sent to Parent Portal!");
+    showTab('dash');
 }
 
-// --- REWARDS LOGIC ---
-function renderRewards() {
-    const list = document.getElementById('reward-display-list');
-    list.innerHTML = "";
-    userData.rewards.forEach(r => {
-        const d = document.createElement('div'); d.className = "item-row";
-        const canAfford = userData.totalXP >= r.cost;
-        d.innerHTML = `<div><b>${r.name}</b><br><small>${r.cost} XP</small></div>
-                       <button style="width:auto; margin:0; padding:8px 15px;" 
-                       onclick="buyReward('${r.name}', ${r.cost})" ${!canAfford?'disabled':''}>Buy</button>`;
-        list.appendChild(d);
-    });
-}
-
-function buyReward(name, cost) {
-    if(userData.totalXP >= cost) {
-        userData.totalXP -= cost;
-        userData.claims.push(name);
-        save(); updateUI(); renderRewards();
-        alert("Purchased! Ask parent to fulfill claim.");
-    }
-}
-
-// --- PARENT PORTAL LOGIC ---
-function verifyParent() {
-    if(document.getElementById('parent-pin-entry').value === userData.parentPin) {
-        document.getElementById('parent-lock-screen').classList.add('hidden');
-        document.getElementById('parent-admin-panel').classList.remove('hidden');
-        renderParentAdmin();
-    } else alert("Invalid PIN");
-}
-
-function renderParentAdmin() {
-    document.getElementById('admin-pending-val').innerText = userData.pendingXP + " XP";
-    document.getElementById('admin-image-review').innerHTML = userData.proofImg ? `<img src="${userData.proofImg}" style="width:100%; border-radius:10px; margin-top:10px;">` : "<p style='color:#666'>No photo proof provided.</p>";
-    document.getElementById('parent-limit-input').value = userData.dailyLimit;
-    
-    const cList = document.getElementById('admin-claims-list');
-    cList.innerHTML = userData.claims.length ? "" : "<p style='color:#444'>No rewards waiting.</p>";
-    userData.claims.forEach((c, i) => {
-        const d = document.createElement('div'); d.className = "item-row";
-        d.innerHTML = `<span>${c}</span><button onclick="clearClaim(${i})" style="width:auto; background:var(--gold); border:none; border-radius:5px; padding:5px 10px;">Done</button>`;
-        cList.appendChild(d);
-    });
-}
-
-function approveXP() {
-    userData.todayMins += userData.pendingXP;
-    userData.totalXP += userData.pendingXP;
-    userData.pendingXP = 0;
-    userData.proofImg = null;
-    save(); updateUI(); renderParentAdmin();
-    alert("XP Approved!");
-}
-
-function clearClaim(i) { userData.claims.splice(i, 1); save(); renderParentAdmin(); }
-
-function updateDailyLimit() {
-    userData.dailyLimit = parseInt(document.getElementById('parent-limit-input').value) || 120;
-    save(); alert("Settings Saved!");
-}
-
-function lockParent() { 
-    document.getElementById('parent-lock-screen').classList.remove('hidden'); 
-    document.getElementById('parent-admin-panel').classList.add('hidden'); 
-    showTab('dash'); 
-}
-
-// --- AUTH & DATA CORE ---
 function handleAuth() {
     const e = document.getElementById("login-email").value.trim().toLowerCase();
     const p = document.getElementById("login-password").value.trim();
     if(isRegMode) {
-        if(localStorage.getItem("user_" + e)) return alert("User exists!");
-        userData.username = e.split('@')[0]; userData.password = p;
+        userData.username = e; userData.password = p;
         localStorage.setItem("user_" + e, JSON.stringify(userData));
-        localStorage.setItem("last_linked_child", e);
         alert("Registered!"); toggleAuthMode();
     } else {
         let stored = JSON.parse(localStorage.getItem("user_" + e));
@@ -281,28 +229,41 @@ function handleAuth() {
             document.getElementById("auth-section").classList.add("hidden");
             document.getElementById("app-content").classList.remove("hidden");
             updateUI();
-        } else alert("Login failed.");
+        }
     }
 }
 
-function updateUI() {
-    document.getElementById('display-xp').innerText = userData.totalXP;
-    const lvl = Math.floor(userData.totalXP / 100) + 1;
-    document.getElementById('display-level').innerText = lvl;
-    document.getElementById('trust-fill').style.width = Math.min((lvl/10)*100, 100) + "%";
-    
-    const fb = document.getElementById('ai-feedback');
-    const percent = (userData.todayMins / userData.dailyLimit) * 100;
-    fb.className = "feedback-box";
-    if(percent < 50) { fb.innerHTML = "✨ <b>Green Zone:</b> Perfect balance!"; fb.classList.add('green-zone'); }
-    else if(percent < 90) { fb.innerHTML = "⚠️ <b>Orange Zone:</b> Getting close! Rest your eyes."; fb.classList.add('orange-zone'); }
-    else { fb.innerHTML = "🛑 <b>Red Zone:</b> Limit reached. Go outside!"; fb.classList.add('red-zone'); }
+function toggleAuthMode() {
+    isRegMode = !isRegMode;
+    document.getElementById('auth-title').innerText = isRegMode ? "Register" : "Login";
+}
+
+function verifyParent() {
+    if(document.getElementById('parent-pin-entry').value === userData.parentPin) {
+        document.getElementById('parent-lock-screen').classList.add('hidden');
+        document.getElementById('parent-admin-panel').classList.remove('hidden');
+        document.getElementById('admin-pending-val').innerText = userData.pendingXP + " XP";
+    }
+}
+
+function approveXP() {
+    userData.totalXP += userData.pendingXP;
+    userData.pendingXP = 0;
+    save(); updateUI(); lockParent();
+}
+
+function lockParent() {
+    document.getElementById('parent-lock-screen').classList.remove('hidden');
+    document.getElementById('parent-admin-panel').classList.add('hidden');
+    showTab('dash');
 }
 
 function save() { localStorage.setItem("user_" + currentEmail, JSON.stringify(userData)); }
-function loadData() { let stored = localStorage.getItem("user_" + currentEmail); if(stored) userData = JSON.parse(stored); updateUI(); }
-
-updateUI();
+function updateUI() {
+    document.getElementById('display-xp').innerText = userData.totalXP;
+    document.getElementById('display-level').innerText = Math.floor(userData.totalXP / 100) + 1;
+    document.getElementById('trust-fill').style.width = (userData.totalXP % 100) + "%";
+}
 </script>
 </body>
 </html>

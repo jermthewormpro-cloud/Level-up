@@ -3,142 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Level Up! Tracker - Ultimate Edition</title>
+    <title>Level Up Your Day</title>
     
-    <link rel="icon" href="https://img.icons8.com/fluency/96/level-up.png">
-    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/96/level-up.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0d0d0d">
 
     <style>
         :root { 
             --neon: #00ff9d; --bg: #0d0d0d; --card-bg: #161616; 
-            --gold: #ffc107; --red: #ff4757; --orange: #ffa502; --blue: #00d4ff; --sidebar-w: 260px; 
+            --gold: #ffc107; --red: #ff4757; --blue: #00d4ff; 
         }
-        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
-        h1, h2, h3, h4 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-        h1 { color: var(--neon); font-size: 1.1rem; }
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 50px; }
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; text-align: center; }
 
-        .sidebar { position: fixed; left: calc(-1 * var(--sidebar-w)); top: 0; width: var(--sidebar-w); height: 100%; background: #111; border-right: 1px solid #333; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; padding-top: 60px; }
-        .sidebar.open { left: 0; }
-        .nav-item { padding: 18px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #222; font-family: 'Orbitron'; font-size: 0.75rem; color: #888; }
-        .nav-active { color: var(--neon); background: #1a1a1a; border-left: 4px solid var(--neon); }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
 
-        header { padding: 15px 20px; display: flex; align-items: center; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 999; border-bottom: 1px solid #222; }
-        .menu-btn { font-size: 1.4rem; color: var(--neon); cursor: pointer; margin-right: 20px; }
+        /* HEADER STYLING FROM SCREENSHOT */
+        .neon-header { color: var(--neon); font-size: 1.8rem; margin-top: 30px; display: flex; align-items: center; justify-content: center; gap: 12px; text-shadow: 0 0 10px rgba(0, 255, 157, 0.3); }
+        .subtitle { font-size: 0.8rem; color: #888; text-align: center; margin-bottom: 25px; letter-spacing: 1px; }
         
-        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
-        .card { background-color: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #222; }
-        
-        .stat-val { font-family: 'Orbitron'; color: var(--neon); font-size: 1.6rem; display: block; font-weight: 700; }
-        .progress-bar { height: 10px; background: #000; border-radius: 5px; margin-top: 8px; overflow: hidden; border: 1px solid #333; }
-        #trust-fill { height: 100%; background: var(--blue); width: 5%; transition: 1s; box-shadow: 0 0 10px var(--blue); }
+        /* NAVIGATION GRID */
+        .nav-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 30px; }
+        .nav-btn { background: var(--neon); color: #000; border: none; padding: 12px 2px; border-radius: 6px; font-family: 'Orbitron'; font-size: 0.55rem; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: 0.2s; }
+        .nav-btn i { font-size: 0.9rem; }
+        .nav-btn:active { transform: scale(0.95); opacity: 0.8; }
+        .nav-btn.settings { background: #1a1a1a; color: var(--neon); border: 1px solid var(--neon); }
+        .nav-btn.power { background: var(--red); color: white; }
 
-        .feedback-box { padding: 15px; border-radius: 12px; margin-top: 15px; font-weight: 600; font-size: 0.85rem; text-align: left; line-height: 1.4; border: 1px solid transparent; }
+        .welcome-msg { font-family: 'Orbitron'; font-size: 1.4rem; margin-bottom: 25px; text-align: center; color: #fff; }
+
+        /* PERFORMANCE STATS CARD */
+        .card { background-color: #1a1a1a; border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center; margin-bottom: 10px; }
+        .stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+        .stat-val { font-family: 'Orbitron'; color: var(--neon); font-size: 1.6rem; font-weight: 700; }
+
+        .progress-bar { height: 10px; background: #000; border-radius: 20px; margin-top: 15px; overflow: hidden; border: 1px solid #333; position: relative; }
+        #xp-fill { height: 100%; background: linear-gradient(90deg, var(--blue), #008cff); width: 0%; transition: 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); box-shadow: 0 0 15px var(--blue); }
+
+        /* LOGGING SECTION */
+        input { padding: 16px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; width: 100%; box-sizing: border-box; margin-bottom: 12px; text-align: center; font-family: 'Orbitron'; font-size: 0.9rem; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0, 255, 157, 0.2); }
+        .action-btn { background: #1a6d4d; color: var(--neon); padding: 16px; border-radius: 12px; border: 1px solid var(--neon); font-family: 'Orbitron'; font-weight: 700; width: 100%; cursor: pointer; margin-top: 5px; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        .action-btn:hover { background: var(--neon); color: #000; }
         
-        button, .btn-label { padding: 14px; border-radius: 12px; border: none; cursor: pointer; font-weight: 700; background: var(--neon); color: #000; font-family: 'Orbitron'; text-transform: uppercase; font-size: 0.75rem; width: 100%; display: block; margin-top: 10px; text-align: center; }
-        button:disabled { opacity: 0.3; cursor: not-allowed; }
-        input { padding: 14px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; width: 100%; box-sizing: border-box; margin-bottom: 10px; text-align: center; outline: none; }
         .hidden { display: none; }
-        
-        .streak-badge { font-size: 0.7rem; color: var(--orange); border: 1px solid var(--orange); padding: 2px 8px; border-radius: 20px; margin-left: 10px; }
     </style>
 </head>
 <body>
 
-<div id="sidebar" class="sidebar">
-    <div class="nav-item nav-active" id="nav-dash" onclick="showTab('dash')"><i class="fa-solid fa-gamepad"></i> Dashboard</div>
-    <div class="nav-item" id="nav-vision" onclick="showTab('vision')" style="color:var(--blue)"><i class="fa-solid fa-brain"></i> Vision AI Tutor</div>
-    <div class="nav-item" id="nav-rewards" onclick="showTab('rewards')"><i class="fa-solid fa-trophy"></i> Reward Shop</div>
-    <div class="nav-item" id="nav-parent" onclick="showTab('parent')" style="color:var(--gold)"><i class="fa-solid fa-user-shield"></i> Parent Portal</div>
-    <div class="nav-item" onclick="location.reload()" style="margin-top:40px; color:var(--red);"><i class="fa-solid fa-power-off"></i> Logout</div>
-</div>
-
-<header>
-    <i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i>
-    <h1>LEVEL UP! <span id="streak-display" class="streak-badge">🔥 0 Days</span></h1>
-</header>
-
 <div class="container">
     <section id="auth-section">
-        <div class="card">
-            <h2 id="auth-title">Player Login</h2>
-            <input type="email" id="login-email" placeholder="Email Address">
+        <div class="card" style="margin-top: 60px;">
+            <h2 id="auth-title">PLAYER LOGIN</h2>
+            <div id="nickname-field" class="hidden">
+                <input type="text" id="reg-nickname" placeholder="Player Nickname">
+            </div>
+            <input type="email" id="login-email" placeholder="Email">
             <input type="password" id="login-password" placeholder="Password">
-            <button id="auth-btn" onclick="handleAuth()">Enter Game</button>
-            <p id="toggle-text" style="font-size: 0.7rem; margin-top: 15px; cursor: pointer; text-decoration: underline;" onclick="toggleAuthMode()">New player? Register here.</p>
+            <button class="action-btn" id="main-auth-btn" onclick="handleAuth()" style="background: var(--neon); color: #000;">LOAD GAME</button>
+            <p style="font-size: 0.75rem; text-align: center; margin-top: 20px; cursor: pointer; color: #888;" onclick="toggleAuth()" id="toggle-text">New Player? <span style="color: var(--neon)">Register</span></p>
         </div>
     </section>
 
     <div id="app-content" class="hidden">
+        <div class="neon-header"><i class="fa-solid fa-gamepad"></i> Level Up Your Day</div>
+        <div class="subtitle">Track stats. Build habits. Own your day.</div>
+
+        <div class="nav-row">
+            <button class="nav-btn" onclick="showTab('dash')"><i class="fa-solid fa-gauge-high"></i>DASH</button>
+            <button class="nav-btn" onclick="showTab('cal')"><i class="fa-solid fa-calendar-days"></i>CAL</button>
+            <button class="nav-btn" onclick="showTab('mission')"><i class="fa-solid fa-bullseye"></i>MISSION</button>
+            <button class="nav-btn settings" onclick="showTab('parent')"><i class="fa-solid fa-gear"></i></button>
+            <button class="nav-btn power" onclick="location.reload()"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+
+        <div id="welcome-banner" class="welcome-msg">Welcome, Player</div>
+
         <section id="tab-dash">
-            <div class="card" style="text-align: center;">
-                <div style="display:grid; grid-template-columns: 1fr 1fr;">
-                    <div><span style="font-size:0.6rem; color:#888;">LEVEL</span><span id="display-level" class="stat-val">1</span></div>
-                    <div><span style="font-size:0.6rem; color:#888;">TOTAL XP</span><span id="display-xp" class="stat-val">0</span></div>
+            <div class="card">
+                <h3 style="margin-top:0; font-size: 1rem; color: #fff;"><i class="fa-solid fa-star" style="color: var(--gold)"></i> Performance Stats</h3>
+                <div class="stat-grid">
+                    <div><span class="stat-label">Level</span><span id="disp-level" class="stat-val">1</span></div>
+                    <div><span class="stat-label">Total XP</span><span id="disp-xp" class="stat-val">0</span></div>
                 </div>
-                <div class="progress-bar"><div id="trust-fill"></div></div>
+                <div class="progress-bar"><div id="xp-fill"></div></div>
             </div>
 
             <div class="card">
-                <h3><i class="fa-solid fa-bolt"></i> Activity Log</h3>
-                <div id="log-controls" style="margin-top:20px;">
-                    <input type="number" id="xp-input-mins" placeholder="Minutes Worked">
-                    <label for="camera-input" class="btn-label" style="background:#222; color:var(--neon); border:1px dashed var(--neon);">
-                        <i class="fa-solid fa-camera"></i> Snap Proof
-                    </label>
-                    <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
-                    <img id="proof-preview" style="width:100%; border-radius:12px; display:none; margin-top:15px; border:2px solid var(--neon);">
-                    <button id="vouch-btn" onclick="vouchForXP()" disabled>Vouch for XP</button>
-                </div>
+                <h3 style="margin-top:0; font-size: 1rem; color: #fff;"><i class="fa-solid fa-bolt" style="color: var(--neon)"></i> Activity Log</h3>
+                <input type="number" id="mins-input" placeholder="Minutes Worked">
+                <button class="action-btn" onclick="vouchXP()">Vouch for XP</button>
             </div>
         </section>
 
-        <section id="tab-vision" class="hidden">
-            <div class="card" style="border: 1px solid var(--blue);">
-                <h3 style="color:var(--blue)"><i class="fa-solid fa-microchip"></i> Vision AI Tutor</h3>
-                <div id="tutor-output" class="feedback-box" style="border-color: var(--blue); color: #fff; background: rgba(0, 212, 255, 0.05);">
-                    Ready to scan.
-                </div>
-                <div style="margin-top:20px;">
-                    <input type="text" id="user-query" placeholder="Ask anything..." style="border-color:var(--blue)">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <label for="vision-camera" class="btn-label" style="background:#111; color:var(--blue); border:1px solid var(--blue);">
-                            <i class="fa-solid fa-camera"></i> Take Photo
-                        </label>
-                        <input type="file" id="vision-camera" accept="image/*" capture="environment" style="display:none" onchange="handleVisionOCR(this)">
-                        <button onclick="runVisionSearch()" style="background:var(--blue); color:#000;">Ask AI</button>
-                    </div>
-                </div>
-                <div id="vision-ocr-status" style="font-size: 0.7rem; color: var(--blue); margin-top: 10px; text-align: center;"></div>
-            </div>
-        </section>
-
-        <section id="tab-rewards" class="hidden">
+        <section id="tab-mission" class="hidden">
             <div class="card">
-                <h3><i class="fa-solid fa-trophy"></i> Rewards</h3>
-                <div id="reward-display-list"></div>
+                <h3 style="color:var(--blue); margin-top:0;"><i class="fa-solid fa-brain"></i> Vision AI Tutor</h3>
+                <input type="text" id="ai-query" placeholder="Ask a question...">
+                <button class="action-btn" style="border-color: var(--blue); color: var(--blue); background: transparent;" onclick="alert('AI Thinking...')">ASK AI</button>
             </div>
         </section>
-
+        
         <section id="tab-parent" class="hidden">
-            <div id="parent-lock-screen" class="card" style="border: 2px solid var(--gold); text-align:center;">
-                <h3>Parent Access</h3>
-                <input type="password" id="parent-pin-entry" placeholder="Enter PIN">
-                <button style="background:var(--gold)" onclick="verifyParent()">Unlock Portal</button>
-            </div>
-            <div id="parent-admin-panel" class="hidden">
-                <div class="card" style="border: 1px solid var(--gold);">
-                    <h4 style="color:var(--gold)">Approve XP</h4>
-                    <span id="admin-pending-val" class="stat-val" style="color:var(--gold)">0 XP</span>
-                    <button style="background:var(--gold)" onclick="approveXP()">Approve</button>
+            <div class="card">
+                <h3 style="color:var(--gold); margin-top:0;"><i class="fa-solid fa-user-shield"></i> Parent Portal</h3>
+                <input type="password" id="parent-pin" placeholder="Enter PIN">
+                <button class="action-btn" style="border-color: var(--gold); color: var(--gold); background: transparent;" onclick="verifyParent()">UNLOCK</button>
+                <div id="admin-panel" class="hidden">
+                    <button class="action-btn" style="background: var(--gold); color: #000; margin-top: 20px;" onclick="approveXP()">APPROVE PENDING XP</button>
                 </div>
-                <button style="background:#333; color:white;" onclick="lockParent()">Lock Portal</button>
             </div>
         </section>
     </div>
@@ -147,161 +122,68 @@
 <script>
 let currentEmail = "";
 let isRegMode = false;
+let userData = { totalXP: 0, pendingXP: 0, nickname: "Player" };
 
-// Default structured data
-let userData = { 
-    username: "", 
-    password: "", 
-    parentPin: "1234", 
-    totalXP: 0, 
-    pendingXP: 0, 
-    lastLogDate: null, 
-    streak: 0,
-    proofImg: null, 
-    rewards: [{name: "1hr Gaming", cost: 100}]
-};
-
-const levelUpSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-
-function showTab(t) {
-    document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('nav-active'));
-    document.getElementById('tab-'+t).classList.remove('hidden');
-    const navBtn = document.getElementById('nav-'+t) || document.getElementById('nav-dash');
-    navBtn.classList.add('nav-active');
-    toggleSidebar();
-    if(t === 'vision') setTimeout(() => document.getElementById('user-query').focus(), 300);
+function toggleAuth() {
+    isRegMode = !isRegMode;
+    document.getElementById('auth-title').innerText = isRegMode ? "PLAYER REGISTER" : "PLAYER LOGIN";
+    document.getElementById('main-auth-btn').innerText = isRegMode ? "CREATE ACCOUNT" : "LOAD GAME";
+    document.getElementById('toggle-text').innerHTML = isRegMode ? "Back to <span style='color: var(--neon)'>Login</span>" : "New Player? <span style='color: var(--neon)'>Register</span>";
+    document.getElementById('nickname-field').classList.toggle('hidden', !isRegMode);
 }
 
-// --- VISION LOGIC ---
-async function handleVisionOCR(input) {
-    const status = document.getElementById('vision-ocr-status');
-    const output = document.getElementById('tutor-output');
-    if (input.files && input.files[0]) {
-        status.innerText = "🌀 Processing image...";
-        try {
-            const { data: { text } } = await Tesseract.recognize(input.files[0], 'eng');
-            document.getElementById('user-query').value = text;
-            status.innerText = "✅ Scan complete!";
-            output.innerHTML = "<b>Analyzed Text:</b><br>" + text;
-        } catch (err) { status.innerText = "❌ Scan failed."; }
-    }
-}
-
-function runVisionSearch() {
-    const q = document.getElementById('user-query').value;
-    const out = document.getElementById('tutor-output');
-    if(!q) return;
-    out.innerHTML = "🌀 Vision AI is computing...";
-    setTimeout(() => {
-        out.innerHTML = `<b>Vision AI:</b> Iteration analysis complete. Level Up progress is looking optimal!`;
-    }, 1200);
-}
-
-// --- CORE LOGIC ---
 function handleAuth() {
-    const e = document.getElementById("login-email").value.trim().toLowerCase();
-    const p = document.getElementById("login-password").value.trim();
+    const e = document.getElementById('login-email').value.trim().toLowerCase();
+    const p = document.getElementById('login-password').value.trim();
+    const nick = document.getElementById('reg-nickname').value.trim();
+
     if(isRegMode) {
-        let newPlayer = {...userData, username: e, password: p, totalXP: 0, streak: 0};
-        localStorage.setItem("user_" + e, JSON.stringify(newPlayer));
-        alert("Account Created!"); toggleAuthMode();
+        if(!nick) return alert("Please enter a Nickname!");
+        localStorage.setItem("user_" + e, JSON.stringify({...userData, nickname: nick, password: p}));
+        alert("Account Created!"); toggleAuth();
     } else {
         let stored = JSON.parse(localStorage.getItem("user_" + e));
         if(stored && stored.password === p) {
             currentEmail = e; 
             userData = {...userData, ...stored}; 
-            document.getElementById("auth-section").classList.add("hidden");
-            document.getElementById("app-content").classList.remove("hidden");
-            checkStreak();
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('app-content').classList.remove('hidden');
+            document.getElementById('welcome-banner').innerText = "Welcome, " + (userData.nickname || "Player");
             updateUI();
-        } else {
-            alert("Login failed.");
-        }
+        } else { alert("Login failed."); }
     }
-}
-
-function checkStreak() {
-    if (!userData.streak) userData.streak = 0;
-    const today = new Date().toDateString();
-    if (userData.lastLogDate) {
-        const lastDate = new Date(userData.lastLogDate);
-        const diffDays = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
-        if (diffDays > 1) userData.streak = 0;
-    }
-    document.getElementById('streak-display').innerText = `🔥 ${userData.streak} Days`;
-}
-
-function vouchForXP() {
-    const val = parseInt(document.getElementById('xp-input-mins').value);
-    if(isNaN(val)) return alert("Enter a number!");
-    userData.pendingXP = val;
-    save();
-    if (navigator.vibrate) navigator.vibrate(50);
-    alert("Vouched!");
-    document.getElementById('xp-input-mins').value = "";
-}
-
-function approveXP() {
-    const xp = userData.totalXP || 0;
-    const oldLevel = Math.floor(xp / 100) + 1;
-    userData.totalXP = xp + (userData.pendingXP || 0);
-    userData.pendingXP = 0;
-    
-    const today = new Date().toDateString();
-    if (userData.lastLogDate !== today) {
-        userData.streak = (userData.streak || 0) + 1;
-        userData.lastLogDate = today;
-    }
-
-    const newLevel = Math.floor(userData.totalXP / 100) + 1;
-    if (newLevel > oldLevel) {
-        levelUpSound.play();
-        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-    }
-
-    save(); updateUI(); lockParent();
-}
-
-function toggleAuthMode() {
-    isRegMode = !isRegMode;
-    document.getElementById('auth-title').innerText = isRegMode ? "Register" : "Login";
 }
 
 function updateUI() {
-    const xp = userData.totalXP || 0;
-    document.getElementById('display-xp').innerText = xp;
-    document.getElementById('display-level').innerText = Math.floor(xp / 100) + 1;
-    document.getElementById('trust-fill').style.width = Math.max((xp % 100), 5) + "%";
-    document.getElementById('streak-display').innerText = `🔥 ${userData.streak || 0} Days`;
+    const xp = parseInt(userData.totalXP) || 0;
+    const level = Math.floor(xp / 100) + 1;
+    document.getElementById('disp-xp').innerText = xp;
+    document.getElementById('disp-level').innerText = level;
+    document.getElementById('xp-fill').style.width = Math.max((xp % 100), 5) + "%";
 }
 
-function handlePhoto(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            document.getElementById('proof-preview').src = e.target.result;
-            document.getElementById('proof-preview').style.display = 'block';
-            document.getElementById('vouch-btn').disabled = false;
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
+function showTab(t) {
+    document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
+    const target = document.getElementById('tab-' + t);
+    if(target) target.classList.remove('hidden');
+}
+
+function vouchXP() {
+    userData.pendingXP = parseInt(document.getElementById('mins-input').value) || 0;
+    save(); alert("Vouched!");
+    document.getElementById('mins-input').value = "";
 }
 
 function verifyParent() {
-    if(document.getElementById('parent-pin-entry').value === (userData.parentPin || "1234")) {
-        document.getElementById('parent-lock-screen').classList.add('hidden');
-        document.getElementById('parent-admin-panel').classList.remove('hidden');
-        document.getElementById('admin-pending-val').innerText = (userData.pendingXP || 0) + " XP";
+    if(document.getElementById('parent-pin').value === "1234") {
+        document.getElementById('admin-panel').classList.remove('hidden');
     }
 }
 
-function lockParent() {
-    document.getElementById('parent-lock-screen').classList.remove('hidden');
-    document.getElementById('parent-admin-panel').classList.add('hidden');
-    showTab('dash');
+function approveXP() {
+    userData.totalXP = (parseInt(userData.totalXP) || 0) + (parseInt(userData.pendingXP) || 0);
+    userData.pendingXP = 0;
+    save(); updateUI(); alert("XP Approved!");
 }
 
 function save() { localStorage.setItem("user_" + currentEmail, JSON.stringify(userData)); }

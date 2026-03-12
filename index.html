@@ -2,241 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Level Up! Home</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Up | AI Productivity</title>
     <style>
-        :root { 
-            --neon: #00ff9d; --bg: #0d0d0d; --card-bg: #161616; 
-            --gold: #ffc107; --red: #ff4757; --blue: #00d4ff; 
+        /* --- DESIGN (CSS) --- */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #0f0f0f;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 50px; }
-        
-        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #111; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 900; }
-        .logo { font-family: 'Orbitron'; font-weight: 700; color: var(--neon); font-size: 1.1rem; letter-spacing: 1px; }
 
-        .container { max-width: 500px; margin: 0 auto; padding: 15px; }
-        .card { background-color: #161616; border-radius: 18px; padding: 20px; margin-bottom: 20px; border: 1px solid #2a2a2a; }
+        .app-container {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            width: 380px;
+            text-align: center;
+            border: 1px solid #333;
+        }
 
-        /* TAB SYSTEM */
-        .tab-bar { display: flex; background: #111; border-radius: 12px; padding: 5px; margin-bottom: 20px; border: 1px solid #222; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: #666; font-family: 'Orbitron'; font-size: 0.65rem; cursor: pointer; border-radius: 8px; transition: 0.3s; text-align: center; }
-        .tab-btn.active { background: var(--card-bg); color: var(--neon); box-shadow: 0 0 10px rgba(0,255,157,0.2); border: 1px solid #333; }
+        h1 { color: #00ff88; letter-spacing: 2px; margin-bottom: 5px; }
+        p { color: #888; margin-top: 0; font-size: 0.9rem; }
 
-        /* MISSION STYLING */
-        .task-container { background: #222; border-radius: 12px; padding: 15px; border-left: 5px solid var(--red); margin-bottom: 15px; }
-        .checkbox { width: 24px; height: 24px; border: 2px solid var(--red); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .checkbox.checked { background: var(--neon); border-color: var(--neon); }
-        .checkbox i { color: #000; font-size: 0.8rem; display: none; }
-        .checkbox.checked i { display: block; }
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            background: #252525;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
 
-        /* CALENDAR */
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
-        .cal-day { font-size: 0.75rem; padding: 8px 0; border-radius: 6px; background: #222; text-align: center; color: #555; }
-        .goal-met { background: var(--neon) !important; color: #000 !important; font-weight: bold; }
-        .goal-missed { background: var(--red) !important; color: #fff !important; }
+        .stat-val { color: #00d4ff; }
 
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
-        .stat-value { font-family: 'Orbitron'; color: var(--neon); font-size: 1.4rem; }
-        .stat-label { font-size: 0.65rem; color: #777; text-transform: uppercase; }
+        .progress-box {
+            background: #333;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
 
-        .action-btn { background: var(--neon); color: #000; border: none; padding: 12px; border-radius: 10px; font-family: 'Orbitron'; font-weight: 700; width: 100%; cursor: pointer; }
-        input { padding: 12px; border-radius: 10px; border: 1px solid #333; background: #080808; color: white; width: 100%; box-sizing: border-box; font-family: 'Orbitron'; }
+        #bar {
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            width: 0%;
+            height: 100%;
+            transition: width 0.4s ease;
+        }
 
-        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1001; top: 0; left: 0; background-color: #0a0a0a; overflow-x: hidden; transition: 0.4s; padding-top: 60px; }
-        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1rem; color: #aaa; display: flex; align-items: center; gap: 15px; font-family: 'Orbitron'; cursor: pointer; }
-        .hidden { display: none; }
+        .actions button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .task-btn { background: #333; color: white; border: 1px solid #444 !important; }
+        .task-btn:hover { background: #444; }
+
+        .ai-btn { background: #00d4ff; color: #121212; margin-top: 10px; }
+        .ai-btn:hover { background: #00b8e6; transform: scale(1.02); }
+
+        .ai-bubble {
+            background: #252525;
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            text-align: left;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="mySidebar" class="sidebar">
-    <span style="position:absolute;top:10px;right:20px;font-size:30px;color:var(--neon);cursor:pointer;" onclick="closeNav()">&times;</span>
-    <a onclick="showView('home')"><i class="fa-solid fa-house"></i> Home</a>
-    <a onclick="showView('parent')"><i class="fa-solid fa-user-shield" style="color:var(--gold)"></i> Parent Portal</a>
-</div>
+    <div class="app-container">
+        <h1>LEVEL UP</h1>
+        <p>Student Accountability System</p>
 
-<div class="top-nav">
-    <i class="fa-solid fa-bars" onclick="openNav()"></i>
-    <div class="logo">LEVEL UP</div>
-    <div style="width:24px"></div>
-</div>
-
-<div class="container" id="app-content">
-    
-    <div id="view-home">
-        <div class="card">
-            <div class="stat-grid">
-                <div class="stat-box"><span class="stat-label">Streak</span><br><span class="stat-value" id="streak-display">0d</span></div>
-                <div class="stat-box"><span class="stat-label">7-Day Avg</span><br><span class="stat-value" id="avg-display">0m</span></div>
-            </div>
+        <div class="stats-row">
+            <div>LEVEL <span id="lvl" class="stat-val">1</span></div>
+            <div>XP <span id="xp" class="stat-val">0</span> / 100</div>
         </div>
 
-        <div class="tab-bar">
-            <button class="tab-btn active" onclick="switchTab('mission')">MISSION</button>
-            <button class="tab-btn" onclick="switchTab('calendar')">CALENDAR</button>
-            <button class="tab-btn" onclick="switchTab('history')">HISTORY</button>
+        <div class="progress-box">
+            <div id="bar"></div>
         </div>
 
-        <div id="tab-mission" class="tab-content">
-            <div class="card" style="border: 1px solid var(--neon);">
-                <div style="font-family:'Orbitron'; font-size:0.8rem; margin-bottom:10px;">LOG PLAYTIME</div>
-                <div style="display:flex; gap:10px;">
-                    <input type="number" id="mins-input" placeholder="Minutes">
-                    <button class="action-btn" style="width:auto; padding:0 20px;" onclick="logTime()">LOG</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="task-container" id="task-box">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <div id="task-check" class="checkbox" onclick="toggleTask()"><i class="fa-solid fa-check"></i></div>
-                        <div>
-                            <span class="stat-label" style="color:var(--red)">Active Task</span>
-                            <p id="task-display" style="margin:2px 0; font-weight:600; font-size:0.9rem;"></p>
-                        </div>
-                    </div>
-                </div>
-                <div style="background:#1a1a1a; padding:12px; border-radius:10px; border:1px dashed #444;">
-                    <div style="font-family:'Orbitron'; font-size:0.7rem; color:var(--gold); margin-bottom:5px;">GAMING FACT</div>
-                    <p id="fact-display" style="font-size:0.8rem; font-style:italic; color:#bbb; margin:0; line-height:1.4;"></p>
-                </div>
-            </div>
+        <div class="actions">
+            <button class="task-btn" onclick="gainXP(30, 'Study Session')">📚 Study Session (+30 XP)</button>
+            <button class="task-btn" onclick="gainXP(20, 'Homework Complete')">📝 Homework (+20 XP)</button>
+            <button class="task-btn" onclick="gainXP(15, 'Daily Chores')">🧹 Daily Chores (+15 XP)</button>
+            
+            <button class="ai-btn" onclick="runAI()">🤖 ASK LEVEL UP AI</button>
         </div>
 
-        <div id="tab-calendar" class="tab-content hidden">
-            <div class="card">
-                <div style="font-family:'Orbitron'; font-size:0.9rem; margin-bottom:10px;">GOAL TRACKER</div>
-                <div class="cal-grid" id="calendar-days">
-                    <div style="color:var(--neon); font-size:0.6rem; text-align:center;">S</div>
-                    <div style="color:var(--neon); font-size:0.6rem; text-align:center;">M</div>
-                    <div style="color:var(--neon); font-size:0.6rem; text-align:center;">T</div>
-                    <div style="color:var(--neon); font-size:0.6rem; text-align:center;">W</div>
-                    <div style="color:var(--neon); font-size:0.6rem; text-align:center;">T</div>
-                    <div style="color:var(--neon); font-size:0.6rem; text-align:center;">F</div>
-                    <div style="color:var(--neon); font-size:0.6rem; text-align:center;">S</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-history" class="tab-content hidden">
-            <div class="card">
-                <div style="font-family:'Orbitron'; font-size:0.9rem; margin-bottom:15px;">RECENT LOGS</div>
-                <div id="history-list" style="font-size:0.85rem;"></div>
-            </div>
-        </div>
+        <div id="aiResponse" class="ai-bubble"></div>
     </div>
 
-    <div id="view-parent" class="hidden">
-        <div class="card">
-            <div style="font-family:'Orbitron'; margin-bottom:15px;">Parent Access</div>
-            <div id="parent-lock">
-                <input type="password" id="pin" placeholder="Enter PIN">
-                <button class="action-btn" style="background:var(--gold); margin-top:10px;" onclick="unlockParent()">Unlock</button>
-            </div>
-            <div id="parent-controls" class="hidden">
-                <p id="pending-msg" style="color:var(--neon); margin-bottom:15px; font-family:'Orbitron';"></p>
-                <button class="action-btn" onclick="approve()">Approve Session</button>
-            </div>
-        </div>
-    </div>
-</div>
+    <script>
+        /* --- LOGIC (JavaScript) --- */
+        let currentXP = 0;
+        let currentLvl = 1;
 
-<script>
-let data = JSON.parse(localStorage.getItem("levelUpData")) || {
-    logs: [], pending: 0, cal: {}, goal: 120, streak: 0, taskDone: false, missionIdx: 0
-};
+        function gainXP(amount, taskName) {
+            currentXP += amount;
+            
+            if (currentXP >= 100) {
+                currentLvl++;
+                currentXP -= 100;
+                alert("🎉 LEVEL UP! You are now Level " + currentLvl + ". Reward Unlocked!");
+            }
 
-const missions = [
-    { task: "Go outside for a bit and breathe fresh air.", fact: "Natural light helps reset your brain for better focus." },
-    { task: "Drink a full glass of water.", fact: "Hydration is key for fast reaction times." },
-    { task: "Stretch your wrists for 2 minutes.", fact: "Stretching prevents injury during long gaming sessions." }
-];
+            updateDisplay();
+        }
 
-function openNav() { document.getElementById("mySidebar").style.width = "250px"; }
-function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
+        function updateDisplay() {
+            document.getElementById('xp').innerText = currentXP;
+            document.getElementById('lvl').innerText = currentLvl;
+            document.getElementById('bar').style.width = currentXP + "%";
+        }
 
-function showView(v) {
-    closeNav();
-    document.getElementById('view-home').classList.toggle('hidden', v !== 'home');
-    document.getElementById('view-parent').classList.toggle('hidden', v !== 'parent');
-}
+        function runAI() {
+            const query = prompt("Ask the AI something (Try: 'tips', 'eye strain', or 'why gaming?'):").toLowerCase();
+            const bubble = document.getElementById('aiResponse');
+            bubble.style.display = "block";
 
-function switchTab(t) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-    
-    event.target.classList.add('active');
-    document.getElementById('tab-' + t).classList.remove('hidden');
-}
-
-function toggleTask() {
-    data.taskDone = !data.taskDone;
-    document.getElementById('task-check').classList.toggle('checked', data.taskDone);
-    save();
-}
-
-function logTime() {
-    let val = document.getElementById('mins-input').value;
-    if(!val) return;
-    data.pending = parseInt(val);
-    save();
-    alert("Sent for approval!");
-}
-
-function unlockParent() {
-    if(document.getElementById('pin').value === "1234") {
-        document.getElementById('parent-lock').classList.add('hidden');
-        document.getElementById('parent-controls').classList.remove('hidden');
-        document.getElementById('pending-msg').innerText = "Pending: " + data.pending + "m";
-    }
-}
-
-function approve() {
-    const today = new Date().toISOString().split('T')[0];
-    data.logs.unshift({date: new Date().toLocaleDateString('en-US',{month:'short', day:'numeric'}), mins: data.pending});
-    data.cal[today] = data.pending >= data.goal ? "met" : "missed";
-    data.streak = data.pending >= data.goal ? (data.streak + 1) : 0;
-    data.pending = 0;
-    save();
-    location.reload();
-}
-
-function render() {
-    document.getElementById('streak-display').innerText = data.streak + "d";
-    let total = 0;
-    data.logs.forEach(l => total += l.mins);
-    document.getElementById('avg-display').innerText = data.logs.length ? Math.round(total/data.logs.length) + "m" : "0m";
-
-    const cal = document.getElementById('calendar-days');
-    for(let i=1; i<=31; i++) {
-        let d = document.createElement('div');
-        d.className = 'cal-day';
-        d.innerText = i;
-        let key = `2026-03-${i.toString().padStart(2,'0')}`;
-        if(data.cal[key] === "met") d.classList.add('goal-met');
-        if(data.cal[key] === "missed") d.classList.add('goal-missed');
-        cal.appendChild(d);
-    }
-
-    const hList = document.getElementById('history-list');
-    data.logs.forEach(l => {
-        hList.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #222;">
-            <span>${l.date}</span><span style="color:var(--neon)">${l.mins}m</span>
-        </div>`;
-    });
-
-    const m = missions[data.missionIdx];
-    document.getElementById('task-display').innerText = m.task;
-    document.getElementById('fact-display').innerText = m.fact;
-    if(data.taskDone) document.getElementById('task-check').classList.add('checked');
-}
-
-function save() { localStorage.setItem("levelUpData", JSON.stringify(data)); }
-render();
-</script>
+            // AI Smart Logic based on your SPARC research
+            if (query.includes("tip") || query.includes("how")) {
+                bubble.innerHTML = "<strong>AI Assistant:</strong> To reach Level " + (currentLvl + 1) + " quickly, focus on your 30XP Study Sessions. Consistency is the best way to earn gaming time!";
+            } 
+            else if (query.includes("eye") || query.includes("strain") || query.includes("tired")) {
+                bubble.innerHTML = "<strong>AI Assistant:</strong> Time for a break! Use the <strong>20-20-20 rule</strong>: Look at something 20 feet away for 20 seconds to protect your vision.";
+            } 
+            else if (query.includes("why") || query.includes("gaming") || query.includes("benefit")) {
+                bubble.innerHTML = "<strong>AI Assistant:</strong> Research shows gaming can improve <strong>decision-making speed</strong> faster than some classes. Keep using it as a brain workout!";
+            } 
+            else {
+                bubble.innerHTML = "<strong>AI Assistant:</strong> I'm monitoring your progress. You've earned " + currentXP + " XP today. Stay focused to unlock your rewards!";
+            }
+        }
+    </script>
 </body>
 </html>

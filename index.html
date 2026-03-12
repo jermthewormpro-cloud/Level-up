@@ -3,127 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level Up Your Day | Gaming Productivity</title>
+    <title>Level Up Your Day</title>
     <style>
-        /* CSS - The Dark Theme & Login Box */
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0f0f0f; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .app-container { width: 380px; position: relative; }
+        /* --- RESET & BACKGROUND --- */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #0d0d0d; 
+            color: white; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+        }
 
-        /* HEADER STYLE FROM SCREENSHOT */
-        .glowing-header { color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.5); font-weight: bold; margin-bottom: 5px; font-size: 1.5rem; text-align: center; }
-        .sub-header { color: #888; font-size: 0.8rem; margin-bottom: 20px; text-align: center; }
+        /* --- LOGIN SCREEN (Matches your screenshot) --- */
+        #login-container {
+            width: 350px;
+            text-align: center;
+        }
 
-        /* PLAYER LOGIN BOX FROM SCREENSHOT */
-        #login-screen { background-color: #1a1a1a; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .login-box-title { font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .header-text { color: #00ff88; font-size: 1.6rem; font-weight: bold; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+        .sub-text { color: #888; font-size: 0.85rem; margin-bottom: 25px; }
+
+        .login-card {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .player-title { font-size: 1.1rem; margin-bottom: 20px; font-weight: 500; }
+
+        .input-box {
+            background: #252525;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            margin-left: 10px;
+            outline: none;
+            width: 100%;
+        }
+
+        .btn-green {
+            background-color: #00ff88;
+            color: #121212;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .btn-blue {
+            background-color: #00d4ff;
+            color: #121212;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .create-acc { color: #888; font-size: 0.75rem; margin-top: 15px; }
+        .create-acc span { color: #00ff88; cursor: pointer; }
+
+        /* --- MAIN APP VIEWS (Hidden at start) --- */
+        #main-app { display: none; width: 380px; }
+        .app-card { background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; }
+
+        .stats-box { display: flex; justify-content: space-around; background: #252525; padding: 15px; border-radius: 10px; margin: 15px 0; font-weight: bold; }
+        .xp-container { background: #333; height: 12px; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+        #xp-bar { background: linear-gradient(90deg, #00ff88, #00d4ff); width: 0%; height: 100%; transition: width 0.4s; }
+
+        .task-btn { background: #333; color: white; border: 1px solid #444; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; font-weight: 500; }
         
-        .input-group { background: #252525; border: 1px solid #444; border-radius: 5px; display: flex; align-items: center; padding: 10px; margin-bottom: 10px; }
-        .input-group input { background: transparent; border: none; color: white; width: 100%; outline: none; margin-left: 10px; font-size: 0.8rem; }
-        
-        .main-btn { background: #00ff88; color: #121212; border: none; padding: 12px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .main-btn:hover { background: #00cc6e; }
-
-        .create-link { font-size: 0.75rem; color: #888; margin-top: 15px; display: block; }
-        .create-link span { color: #00ff88; cursor: pointer; }
-
-        /* INTERNAL SCREENS (Hidden at start) */
-        .app-inner { display: none; background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; }
-        .stats-row { display: flex; justify-content: space-around; background: #252525; padding: 15px; border-radius: 10px; margin: 15px 0; font-weight: bold; }
-        .stat-val { color: #00d4ff; }
-        .progress-box { background: #333; height: 15px; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
-        #bar { background: linear-gradient(90deg, #00ff88, #00d4ff); width: 0%; height: 100%; transition: width 0.4s; }
-        .task-btn { background: #333; color: white; border: 1px solid #444; padding: 12px; width: 100%; border-radius: 8px; margin-bottom: 8px; cursor: pointer; font-weight: bold; }
-        
-        /* VISION SECTION FROM PREVIOUS REQUEST */
-        .vision-hub { background: #252525; border-radius: 10px; padding: 15px; margin-top: 20px; text-align: left; border-top: 3px solid #ff4444; }
+        /* VISION HUB - AS REQUESTED */
+        .vision-hub { background: rgba(255, 68, 68, 0.1); border-top: 3px solid #ff4444; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: left; }
         .vision-hub h3 { margin: 0; color: #ff4444; font-size: 0.9rem; }
-        .vision-text { font-size: 0.8rem; line-height: 1.4; color: #ccc; margin-top: 5px; }
+        .vision-p { font-size: 0.8rem; color: #ccc; margin-top: 5px; }
 
-        .logout-btn { background: transparent; color: #888; border: none; cursor: pointer; font-size: 0.8rem; margin-top: 15px; text-decoration: underline; width: 100%; }
+        /* PARENT PORTAL */
+        #parent-view { display: none; }
+        .parent-item { background: #252525; padding: 10px; margin-bottom: 5px; border-radius: 5px; font-size: 0.8rem; color: #bbb; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        
-        <div id="header-area">
-            <div class="glowing-header">🎮 Level Up Your Day</div>
-            <div class="sub-header">Track stats. Build habits. Own your day.</div>
-        </div>
+    <div id="login-container">
+        <div class="header-text">🎮 Level Up Your Day</div>
+        <div class="sub-text">Track stats. Build habits. Own your day.</div>
 
-        <div id="login-screen">
-            <div class="login-box-title">👤 Player Login</div>
+        <div class="login-card">
+            <div class="player-title">👤 Player Login</div>
+            <div class="input-box">📧 <input type="email" placeholder="Email Address"></div>
+            <div class="input-box">🔒 <input type="password" placeholder="Password"></div>
             
-            <div class="input-group">
-                <span>📧</span><input type="email" placeholder="Email Address">
-            </div>
-            <div class="input-group">
-                <span>🔒</span><input type="password" placeholder="Password">
-            </div>
-            
-            <button class="main-btn" onclick="login('student')">LOG IN</button>
-            <button class="main-btn" style="background: #00d4ff; margin-top: 8px;" onclick="login('parent')">PARENT PORTAL</button>
-            
-            <div class="create-link">New player? <span>Create Account</span></div>
-        </div>
+            <button class="btn-green" onclick="enterApp('student')">LOG IN (STUDENT)</button>
+            <button class="btn-blue" onclick="enterApp('parent')">PARENT PORTAL</button>
 
-        <div id="student-view" class="app-inner">
-            <h1 style="color: #00ff88; text-align: center; margin: 0;">DASHBOARD</h1>
-            <div class="stats-row">
-                <div>LEVEL <span id="lvl" class="stat-val">1</span></div>
-                <div>XP <span id="xp" class="stat-val">0</span> / 100</div>
+            <div class="create-acc">New player? <span>Create Account</span></div>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <div id="student-view" class="app-card">
+            <h2 style="margin:0; color:#00ff88; text-align:center;">DASHBOARD</h2>
+            <div class="stats-box">
+                <div>LEVEL <span id="lvl-display" style="color:#00d4ff">1</span></div>
+                <div>XP <span id="xp-display" style="color:#00d4ff">0</span>/100</div>
             </div>
-            <div class="progress-box"><div id="bar"></div></div>
-            <button class="task-btn" onclick="gainXP(30)">📚 Study Session (+30 XP)</button>
-            <button class="task-btn" onclick="gainXP(20)">📝 Homework (+20 XP)</button>
-            <button class="task-btn" style="background: #00d4ff; color: #121212;" onclick="alert('AI: Remember the 20-20-20 rule for eye health!')">🤖 ASK AI</button>
+            <div class="xp-container"><div id="xp-bar"></div></div>
+            
+            <button class="task-btn" onclick="addXP(30)">📚 Study Session (+30 XP)</button>
+            <button class="task-btn" onclick="addXP(20)">📝 Homework (+20 XP)</button>
+            <button class="task-btn" style="background:#00d4ff; color:black; border:none;" onclick="alert('AI: Decision making is a skill! You are doing great.')">🤖 ASK AI</button>
 
             <div class="vision-hub">
                 <h3>👁️ VISION PROTECT</h3>
-                <p class="vision-text"><strong>20-20-20 Rule:</strong> Every 20 mins, look 20ft away for 20s to prevent eye strain.</p>
+                <p class="vision-p"><strong>20-20-20 Rule:</strong> Every 20 mins, look 20ft away for 20s to prevent digital eye strain.</p>
             </div>
-            <button class="logout-btn" onclick="logout()">Back to Login</button>
+            <p onclick="location.reload()" style="font-size:0.7rem; color:#666; cursor:pointer; margin-top:15px; text-align:center;">Logout</p>
         </div>
 
-        <div id="parent-view" class="app-inner">
-            <h1 style="color: #00d4ff; text-align: center; margin: 0;">PARENT PORTAL</h1>
-            <p style="text-align: center; color: #888; font-size: 0.8rem;">Monitoring Active Sessions</p>
-            <div style="background: #252525; padding: 15px; border-radius: 10px; font-size: 0.8rem;">
-                <p>✅ Completed: Study Session</p>
-                <p>⏳ Pending: 1 Hour Gaming Reward</p>
-            </div>
-            <button class="main-btn" onclick="alert('Reward Approved!')">APPROVE REWARD</button>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+        <div id="parent-view" class="app-card">
+            <h2 style="margin:0; color:#00d4ff; text-align:center;">PARENT PORTAL</h2>
+            <p style="text-align:center; color:#888; font-size:0.8rem;">Monitoring Progress</p>
+            <div class="parent-item">✅ Complete: Homework (20 XP)</div>
+            <div class="parent-item">⏳ Pending: 1 Hour Game Time</div>
+            <button class="btn-green" style="margin-top:15px;" onclick="alert('Reward Confirmed!')">APPROVE REWARD</button>
+            <p onclick="location.reload()" style="font-size:0.7rem; color:#666; cursor:pointer; margin-top:15px; text-align:center;">Logout</p>
         </div>
-
     </div>
 
     <script>
-        let xp = 0; let level = 1;
+        let xp = 0; let lvl = 1;
 
-        function login(role) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('header-area').style.display = 'none';
-            if (role === 'student') {
+        function enterApp(role) {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            if(role === 'student') {
                 document.getElementById('student-view').style.display = 'block';
+                document.getElementById('parent-view').style.display = 'none';
             } else {
+                document.getElementById('student-view').style.display = 'none';
                 document.getElementById('parent-view').style.display = 'block';
             }
         }
 
-        function logout() {
-            document.getElementById('login-screen').style.display = 'block';
-            document.getElementById('header-area').style.display = 'block';
-            document.getElementById('student-view').style.display = 'none';
-            document.getElementById('parent-view').style.display = 'none';
-        }
-
-        function gainXP(n) {
-            xp += n;
-            if (xp >= 100) { level++; xp -= 100; alert("LEVEL UP!"); }
-            document.getElementById('xp').innerText = xp;
-            document.getElementById('lvl').innerText = level;
-            document.getElementById('bar').style.width = xp + "%";
+        function addXP(val) {
+            xp += val;
+            if (xp >= 100) { lvl++; xp -= 100; alert("LEVEL UP!"); }
+            document.getElementById('xp-display').innerText = xp;
+            document.getElementById('lvl-display').innerText = lvl;
+            document.getElementById('xp-bar').style.width = xp + "%";
         }
     </script>
 </body>

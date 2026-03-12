@@ -3,158 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level Up | AI Productivity</title>
+    <title>Level Up | Accountability System</title>
     <style>
-        /* --- DESIGN (CSS) --- */
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #0f0f0f;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .app-container {
-            background-color: #1a1a1a;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-            width: 380px;
-            text-align: center;
-            border: 1px solid #333;
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f0f0f; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .app-container { background-color: #1a1a1a; padding: 30px; border-radius: 20px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); width: 380px; text-align: center; border: 1px solid #333; position: relative; }
+        
+        /* Login Screen */
+        #login-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; }
+        .login-btn { background: #00ff88; color: #121212; border: none; padding: 15px; width: 200px; margin: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        
         h1 { color: #00ff88; letter-spacing: 2px; margin-bottom: 5px; }
-        p { color: #888; margin-top: 0; font-size: 0.9rem; }
-
-        .stats-row {
-            display: flex;
-            justify-content: space-around;
-            background: #252525;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-
+        .stats-row { display: flex; justify-content: space-around; background: #252525; padding: 15px; border-radius: 10px; margin: 20px 0; font-weight: bold; }
         .stat-val { color: #00d4ff; }
 
-        .progress-box {
-            background: #333;
-            height: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 25px;
-        }
+        .progress-box { background: #333; height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 25px; }
+        #bar { background: linear-gradient(90deg, #00ff88, #00d4ff); width: 0%; height: 100%; transition: width 0.4s ease; }
 
-        #bar {
-            background: linear-gradient(90deg, #00ff88, #00d4ff);
-            width: 0%;
-            height: 100%;
-            transition: width 0.4s ease;
-        }
-
-        .actions button {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
+        .actions button { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
         .task-btn { background: #333; color: white; border: 1px solid #444 !important; }
-        .task-btn:hover { background: #444; }
+        .ai-btn { background: #00d4ff; color: #121212; }
+        
+        /* Vision Section */
+        .vision-hub { background: #252525; border-radius: 10px; padding: 15px; margin-top: 20px; text-align: left; border-top: 3px solid #ff4444; }
+        .vision-hub h3 { margin-top: 0; color: #ff4444; font-size: 0.9rem; }
+        .vision-text { font-size: 0.8rem; line-height: 1.4; color: #ccc; }
 
-        .ai-btn { background: #00d4ff; color: #121212; margin-top: 10px; }
-        .ai-btn:hover { background: #00b8e6; transform: scale(1.02); }
-
-        .ai-bubble {
-            background: #252525;
-            border-left: 4px solid #00d4ff;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 0.85rem;
-            text-align: left;
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Parent View */
+        #parent-view { display: none; text-align: left; }
+        .reward-item { background: #333; padding: 10px; margin: 5px 0; border-radius: 5px; font-size: 0.8rem; }
+        
+        .back-btn { background: transparent; color: #888; border: none; cursor: pointer; font-size: 0.8rem; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <h1>LEVEL UP</h1>
-        <p>Student Accountability System</p>
-
-        <div class="stats-row">
-            <div>LEVEL <span id="lvl" class="stat-val">1</span></div>
-            <div>XP <span id="xp" class="stat-val">0</span> / 100</div>
+        <div id="login-screen">
+            <h1>LEVEL UP</h1>
+            <p>Select User Profile</p>
+            <button class="login-btn" onclick="showApp('student')">STUDENT LOGIN</button>
+            <button class="login-btn" style="background:#00d4ff" onclick="showApp('parent')">PARENT LOGIN</button>
         </div>
 
-        <div class="progress-box">
-            <div id="bar"></div>
+        <div id="student-view">
+            <h1>LEVEL UP</h1>
+            <div class="stats-row">
+                <div>LEVEL <span id="lvl" class="stat-val">1</span></div>
+                <div>XP <span id="xp" class="stat-val">0</span> / 100</div>
+            </div>
+            <div class="progress-box"><div id="bar"></div></div>
+            <div class="actions">
+                <button class="task-btn" onclick="gainXP(30)">📚 Study Session (+30 XP)</button>
+                <button class="task-btn" onclick="gainXP(20)">📝 Homework (+20 XP)</button>
+                <button class="ai-btn" onclick="runAI()">🤖 ASK AI ASSISTANT</button>
+            </div>
+
+            <div class="vision-hub">
+                <h3>👁️ VISION PROTECT</h3>
+                <p class="vision-text"><strong>20-20-20 Rule:</strong> Every 20 minutes, look at something 20 feet away for 20 seconds. This prevents digital eye strain.</p>
+            </div>
+            <button class="back-btn" onclick="logout()">Logout</button>
         </div>
 
-        <div class="actions">
-            <button class="task-btn" onclick="gainXP(30, 'Study Session')">📚 Study Session (+30 XP)</button>
-            <button class="task-btn" onclick="gainXP(20, 'Homework Complete')">📝 Homework (+20 XP)</button>
-            <button class="task-btn" onclick="gainXP(15, 'Daily Chores')">🧹 Daily Chores (+15 XP)</button>
-            
-            <button class="ai-btn" onclick="runAI()">🤖 ASK LEVEL UP AI</button>
+        <div id="parent-view">
+            <h1>PARENT PORTAL</h1>
+            <p>Monitor & Approve Rewards</p>
+            <div class="reward-item">✅ Student completed: Study Session (+30 XP)</div>
+            <div class="reward-item">⏳ Pending Approval: 1 Hour Gaming Time</div>
+            <button class="login-btn" onclick="alert('Reward Approved!')">APPROVE REWARD</button>
+            <button class="back-btn" onclick="logout()">Logout</button>
         </div>
-
-        <div id="aiResponse" class="ai-bubble"></div>
     </div>
 
     <script>
-        /* --- LOGIC (JavaScript) --- */
         let currentXP = 0;
         let currentLvl = 1;
 
-        function gainXP(amount, taskName) {
+        function showApp(role) {
+            document.getElementById('login-screen').style.display = 'none';
+            if (role === 'student') {
+                document.getElementById('student-view').style.display = 'block';
+                document.getElementById('parent-view').style.display = 'none';
+            } else {
+                document.getElementById('student-view').style.display = 'none';
+                document.getElementById('parent-view').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+
+        function gainXP(amount) {
             currentXP += amount;
-            
             if (currentXP >= 100) {
                 currentLvl++;
                 currentXP -= 100;
-                alert("🎉 LEVEL UP! You are now Level " + currentLvl + ". Reward Unlocked!");
+                alert("🎉 LEVEL UP!");
             }
-
-            updateDisplay();
-        }
-
-        function updateDisplay() {
             document.getElementById('xp').innerText = currentXP;
             document.getElementById('lvl').innerText = currentLvl;
             document.getElementById('bar').style.width = currentXP + "%";
         }
 
         function runAI() {
-            const query = prompt("Ask the AI something (Try: 'tips', 'eye strain', or 'why gaming?'):").toLowerCase();
-            const bubble = document.getElementById('aiResponse');
-            bubble.style.display = "block";
-
-            // AI Smart Logic based on your SPARC research
-            if (query.includes("tip") || query.includes("how")) {
-                bubble.innerHTML = "<strong>AI Assistant:</strong> To reach Level " + (currentLvl + 1) + " quickly, focus on your 30XP Study Sessions. Consistency is the best way to earn gaming time!";
-            } 
-            else if (query.includes("eye") || query.includes("strain") || query.includes("tired")) {
-                bubble.innerHTML = "<strong>AI Assistant:</strong> Time for a break! Use the <strong>20-20-20 rule</strong>: Look at something 20 feet away for 20 seconds to protect your vision.";
-            } 
-            else if (query.includes("why") || query.includes("gaming") || query.includes("benefit")) {
-                bubble.innerHTML = "<strong>AI Assistant:</strong> Research shows gaming can improve <strong>decision-making speed</strong> faster than some classes. Keep using it as a brain workout!";
-            } 
-            else {
-                bubble.innerHTML = "<strong>AI Assistant:</strong> I'm monitoring your progress. You've earned " + currentXP + " XP today. Stay focused to unlock your rewards!";
-            }
+            alert("AI Assistant: Based on your current progress, you are 3 tasks away from your next level-up reward. Remember your 20-20-20 vision break!");
         }
     </script>
 </body>

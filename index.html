@@ -3,112 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level Up | Accountability & Vision</title>
+    <title>Level Up | Accountability System</title>
     <style>
-        /* CSS - The Look */
         body { font-family: 'Segoe UI', sans-serif; background-color: #0f0f0f; color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .app-container { background-color: #1a1a1a; padding: 25px; border-radius: 20px; box-shadow: 0 0 25px rgba(0, 255, 136, 0.3); width: 380px; text-align: center; border: 1px solid #333; position: relative; min-height: 550px; }
+        .app-container { background-color: #1a1a1a; padding: 30px; border-radius: 20px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); width: 380px; text-align: center; border: 1px solid #333; position: relative; min-height: 520px; }
         
-        /* Login Screen - This covers the app until you click */
-        #login-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
-        .login-btn { background: #00ff88; color: #121212; border: none; padding: 15px; width: 220px; margin: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        .login-btn:hover { transform: scale(1.05); }
-
-        /* Main Sections */
+        /* Login Screen Styles */
+        #login-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; }
+        .login-input { background: #252525; border: 1px solid #444; color: white; padding: 12px; width: 250px; margin: 5px 0; border-radius: 8px; }
+        .login-btn { background: #00ff88; color: #121212; border: none; padding: 15px; width: 275px; margin: 15px 0 5px 0; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .switch-login { color: #00d4ff; font-size: 0.8rem; cursor: pointer; text-decoration: underline; margin-top: 10px; }
+        
+        /* Main App Styles */
         h1 { color: #00ff88; letter-spacing: 2px; margin-bottom: 5px; }
-        .stats-row { display: flex; justify-content: space-around; background: #252525; padding: 15px; border-radius: 10px; margin: 15px 0; font-weight: bold; border: 1px solid #444; }
+        .stats-row { display: flex; justify-content: space-around; background: #252525; padding: 15px; border-radius: 10px; margin: 20px 0; font-weight: bold; }
         .stat-val { color: #00d4ff; }
 
-        .progress-box { background: #333; height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+        .progress-box { background: #333; height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 25px; }
         #bar { background: linear-gradient(90deg, #00ff88, #00d4ff); width: 0%; height: 100%; transition: width 0.4s ease; }
 
-        .actions button { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
-        .task-btn { background: #333; color: white; border: 1px solid #555 !important; }
-        .ai-btn { background: #00d4ff; color: #121212; margin-top: 5px; }
+        .actions button { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+        .task-btn { background: #333; color: white; border: 1px solid #444 !important; }
+        .ai-btn { background: #00d4ff; color: #121212; }
         
-        /* Vision Section - Now clearly visible at the bottom */
-        .vision-section { background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; border-radius: 10px; padding: 12px; margin-top: 15px; text-align: left; }
-        .vision-section h3 { margin: 0 0 5px 0; color: #ff4444; font-size: 0.85rem; display: flex; align-items: center; }
-        .vision-text { font-size: 0.75rem; line-height: 1.3; color: #eee; margin: 0; }
+        /* Vision Section */
+        .vision-hub { background: #252525; border-radius: 10px; padding: 15px; margin-top: 20px; text-align: left; border-top: 3px solid #ff4444; }
+        .vision-hub h3 { margin-top: 0; color: #ff4444; font-size: 0.9rem; }
+        .vision-text { font-size: 0.8rem; line-height: 1.4; color: #ccc; }
 
-        /* Parent View Layout */
-        #parent-view { display: none; }
-        .parent-card { background: #252525; padding: 15px; border-radius: 10px; text-align: left; margin-top: 15px; }
-        .log-item { font-size: 0.8rem; border-bottom: 1px solid #444; padding: 8px 0; color: #bbb; }
-
-        .logout-link { color: #888; font-size: 0.75rem; cursor: pointer; text-decoration: underline; margin-top: 15px; display: inline-block; }
+        /* Parent View */
+        #student-view { display: none; }
+        #parent-view { display: none; text-align: left; }
+        .reward-item { background: #333; padding: 10px; margin: 5px 0; border-radius: 5px; font-size: 0.8rem; }
+        
+        .back-btn { background: transparent; color: #888; border: none; cursor: pointer; font-size: 0.8rem; margin-top: 10px; width: 100%; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         <div id="login-screen">
-            <h1>LEVEL UP</h1>
-            <p style="color: #888;">Select Your Profile</p>
-            <button class="login-btn" onclick="openApp('student')">Student Login</button>
-            <button class="login-btn" style="background:#00d4ff" onclick="openApp('parent')">Parent Login</button>
+            <h1 id="login-title">STUDENT LOGIN</h1>
+            <p id="login-subtext" style="color: #888; font-size: 0.8rem;">Enter your credentials to Level Up</p>
+            
+            <input type="email" class="login-input" placeholder="Email Address">
+            <input type="password" class="login-input" placeholder="Password">
+            
+            <button class="login-btn" id="main-login-btn" onclick="handleLogin()">LOGIN</button>
+            
+            <span class="switch-login" id="toggle-text" onclick="toggleLoginMode()">Switch to Parent Login</span>
         </div>
 
-        <div id="student-view" style="display:none;">
+        <div id="student-view">
             <h1>LEVEL UP</h1>
             <div class="stats-row">
-                <div>LVL <span id="lvl" class="stat-val">1</span></div>
-                <div>XP <span id="xp" class="stat-val">0</span>/100</div>
+                <div>LEVEL <span id="lvl" class="stat-val">1</span></div>
+                <div>XP <span id="xp" class="stat-val">0</span> / 100</div>
             </div>
             <div class="progress-box"><div id="bar"></div></div>
-            
             <div class="actions">
-                <button class="task-btn" onclick="addXP(30)">📚 Study Session (+30 XP)</button>
-                <button class="task-btn" onclick="addXP(20)">📝 Homework (+20 XP)</button>
-                <button class="ai-btn" onclick="callAI()">🤖 ASK AI ASSISTANT</button>
+                <button class="task-btn" onclick="gainXP(30)">📚 Study Session (+30 XP)</button>
+                <button class="task-btn" onclick="gainXP(20)">📝 Homework (+20 XP)</button>
+                <button class="ai-btn" onclick="runAI()">🤖 ASK AI ASSISTANT</button>
             </div>
 
-            <div class="vision-section">
-                <h3>👁️ VISION & HEALTH</h3>
-                <p class="vision-text"><strong>20-20-20 Rule Enabled:</strong> Looking at a screen for too long causes strain. Every 20 mins, look 20ft away for 20 seconds.</p>
+            <div class="vision-hub">
+                <h3>👁️ VISION PROTECT</h3>
+                <p class="vision-text"><strong>20-20-20 Rule:</strong> Every 20 minutes, look at something 20 feet away for 20 seconds. This prevents digital eye strain.</p>
             </div>
-
-            <span class="logout-link" onclick="exitApp()">Logout to Switch Profiles</span>
+            <button class="back-btn" onclick="logout()">Logout</button>
         </div>
 
         <div id="parent-view">
             <h1>PARENT PORTAL</h1>
-            <p style="color: #888;">Accountability Dashboard</p>
-            <div class="parent-card">
-                <div class="log-item">🕒 Recent: Study Session completed (30 XP)</div>
-                <div class="log-item">🕒 Recent: Homework completed (20 XP)</div>
-                <div style="margin-top:15px; font-weight:bold; color:#00ff88;">Reward Status: 45 min Gaming Unlocked</div>
-            </div>
-            <button class="login-btn" style="margin-top:20px;" onclick="alert('Reward Confirmed!')">CONFIRM REWARD</button>
-            <br>
-            <span class="logout-link" onclick="exitApp()">Logout</span>
+            <p style="color: #888; margin-top: -5px;">Monitor & Approve Rewards</p>
+            <div class="reward-item">✅ Student completed: Study Session (+30 XP)</div>
+            <div class="reward-item">⏳ Pending Approval: 1 Hour Gaming Time</div>
+            <button class="login-btn" style="width: 100%;" onclick="alert('Reward Approved!')">APPROVE REWARD</button>
+            <button class="back-btn" onclick="logout()">Logout</button>
         </div>
     </div>
 
     <script>
-        let xp = 0;
-        let level = 1;
+        let currentXP = 0;
+        let currentLvl = 1;
+        let isParentMode = false;
 
-        function openApp(role) {
-            document.getElementById('login-screen').style.display = 'none';
-            if(role === 'student') {
-                document.getElementById('student-view').style.display = 'block';
-                document.getElementById('parent-view').style.display = 'none';
+        function toggleLoginMode() {
+            isParentMode = !isParentMode;
+            const title = document.getElementById('login-title');
+            const btn = document.getElementById('main-login-btn');
+            const toggle = document.getElementById('toggle-text');
+
+            if (isParentMode) {
+                title.innerText = "PARENT LOGIN";
+                btn.style.background = "#00d4ff";
+                toggle.innerText = "Switch to Student Login";
             } else {
-                document.getElementById('student-view').style.display = 'none';
-                document.getElementById('parent-view').style.display = 'block';
+                title.innerText = "STUDENT LOGIN";
+                btn.style.background = "#00ff88";
+                toggle.innerText = "Switch to Parent Login";
             }
         }
 
-        function exitApp() {
+        function handleLogin() {
+            document.getElementById('login-screen').style.display = 'none';
+            if (isParentMode) {
+                document.getElementById('parent-view').style.display = 'block';
+                document.getElementById('student-view').style.display = 'none';
+            } else {
+                document.getElementById('student-view').style.display = 'block';
+                document.getElementById('parent-view').style.display = 'none';
+            }
+        }
+
+        function logout() {
             document.getElementById('login-screen').style.display = 'flex';
             document.getElementById('student-view').style.display = 'none';
             document.getElementById('parent-view').style.display = 'none';
         }
 
-        function addXP(val) {
-            xp += val;
-            if (xp >= 100) {
-                level++;
-                xp -= 100;
-                alert("🚀 LEVEL UP! You reached Level " +
+        function gainXP(amount) {
+            currentXP += amount;
+            if (currentXP >= 100) {
+                currentLvl++;
+                currentXP -= 100;
+                alert("🎉 LEVEL UP!");
+            }
+            document.getElementById('xp').innerText = currentXP;
+            document.getElementById('lvl').innerText = currentLvl;
+            document.getElementById('bar').style.width = currentXP + "%";
+        }
+
+        function runAI() {
+            alert("AI Assistant: Based on your current progress, you are 3 tasks away from your next level-up reward. Remember your 20-20-20 vision break!");
+        }
+    </script>
+</body>
+</html>

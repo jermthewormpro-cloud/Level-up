@@ -3,114 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level Up | Sidebar Edition</title>
+    <title>Level Up</title>
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0d0d0d; color: white; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0d0d0d; color: white; margin: 0; overflow-x: hidden; }
 
-        /* --- LOGIN SCREEN (IMG_1936 Style) --- */
-        #login-container { width: 350px; text-align: center; }
+        /* --- LOGIN SCREEN --- */
+        #login-screen { 
+            height: 100vh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; text-align: center;
+        }
         .header-text { color: #00ff88; font-size: 1.6rem; font-weight: bold; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
-        .login-card { background-color: #1a1a1a; padding: 30px; border-radius: 12px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .login-card { background-color: #1a1a1a; padding: 30px; border-radius: 12px; border: 1px solid #333; width: 350px; }
         .input-box { background: #252525; border: 1px solid #444; border-radius: 6px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; }
         .input-box input { background: transparent; border: none; color: white; margin-left: 10px; outline: none; width: 100%; }
         .btn-green { background-color: #00ff88; color: #121212; border: none; width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-blue { background-color: #00d4ff; color: #121212; border: none; width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-        /* --- DASHBOARD --- */
-        #main-app { display: none; width: 100%; height: 100%; position: relative; }
-        .dashboard-container { width: 380px; margin: auto; margin-top: 100px; background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; }
-        
+        /* --- MAIN DASHBOARD --- */
+        #main-app { display: none; padding-top: 60px; }
+        .section { width: 90%; max-width: 400px; margin: 20px auto; background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; position: relative; }
+
+        /* LOCK SCREEN OVERLAY */
+        #account-lock {
+            background: rgba(0,0,0,0.9); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px;
+        }
+
         .stats-box { display: flex; justify-content: space-around; background: #252525; padding: 15px; border-radius: 10px; margin: 15px 0; font-weight: bold; }
         .xp-container { background: #333; height: 12px; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
         #xp-bar { background: linear-gradient(90deg, #00ff88, #00d4ff); width: 0%; height: 100%; transition: width 0.4s; }
-        .task-btn { background: #333; color: white; border: 1px solid #444; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
-
-        /* --- SIDEBAR MENU --- */
-        .menu-icon { position: absolute; top: 20px; left: 20px; font-size: 1.5rem; cursor: pointer; z-index: 100; color: #00ff88; }
         
-        #sidebar { 
-            position: fixed; top: 0; left: -300px; width: 280px; height: 100%; 
-            background: #111; border-right: 1px solid #333; transition: 0.3s; padding: 60px 20px; z-index: 99; 
-        }
-        #sidebar.active { left: 0; }
-        .sidebar-content h3 { color: #ff4444; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .sidebar-content p { font-size: 0.85rem; color: #ccc; line-height: 1.5; }
+        h2 { color: #00ff88; font-size: 1.2rem; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .task-btn { background: #333; color: white; border: 1px solid #444; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; font-weight: bold; }
 
-        /* --- PARENT VIEW --- */
-        #parent-view { display: none; width: 380px; margin: auto; margin-top: 100px; }
+        /* SIDEBAR */
+        .menu-icon { position: fixed; top: 20px; left: 20px; font-size: 1rem; cursor: pointer; z-index: 100; color: #00ff88; background: #1a1a1a; padding: 8px 15px; border-radius: 5px; border: 1px solid #333; }
+        #sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #111; border-right: 1px solid #333; transition: 0.3s; padding: 80px 20px; z-index: 99; }
+        #sidebar.active { left: 0; }
+        .sidebar-item { background: #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #00d4ff; }
+        .parent-btn { background: #00d4ff; color: black; border: none; padding: 10px; width: 100%; border-radius: 5px; margin-top: 10px; font-weight: bold; cursor: pointer; }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; text-align: center; }
+        .calendar-grid div { font-size: 0.7rem; color: #666; }
+        .day-active { color: #00ff88 !important; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="login-container">
+    <div id="login-screen">
         <div class="header-text">🎮 Level Up Your Day</div>
         <div class="login-card">
             <div style="margin-bottom: 15px;">👤 Player Login</div>
             <div class="input-box">📧 <input type="email" placeholder="Email Address"></div>
             <div class="input-box">🔒 <input type="password" placeholder="Password"></div>
             <button class="btn-green" onclick="enterApp('student')">LOG IN</button>
-            <button class="btn-blue" onclick="enterApp('parent')">PARENT PORTAL</button>
         </div>
     </div>
 
-    <div id="main-app">
-        <div class="menu-icon" onclick="toggleSidebar()">☰</div>
-
-        <div id="sidebar">
-            <div class="sidebar-content">
-                <h3>👁️ VISION HUB</h3>
-                <p><strong>20-20-20 Rule:</strong> Prevent digital eye strain by looking 20 feet away for 20 seconds every 20 minutes.</p>
-                <p><strong>Science:</strong> Gaming improves decision-making speed, but only when your eyes are rested!</p>
-                <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
-                <p style="cursor:pointer; color:#888;" onclick="location.reload()">Logout</p>
-            </div>
+    <div id="sidebar">
+        <div class="sidebar-item">
+            <h3>🛡️ Parent Portal</h3>
+            <button class="parent-btn" onclick="enterApp('parent')">OPEN PARENT VIEW</button>
         </div>
+        <div class="sidebar-item">
+            <h3>👁️ Vision Hub</h3>
+            <p style="font-size: 0.75rem; color: #ccc;">20-20-20 Rule Active.</p>
+        </div>
+        <p style="text-align:center; color:#555; cursor:pointer; font-size:0.8rem; margin-top: 40px;" onclick="location.reload()">Logout</p>
+    </div>
 
-        <div id="student-view" class="dashboard-container">
-            <h2 style="color:#00ff88; text-align:center; margin:0;">DASHBOARD</h2>
+    <div id="main-app">
+        <div class="menu-icon" onclick="toggleSidebar()">☰ MENU</div>
+
+        <div class="section">
+            <div id="account-lock">
+                <div style="font-size: 3rem;">🔒</div>
+                <h3 style="color: #ff4444;">Account Locked</h3>
+                <p style="font-size: 0.8rem; color: #888;">Connect a parent account to begin.</p>
+            </div>
+
+            <h2 id="dash-title">STUDENT DASHBOARD</h2>
             <div class="stats-box">
-                <div>LEVEL <span id="lvl-display" style="color:#00d4ff">1</span></div>
+                <div>LVL <span id="lvl-display" style="color:#00ff88">1</span></div>
                 <div>XP <span id="xp-display" style="color:#00d4ff">0</span>/100</div>
             </div>
             <div class="xp-container"><div id="xp-bar"></div></div>
-            <button class="task-btn" onclick="addXP(30)">📚 Study Session (+30 XP)</button>
-            <button class="task-btn" onclick="addXP(20)">📝 Homework (+20 XP)</button>
-            <button class="task-btn" style="background:#00d4ff; color:black; border:none;" onclick="alert('AI: Great job! Your concentration levels are peaking.')">🤖 ASK AI</button>
+            
+            <div id="student-actions">
+                <button class="task-btn" onclick="addXP(30)">📚 Study Session (+30 XP)</button>
+                <button class="task-btn" onclick="addXP(20)">📝 Homework (+20 XP)</button>
+            </div>
+
+            <div id="parent-actions" style="display:none;">
+                <button id="connect-btn" class="btn-green" onclick="connectAccount()">🔗 CONNECT TO STUDENT ACCOUNT</button>
+                <button id="approve-btn" class="btn-green" style="display:none; background:#00d4ff;" onclick="alert('Reward Approved!')">APPROVE REWARD</button>
+            </div>
         </div>
 
-        <div id="parent-view" class="dashboard-container">
-            <h2 style="color:#00d4ff; text-align:center; margin:0;">PARENT PORTAL</h2>
-            <div style="background:#252525; padding:10px; border-radius:5px; margin-top:20px;">
-                <p style="font-size:0.8rem;">✅ Task Log: Study Session (+30 XP)</p>
-                <p style="font-size:0.8rem;">⏳ Waiting for Approval: Game Reward</p>
+        <div class="section">
+            <h2>WEEKLY CALENDAR</h2>
+            <div class="calendar-grid">
+                <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+                <div class="day-active">●</div><div class="day-active">●</div><div class="day-active">●</div><div>○</div><div>○</div><div>○</div><div>○</div>
             </div>
-            <button class="btn-green" style="margin-top:10px;" onclick="alert('Reward Approved!')">APPROVE</button>
+        </div>
+
+        <div class="section">
+            <h2>OUR MISSION</h2>
+            <p style="font-size: 0.85rem; color: #ccc;">Turning real-world effort into in-game progress.</p>
+        </div>
+
+        <div class="section">
+            <h2>HISTORY</h2>
+            <p style="font-size: 0.8rem; color: #666;">No recent activity found.</p>
         </div>
     </div>
 
     <script>
         let xp = 0; let lvl = 1;
+        let isConnected = false;
 
         function enterApp(role) {
-            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
-            if(role === 'student') {
-                document.getElementById('student-view').style.display = 'block';
-                document.getElementById('parent-view').style.display = 'none';
+            document.getElementById('sidebar').classList.remove('active');
+
+            if (role === 'parent') {
+                document.getElementById('account-lock').style.display = 'none';
+                document.getElementById('dash-title').innerText = "PARENT CONTROL";
+                document.getElementById('student-actions').style.display = 'none';
+                document.getElementById('parent-actions').style.display = 'block';
             } else {
-                document.getElementById('student-view').style.display = 'none';
-                document.getElementById('parent-view').style.display = 'block';
+                document.getElementById('dash-title').innerText = "STUDENT DASHBOARD";
+                document.getElementById('student-actions').style.display = 'block';
+                document.getElementById('parent-actions').style.display = 'none';
+                document.getElementById('account-lock').style.display = isConnected ? 'none' : 'flex';
             }
         }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
+        function connectAccount() {
+            isConnected = true;
+            document.getElementById('connect-btn').style.display = 'none';
+            document.getElementById('approve-btn').style.display = 'block';
+            alert("Account Connected!");
         }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
         function addXP(val) {
             xp += val;
-            if (xp >= 100) { lvl++; xp -= 100; alert("LEVEL UP!"); }
+            if (xp >= 100) { lvl++; xp -= 100; alert("Level Up!"); }
             document.getElementById('xp-display').innerText = xp;
             document.getElementById('lvl-display').innerText = lvl;
             document.getElementById('xp-bar').style.width = xp + "%";

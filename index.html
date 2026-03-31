@@ -9,172 +9,164 @@
         :root {
             --primary: #00ff88;
             --accent: #00d4ff;
-            --ai-purple: #a855f7;
-            --danger: #ff4444;
             --bg: #0d0d0d;
             --card: #1a1a1a;
             --border: #333;
+            --danger: #ff4444;
         }
 
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; margin: 0; overflow: hidden; }
-        h1, h2, h3, h4, .player-name, .nav-btn { font-family: 'Orbitron', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; margin: 0; display: flex; justify-content: center; }
+
+        .container { width: 100%; max-width: 450px; padding: 20px; min-height: 100vh; }
 
         /* --- LOGIN SCREEN --- */
-        #login-screen { 
-            height: 100vh; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; background: #000;
-            position: fixed; width: 100%; top: 0; left: 0; z-index: 1000;
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center;
         }
-        .login-card { background: var(--card); padding: 30px; border-radius: 20px; width: 340px; border: 1px solid var(--border); text-align: center; }
+        .login-card { background: var(--card); padding: 30px; border-radius: 20px; width: 320px; border: 1px solid var(--border); text-align: center; }
 
-        /* --- DASHBOARD ELEMENTS --- */
-        .menu-icon { position: fixed; top: 20px; left: 20px; font-size: 1rem; cursor: pointer; z-index: 100; color: var(--primary); background: var(--card); padding: 12px 18px; border-radius: 8px; border: 1px solid var(--border); }
-        #sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #111; border-right: 1px solid var(--border); transition: 0.4s ease; padding: 80px 20px; z-index: 101; overflow-y: auto; }
-        #sidebar.active { left: 0; }
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; }
+        /* --- SIDEBAR --- */
+        #sidebar {
+            position: fixed; top: 0; right: -280px; width: 260px; height: 100%;
+            background: #111; border-left: 1px solid var(--border);
+            transition: 0.3s ease; z-index: 2000; padding: 25px;
+        }
+        #sidebar.open { right: 0; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1999; }
         .sidebar-overlay.active { display: block; }
-        
-        .nav-btn { background: var(--card); color: white; border: 1px solid var(--border); padding: 15px; border-radius: 12px; width: 100%; margin-bottom: 12px; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 10px; }
-        .nav-btn.active-nav { border-color: var(--primary); background: #222; }
 
-        #main-container { display: none; height: 100vh; padding: 90px 20px 20px 20px; overflow-y: auto; }
-        .page { display: none; max-width: 500px; margin: 0 auto; padding-bottom: 40px; }
+        /* --- NAVIGATION --- */
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .nav-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+        .nav-btn {
+            flex: 1; background: var(--card); border: 1px solid var(--border);
+            color: #888; padding: 12px; border-radius: 10px; cursor: pointer;
+            font-family: 'Orbitron'; font-size: 0.7rem; transition: 0.2s;
+        }
+        .nav-btn.active { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 10px rgba(0,255,136,0.2); }
+
+        /* --- CARDS & UI --- */
+        .card { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .page { display: none; }
         .page.active { display: block; }
-        .stat-card { background: var(--card); border-radius: 24px; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; overflow: hidden; }
 
-        /* --- DASHBOARD UI --- */
-        .avatar { width: 60px; height: 60px; background: linear-gradient(45deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid #fff; }
-        .circle-wrap { width: 150px; height: 150px; margin: 0 auto 15px auto; position: relative; display: flex; align-items: center; justify-content: center; }
-        svg { transform: rotate(-90deg); position: absolute; }
-        circle { fill: none; stroke-width: 10; stroke-linecap: round; }
-        .fg-circle { stroke: var(--primary); stroke-dasharray: 440; stroke-dashoffset: 440; transition: 1s ease; }
-        #account-lock { background: rgba(0,0,0,0.98); position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .stats-grid { display: flex; justify-content: space-around; text-align: center; }
+        .stat-val { font-size: 1.5rem; font-family: 'Orbitron'; color: var(--primary); display: block; }
 
-        /* --- INPUTS/BUTTONS --- */
-        input { background: #252525; border: 1px solid #444; color: white; padding: 12px; border-radius: 10px; width: 100%; outline: none; margin-bottom: 12px; }
-        .btn-main { background: var(--primary); border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; width: 100%; color: #000; }
-        .btn-parent { background: var(--accent); }
+        .xp-bar-bg { background: #333; height: 12px; border-radius: 10px; margin: 15px 0 5px 0; overflow: hidden; }
+        #xp-fill { background: var(--primary); height: 100%; width: 0%; transition: 0.5s ease; }
+
+        .mission-item {
+            background: #222; padding: 15px; border-radius: 12px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* --- BUTTONS & INPUTS --- */
+        input {
+            width: 100%; padding: 12px; background: #252525; border: 1px solid #444;
+            color: white; border-radius: 10px; margin-bottom: 12px; outline: none;
+        }
+        .btn-main { background: var(--primary); border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; }
+        .btn-side { background: var(--accent); border: none; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.7rem; }
+        .menu-trigger { background: var(--card); border: 1px solid var(--border); color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <h1 style="color:var(--primary); margin-bottom: 20px;">LEVEL UP</h1>
         <div class="login-card">
-            <h3 style="margin-top:0; font-size: 0.9rem; color: #888;">SIGN IN</h3>
-            <input type="email" id="login-email" placeholder="Email Address">
+            <h1 style="font-family:'Orbitron'; color:var(--primary);">LEVEL UP</h1>
+            <input type="email" id="login-email" placeholder="Email">
             <input type="password" id="login-pass" placeholder="Password">
             <button onclick="handleLogin()" class="btn-main">LOG IN</button>
-            <p style="font-size: 0.7rem; color: #555; margin-top: 15px;">New user? Enter your details to create an account.</p>
         </div>
     </div>
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div id="sidebar">
-        <button class="nav-btn active-nav" id="nav-home" onclick="showPage('home-page')">🏠 Dashboard</button>
-        <button class="nav-btn" id="nav-vision" onclick="showPage('vision-page')">🤖 Vision AI</button>
-        <button class="nav-btn" id="nav-settings" onclick="showPage('settings-page')">⚙️ Settings</button>
+        <h3 style="font-family:'Orbitron';">SETTINGS</h3>
+        <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
+        <p style="font-size: 0.7rem; color: #666;">PARENT PORTAL</p>
+        <button class="btn-side" onclick="parentPortal()">ACCESS PORTAL</button>
+        <button class="btn-side" style="background:transparent; border:1px solid #444; color:white;" onclick="changePin()">CHANGE PIN</button>
         
-        <div style="margin-top:30px; padding-top:20px; border-top:1px solid #333;">
-            <p style="font-size: 0.6rem; color: #555;">PARENT PORTAL</p>
-            <div style="background:#1a1a1a; padding:15px; border-radius:10px; border:1px solid var(--accent);">
-                <p id="conn-status" style="font-size:0.75rem; margin-bottom:10px;">Status: <b id="status-text" style="color:var(--danger)">Locked</b></p>
-                <button id="connect-btn" onclick="secureAction('unlock')" class="btn-main btn-parent" style="font-size:0.7rem;">AUTHORIZE SESSION</button>
-                <button id="disconnect-btn" onclick="parentLock()" class="btn-main" style="display:none; background:#444; color:white; font-size:0.7rem;">LOCK APP</button>
-                <button onclick="secureAction('settings')" class="btn-main" style="margin-top:10px; background:transparent; border:1px solid #444; color:#888; font-size:0.6rem;">PARENT SETTINGS</button>
-            </div>
-        </div>
-        <button onclick="logout()" style="margin-top: 20px; background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 0.8rem; font-family: 'Orbitron';">LOG OUT</button>
+        <button onclick="logout()" style="margin-top: 40px; background:none; border:none; color:var(--danger); cursor:pointer; font-family:'Orbitron'; width:100%; text-align:left;">LOG OUT</button>
     </div>
 
-    <div id="main-container">
-        <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+    <div class="container" id="main-app" style="display:none;">
+        <div class="header-row">
+            <h1 style="font-family:'Orbitron'; font-size: 1.2rem; margin:0;">LEVEL UP</h1>
+            <button class="menu-trigger" onclick="toggleSidebar()">⚙️</button>
+        </div>
 
-        <div id="home-page" class="page active">
-            <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
-                <div class="avatar">👤</div>
-                <div><div class="player-name" id="display-name">Loading...</div><div style="color:var(--primary); font-size:0.7rem; font-weight:bold;">LVL 1 GAMER</div></div>
-            </div>
-            
-            <div class="stat-card">
-                <div id="account-lock">🔒 <h3 style="color:var(--danger); margin:5px;">LOCKED</h3><p style="font-size:0.7rem; color:#666;">Requires Parent PIN</p></div>
-                <div class="circle-wrap">
-                    <svg width="150" height="150"><circle cx="75" cy="75" r="70" stroke="#252525"/><circle id="prog-circle" class="fg-circle" cx="75" cy="75" r="70"/></svg>
-                    <div style="position:absolute; text-align:center;"><span id="current-mins" style="color:var(--primary); font-size:1.5rem; font-weight:bold;">0</span><br><span id="goal-display" style="font-size:0.6rem; color:#888;">/ 60 MINS</span></div>
+        <div class="nav-bar">
+            <button class="nav-btn active" id="btn-dash" onclick="showPage('dash')">DASH</button>
+            <button class="nav-btn" id="btn-cal" onclick="showPage('cal')">CAL</button>
+            <button class="nav-btn" id="btn-mission" onclick="showPage('mission')">MISSION</button>
+        </div>
+
+        <h2 id="welcome-user" style="margin-top:0; font-size: 1.5rem;">Welcome, Player</h2>
+
+        <div id="page-dash" class="page active">
+            <div class="card">
+                <h3>⭐ Stats</h3>
+                <div class="stats-grid">
+                    <div><span class="stat-val" id="lvl-display">1</span>Rank</div>
+                    <div><span class="stat-val" id="time-display">0m</span>Earned</div>
                 </div>
-                <div style="display:flex; gap:10px;"><input type="number" id="play-input" placeholder="Mins"><button onclick="logTime()" class="btn-main" style="width:80px;">LOG</button></div>
+            </div>
+            <div class="card">
+                <h3>🕒 Log Playtime</h3>
+                <input type="number" id="play-input" placeholder="Minutes used">
+                <button class="btn-main" onclick="logTime()">LOG TIME</button>
             </div>
         </div>
 
-        <div id="vision-page" class="page">
-            <h2 style="color:var(--ai-purple); text-align:center;">VISION AI</h2>
-            <div id="chat-box" style="height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:10px; background:#111; border-radius:15px;">
-                <div style="background:#222; padding:10px; border-radius:10px; border-left:3px solid var(--ai-purple); font-size:0.8rem;">Ready for homework help?</div>
+        <div id="page-mission" class="page">
+            <div class="card">
+                <h3>⚔️ Missions</h3>
+                <div class="mission-item">
+                    <p style="margin:0;"><strong>Math Destroyer</strong><br><small>+25 XP | +15m Time</small></p>
+                    <button class="btn-main" style="width:70px; padding:8px; font-size:0.6rem;" onclick="completeMission(25, 15)">DONE</button>
+                </div>
+                <div class="mission-item">
+                    <p style="margin:0;"><strong>Scholar</strong><br><small>+40 XP | +20m Time</small></p>
+                    <button class="btn-main" style="width:70px; padding:8px; font-size:0.6rem;" onclick="completeMission(40, 20)">DONE</button>
+                </div>
             </div>
-            <div style="display:flex; gap:10px; margin-top:15px;"><input type="text" id="chat-input" placeholder="Type here..."><button onclick="sendMessage()" class="btn-main" style="background:var(--ai-purple); width:80px; color:white;">ASK</button></div>
+            <div class="card">
+                <h3>Progress</h3>
+                <div class="xp-bar-bg"><div id="xp-fill"></div></div>
+                <p id="xp-text" style="text-align:center; font-size:0.7rem; color:#888;">0 / 100 XP</p>
+            </div>
         </div>
 
-        <div id="settings-page" class="page">
-            <h2>SETTINGS</h2>
-            <div class="stat-card">
-                <label style="font-size:0.7rem; color:#888;">PLAYER NAME</label>
-                <input type="text" id="new-name" placeholder="Update name...">
-                <button onclick="updateName()" class="btn-main">SAVE NAME</button>
+        <div id="page-cal" class="page">
+            <div class="card" style="text-align:center;">
+                <h3>📅 History</h3>
+                <p style="color:#555;">Calendar tracking coming soon.</p>
             </div>
-        </div>
-
-        <div id="parent-page" class="page">
-            <h2 style="color:var(--accent);">PARENT PORTAL</h2>
-            <div class="stat-card">
-                <label style="font-size:0.7rem; color:#888;">DAILY MINUTE LIMIT</label>
-                <input type="number" id="new-goal" placeholder="e.g. 120">
-                <button onclick="updateGoal()" class="btn-main btn-parent">UPDATE LIMIT</button>
-            </div>
-            <div class="stat-card">
-                <label style="font-size:0.7rem; color:#888;">CHANGE SECURITY PIN</label>
-                <input type="password" id="new-pin" placeholder="New 4-digit PIN">
-                <button onclick="updatePin()" class="btn-main btn-parent">UPDATE PIN</button>
-            </div>
-            <button onclick="showPage('home-page')" class="btn-main" style="background:#333; color:white;">EXIT PORTAL</button>
         </div>
     </div>
 
     <script>
-        // LOAD SAVED DATA
-        let totalLogged = 0;
-        let currentGoal = parseInt(localStorage.getItem('goal')) || 60;
-        let parentPin = localStorage.getItem('pin') || "1234";
-        let playerName = localStorage.getItem('playerName') || "Player_One";
-        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let xp = parseInt(localStorage.getItem('xp')) || 0;
+        let lvl = parseInt(localStorage.getItem('lvl')) || 1;
+        let earnedTime = parseInt(localStorage.getItem('earnedTime')) || 0;
 
-        window.onload = function() {
-            if(isLoggedIn) {
+        window.onload = () => {
+            if(localStorage.getItem('isLoggedIn') === 'true') {
                 document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-container').style.display = 'block';
+                document.getElementById('main-app').style.display = 'block';
             }
-            document.getElementById('display-name').innerText = playerName;
-            document.getElementById('goal-display').innerText = "/ " + currentGoal + " MINS";
-            updateCircle();
+            updateUI();
         };
 
         function handleLogin() {
-            let email = document.getElementById('login-email').value;
-            let pass = document.getElementById('login-pass').value;
-
-            if(email && pass) {
-                // In a simple web version, we use email to derive a name if no name is set
-                if(playerName === "Player_One") {
-                    playerName = email.split('@')[0];
-                    localStorage.setItem('playerName', playerName);
-                }
-                localStorage.setItem('isLoggedIn', 'true');
-                document.getElementById('display-name').innerText = playerName;
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-container').style.display = 'block';
-            } else {
-                alert("Please enter both Email and Password.");
-            }
+            localStorage.setItem('isLoggedIn', 'true');
+            location.reload();
         }
 
         function logout() {
@@ -183,94 +175,65 @@
         }
 
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebar').classList.toggle('open');
             document.querySelector('.sidebar-overlay').classList.toggle('active');
         }
 
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            toggleSidebar();
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('btn-' + pageId).classList.add('active');
         }
 
-        function secureAction(action) {
-            let check = prompt("Enter Parent PIN:");
-            if(check === parentPin) {
-                if(action === 'unlock') {
-                    document.getElementById('account-lock').style.display = 'none';
-                    document.getElementById('status-text').innerHTML = "Unlocked";
-                    document.getElementById('status-text').style.color = "var(--primary)";
-                    document.getElementById('connect-btn').style.display = 'none';
-                    document.getElementById('disconnect-btn').style.display = 'block';
-                } else if(action === 'settings') {
-                    showPage('parent-page');
-                }
-            } else { alert("Incorrect PIN!"); }
-        }
-
-        function parentLock() {
-            document.getElementById('account-lock').style.display = 'flex';
-            document.getElementById('status-text').innerHTML = "Locked";
-            document.getElementById('status-text').style.color = "var(--danger)";
-            document.getElementById('connect-btn').style.display = 'block';
-            document.getElementById('disconnect-btn').style.display = 'none';
-        }
-
-        function updateName() {
-            let n = document.getElementById('new-name').value;
-            if(n) { 
-                playerName = n;
-                localStorage.setItem('playerName', n);
-                document.getElementById('display-name').innerText = n; 
-                alert("Profile Updated!"); 
+        function completeMission(xpGain, timeGain) {
+            xp += xpGain;
+            earnedTime += timeGain;
+            if(xp >= 100) {
+                xp -= 100;
+                lvl++;
+                alert("Level Up! You are now Level " + lvl);
             }
-        }
-
-        function updateGoal() {
-            let g = document.getElementById('new-goal').value;
-            if(g > 0) {
-                currentGoal = g;
-                localStorage.setItem('goal', g);
-                document.getElementById('goal-display').innerText = "/ " + g + " MINS";
-                updateCircle();
-                alert("Daily Goal Updated!");
-            }
-        }
-
-        function updatePin() {
-            let p = document.getElementById('new-pin').value;
-            if(p.length >= 4) { 
-                parentPin = p; 
-                localStorage.setItem('pin', p);
-                alert("PIN Securely Saved!"); 
-            }
+            save();
+            updateUI();
         }
 
         function logTime() {
-            let v = parseInt(document.getElementById('play-input').value);
-            if(v > 0) {
-                totalLogged += v;
-                document.getElementById('current-mins').innerText = totalLogged;
-                updateCircle();
+            let val = document.getElementById('play-input').value;
+            if(val > 0) {
+                alert("Logged " + val + " minutes.");
                 document.getElementById('play-input').value = "";
             }
         }
 
-        function updateCircle() {
-            let offset = 440 - (440 * (Math.min(totalLogged, currentGoal) / currentGoal));
-            document.getElementById('prog-circle').style.strokeDashoffset = offset;
+        function save() {
+            localStorage.setItem('xp', xp);
+            localStorage.setItem('lvl', lvl);
+            localStorage.setItem('earnedTime', earnedTime);
         }
 
-        function sendMessage() {
-            let i = document.getElementById('chat-input');
-            let b = document.getElementById('chat-box');
-            if(i.value) {
-                b.innerHTML += `<div style="align-self:flex-end; background:var(--ai-purple); padding:8px; border-radius:10px; font-size:0.8rem;">${i.value}</div>`;
-                i.value = "";
-                setTimeout(() => { 
-                    b.innerHTML += `<div style="background:#222; padding:8px; border-radius:10px; font-size:0.8rem;">Vision is analyzing...</div>`; 
-                    b.scrollTop = b.scrollHeight; 
-                }, 600);
+        function updateUI() {
+            document.getElementById('xp-fill').style.width = xp + "%";
+            document.getElementById('xp-text').innerText = xp + " / 100 XP";
+            document.getElementById('lvl-display').innerText = lvl;
+            document.getElementById('time-display').innerText = earnedTime + "m";
+        }
+
+        function parentPortal() {
+            let pin = prompt("Enter Parent PIN:");
+            if(pin === (localStorage.getItem('parentPin') || "1234")) {
+                alert("Parent Portal Unlocked.");
+            } else { alert("Wrong PIN."); }
+        }
+
+        function changePin() {
+            let old = prompt("Current PIN:");
+            if(old === (localStorage.getItem('parentPin') || "1234")) {
+                let n = prompt("New 4-digit PIN:");
+                if(n.length === 4) {
+                    localStorage.setItem('parentPin', n);
+                    alert("PIN Changed.");
+                }
             }
         }
     </script>

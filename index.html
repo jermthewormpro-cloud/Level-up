@@ -4,159 +4,206 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0d0d0d; color: white; margin: 0; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #0d0d0d; color: white; margin: 0; overflow-x: hidden; }
+        h1, h2, h3, .player-name { font-family: 'Orbitron', sans-serif; }
 
-        /* --- LOGIN SCREEN --- */
-        #login-screen { 
-            height: 100vh; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; text-align: center;
-        }
-        .header-text { color: #00ff88; font-size: 1.6rem; font-weight: bold; margin-bottom: 5px; text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
-        .login-card { background-color: #1a1a1a; padding: 30px; border-radius: 12px; border: 1px solid #333; width: 350px; }
-        .input-box { background: #252525; border: 1px solid #444; border-radius: 6px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; }
-        .input-box input { background: transparent; border: none; color: white; margin-left: 10px; outline: none; width: 100%; }
-        .btn-green { background-color: #00ff88; color: #121212; border: none; width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        /* --- MAIN DASHBOARD --- */
-        #main-app { display: none; padding-top: 60px; }
-        .section { width: 90%; max-width: 400px; margin: 20px auto; background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; position: relative; }
-
-        /* LOCK SCREEN OVERLAY */
-        #account-lock {
-            background: rgba(0,0,0,0.9); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10; border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; padding: 20px;
-        }
-
-        .stats-box { display: flex; justify-content: space-around; background: #252525; padding: 15px; border-radius: 10px; margin: 15px 0; font-weight: bold; }
-        .xp-container { background: #333; height: 12px; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
-        #xp-bar { background: linear-gradient(90deg, #00ff88, #00d4ff); width: 0%; height: 100%; transition: width 0.4s; }
+        /* --- NAVIGATION --- */
+        .menu-icon { position: fixed; top: 20px; left: 20px; font-size: 1rem; cursor: pointer; z-index: 100; color: #00ff88; background: #1a1a1a; padding: 10px 15px; border-radius: 8px; border: 1px solid #333; }
         
-        h2 { color: #00ff88; font-size: 1.2rem; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .task-btn { background: #333; color: white; border: 1px solid #444; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; font-weight: bold; }
-
-        /* SIDEBAR */
-        .menu-icon { position: fixed; top: 20px; left: 20px; font-size: 1rem; cursor: pointer; z-index: 100; color: #00ff88; background: #1a1a1a; padding: 8px 15px; border-radius: 5px; border: 1px solid #333; }
-        #sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #111; border-right: 1px solid #333; transition: 0.3s; padding: 80px 20px; z-index: 99; }
+        #sidebar { 
+            position: fixed; top: 0; left: -320px; width: 300px; height: 100%; 
+            background: #111; border-right: 1px solid #333; transition: 0.3s ease; 
+            padding: 80px 20px; z-index: 101; 
+        }
         #sidebar.active { left: 0; }
-        .sidebar-item { background: #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #00d4ff; }
-        .parent-btn { background: #00d4ff; color: black; border: none; padding: 10px; width: 100%; border-radius: 5px; margin-top: 10px; font-weight: bold; cursor: pointer; }
 
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; text-align: center; }
-        .calendar-grid div { font-size: 0.7rem; color: #666; }
-        .day-active { color: #00ff88 !important; font-weight: bold; }
+        .nav-btn { 
+            background: #1a1a1a; color: white; border: 1px solid #333; padding: 15px; 
+            border-radius: 10px; width: 100%; margin-bottom: 12px; cursor: pointer; 
+            text-align: left; font-family: 'Orbitron'; font-size: 0.8rem; display: flex; 
+            align-items: center; gap: 10px; transition: 0.2s;
+        }
+        .nav-btn:hover { border-color: #00ff88; background: #222; }
+
+        /* --- PARENT CONTROL SECTION IN SIDEBAR --- */
+        .sidebar-admin-box {
+            margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;
+        }
+        .parent-ctrl-card {
+            background: #1a1a1a; border: 1px solid #00d4ff; padding: 15px; border-radius: 10px;
+        }
+
+        /* --- APP PAGES --- */
+        #main-container { display: none; padding: 80px 20px 50px 20px; }
+        .page { display: none; max-width: 450px; margin: 0 auto; }
+        .active { display: block; }
+
+        /* --- HOME PAGE COMPONENTS --- */
+        .welcome-box { margin-bottom: 30px; }
+        .player-name { color: #00ff88; font-size: 1.4rem; margin: 5px 0; }
+        
+        .stat-card { background: #1a1a1a; border-radius: 20px; padding: 25px; border: 1px solid #333; margin-bottom: 20px; position: relative; }
+        
+        /* Circular Progress */
+        .circle-wrap { width: 150px; height: 150px; margin: 0 auto 15px auto; position: relative; display: flex; align-items: center; justify-content: center; }
+        .circle-inner { font-family: 'Orbitron'; font-size: 1.2rem; text-align: center; }
+        .circle-inner span { font-size: 0.7rem; color: #888; display: block; }
+        
+        svg { transform: rotate(-90deg); position: absolute; top: 0; left: 0; }
+        circle { fill: none; stroke-width: 8; stroke-linecap: round; }
+        .bg-circle { stroke: #252525; }
+        .fg-circle { stroke: #00ff88; stroke-dasharray: 440; stroke-dashoffset: 440; transition: 0.8s ease-out; }
+
+        /* Accountability Lock Overlay */
+        #account-lock { 
+            background: rgba(0,0,0,0.97); position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%; z-index: 5; border-radius: 20px; 
+            display: flex; flex-direction: column; justify-content: center; 
+            align-items: center; text-align: center; padding: 20px; 
+        }
+
+        /* --- VISION PAGE --- */
+        .vision-timer { background: #000; border: 2px solid #ff4444; border-radius: 25px; padding: 40px 20px; text-align: center; margin-top: 20px; }
+        #v-time { font-size: 3.5rem; color: #ff4444; font-family: 'Orbitron'; margin-bottom: 20px; }
+
+        /* --- LOGIN --- */
+        #login-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #000; }
+        .login-card { background: #1a1a1a; padding: 40px; border-radius: 15px; border: 1px solid #333; width: 340px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <div class="header-text">🎮 Level Up Your Day</div>
+        <h1 style="color:#00ff88; font-size: 2rem; margin-bottom: 10px;">LEVEL UP</h1>
         <div class="login-card">
-            <div style="margin-bottom: 15px;">👤 Player Login</div>
-            <div class="input-box">📧 <input type="email" placeholder="Email Address"></div>
-            <div class="input-box">🔒 <input type="password" placeholder="Password"></div>
-            <button class="btn-green" onclick="enterApp('student')">LOG IN</button>
+            <input type="email" placeholder="Email" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #444; background:#222; color:white;">
+            <input type="password" placeholder="Password" style="width:100%; padding:12px; margin-bottom:20px; border-radius:8px; border:1px solid #444; background:#222; color:white;">
+            <button onclick="enterApp()" style="width:100%; padding:12px; border-radius:8px; border:none; background:#00ff88; font-weight:bold; cursor:pointer; font-family:'Orbitron';">LOGIN</button>
         </div>
     </div>
 
     <div id="sidebar">
-        <div class="sidebar-item">
-            <h3>🛡️ Parent Portal</h3>
-            <button class="parent-btn" onclick="enterApp('parent')">OPEN PARENT VIEW</button>
+        <button class="nav-btn" onclick="showPage('home-page')"><span>🏠</span> Home Dashboard</button>
+        <button class="nav-btn" onclick="showPage('vision-page')" style="color:#ff4444; border-color:#ff4444;"><span>👁️</span> Vision Tool</button>
+        
+        <div class="sidebar-admin-box">
+            <p style="font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Parental Control Panel</p>
+            <div class="parent-ctrl-card">
+                <p id="conn-status" style="font-size: 0.75rem; color: #888; margin-top: 0;">Status: <b>Disconnected</b></p>
+                <button id="connect-btn" onclick="parentConnect()" style="width:100%; background:#00d4ff; color:black; border:none; padding:10px; border-radius:6px; font-weight:bold; font-family:'Orbitron'; font-size:0.7rem; cursor:pointer;">CONNECT TO CHILD</button>
+                <button id="disconnect-btn" onclick="parentDisconnect()" style="display:none; width:100%; background:#444; color:white; border:none; padding:10px; border-radius:6px; font-weight:bold; font-family:'Orbitron'; font-size:0.7rem; cursor:pointer;">DISCONNECT</button>
+            </div>
         </div>
-        <div class="sidebar-item">
-            <h3>👁️ Vision Hub</h3>
-            <p style="font-size: 0.75rem; color: #ccc;">20-20-20 Rule Active.</p>
-        </div>
-        <p style="text-align:center; color:#555; cursor:pointer; font-size:0.8rem; margin-top: 40px;" onclick="location.reload()">Logout</p>
+
+        <p style="text-align:center; color:#333; font-size:0.7rem; margin-top:50px; cursor:pointer;" onclick="location.reload()">Logout Player</p>
     </div>
 
-    <div id="main-app">
+    <div id="main-container">
         <div class="menu-icon" onclick="toggleSidebar()">☰ MENU</div>
 
-        <div class="section">
-            <div id="account-lock">
-                <div style="font-size: 3rem;">🔒</div>
-                <h3 style="color: #ff4444;">Account Locked</h3>
-                <p style="font-size: 0.8rem; color: #888;">Connect a parent account to begin.</p>
+        <div id="home-page" class="page active">
+            <div class="welcome-box">
+                <span style="color:#888; font-size:0.9rem;">Welcome back,</span>
+                <div class="player-name">Player_One</div>
             </div>
 
-            <h2 id="dash-title">STUDENT DASHBOARD</h2>
-            <div class="stats-box">
-                <div>LVL <span id="lvl-display" style="color:#00ff88">1</span></div>
-                <div>XP <span id="xp-display" style="color:#00d4ff">0</span>/100</div>
-            </div>
-            <div class="xp-container"><div id="xp-bar"></div></div>
-            
-            <div id="student-actions">
-                <button class="task-btn" onclick="addXP(30)">📚 Study Session (+30 XP)</button>
-                <button class="task-btn" onclick="addXP(20)">📝 Homework (+20 XP)</button>
+            <div class="stat-card">
+                <div id="account-lock">
+                    <div style="font-size:2rem; margin-bottom:10px;">🔒</div>
+                    <h3 style="color:#ff4444; margin:0; font-size:1rem;">LOCKED</h3>
+                    <p style="font-size:0.7rem; color:#666;">Waiting for parent to connect...</p>
+                </div>
+
+                <div class="circle-wrap">
+                    <svg width="150" height="150">
+                        <circle class="bg-circle" cx="75" cy="75" r="70"></circle>
+                        <circle id="prog-circle" class="fg-circle" cx="75" cy="75" r="70"></circle>
+                    </svg>
+                    <div class="circle-inner">
+                        <span id="current-mins">0</span>
+                        <div style="color:#00ff88; font-size: 1.2rem;">/ 60</div>
+                        <span>MINUTES</span>
+                    </div>
+                </div>
+                
+                <div class="log-row" style="display:flex; gap:10px; margin-top:20px;">
+                    <input type="number" id="play-input" placeholder="Minutes" style="background:#252525; border:1px solid #444; color:white; padding:12px; border-radius:10px; flex:1; outline:none;">
+                    <button onclick="logTime()" style="background:#00ff88; color:black; border:none; padding:0 20px; border-radius:10px; font-weight:bold; cursor:pointer; font-family:'Orbitron';">LOG</button>
+                </div>
             </div>
 
-            <div id="parent-actions" style="display:none;">
-                <button id="connect-btn" class="btn-green" onclick="connectAccount()">🔗 CONNECT TO STUDENT ACCOUNT</button>
-                <button id="approve-btn" class="btn-green" style="display:none; background:#00d4ff;" onclick="alert('Reward Approved!')">APPROVE REWARD</button>
+            <div class="stat-card">
+                <h3>Weekly Activity</h3>
+                <p style="font-size:0.8rem; color:#444;">Activity tracking starts after connection.</p>
             </div>
         </div>
 
-        <div class="section">
-            <h2>WEEKLY CALENDAR</h2>
-            <div class="calendar-grid">
-                <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
-                <div class="day-active">●</div><div class="day-active">●</div><div class="day-active">●</div><div>○</div><div>○</div><div>○</div><div>○</div>
+        <div id="vision-page" class="page">
+            <h2 style="color:#ff4444; text-align:center;">Vision Health</h2>
+            <div class="vision-timer">
+                <div id="v-time">20:00</div>
+                <button style="background:#ff4444; color:white; border:none; padding:15px 30px; border-radius:10px; font-family:'Orbitron'; cursor:pointer; width:100%;">START FOCUS</button>
             </div>
-        </div>
-
-        <div class="section">
-            <h2>OUR MISSION</h2>
-            <p style="font-size: 0.85rem; color: #ccc;">Turning real-world effort into in-game progress.</p>
-        </div>
-
-        <div class="section">
-            <h2>HISTORY</h2>
-            <p style="font-size: 0.8rem; color: #666;">No recent activity found.</p>
+            <div class="stat-card" style="margin-top:20px; border-color:#ff4444;">
+                <h3>The 20-20-20 Rule</h3>
+                <p style="font-size:0.8rem; color:#888;">Every 20 minutes, look at something 20 feet away for 20 seconds. This prevents digital eye strain.</p>
+            </div>
         </div>
     </div>
 
     <script>
-        let xp = 0; let lvl = 1;
         let isConnected = false;
+        let totalLogged = 0;
 
-        function enterApp(role) {
+        function enterApp() {
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            document.getElementById('sidebar').classList.remove('active');
-
-            if (role === 'parent') {
-                document.getElementById('account-lock').style.display = 'none';
-                document.getElementById('dash-title').innerText = "PARENT CONTROL";
-                document.getElementById('student-actions').style.display = 'none';
-                document.getElementById('parent-actions').style.display = 'block';
-            } else {
-                document.getElementById('dash-title').innerText = "STUDENT DASHBOARD";
-                document.getElementById('student-actions').style.display = 'block';
-                document.getElementById('parent-actions').style.display = 'none';
-                document.getElementById('account-lock').style.display = isConnected ? 'none' : 'flex';
-            }
+            document.getElementById('main-container').style.display = 'block';
         }
 
-        function connectAccount() {
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            toggleSidebar();
+            window.scrollTo(0,0);
+        }
+
+        // --- PARENTAL CONTROL LOGIC ---
+        function parentConnect() {
             isConnected = true;
+            document.getElementById('account-lock').style.display = 'none';
+            document.getElementById('conn-status').innerHTML = "Status: <b style='color:#00ff88'>Connected</b>";
             document.getElementById('connect-btn').style.display = 'none';
-            document.getElementById('approve-btn').style.display = 'block';
-            alert("Account Connected!");
+            document.getElementById('disconnect-btn').style.display = 'block';
+            alert("Account Connected! Student can now log activity.");
         }
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function parentDisconnect() {
+            isConnected = false;
+            document.getElementById('account-lock').style.display = 'flex';
+            document.getElementById('conn-status').innerHTML = "Status: <b>Disconnected</b>";
+            document.getElementById('connect-btn').style.display = 'block';
+            document.getElementById('disconnect-btn').style.display = 'none';
+        }
 
-        function addXP(val) {
-            xp += val;
-            if (xp >= 100) { lvl++; xp -= 100; alert("Level Up!"); }
-            document.getElementById('xp-display').innerText = xp;
-            document.getElementById('lvl-display').innerText = lvl;
-            document.getElementById('xp-bar').style.width = xp + "%";
+        function logTime() {
+            let val = parseInt(document.getElementById('play-input').value);
+            if (val > 0) {
+                totalLogged += val;
+                document.getElementById('current-mins').innerText = totalLogged;
+                
+                // Circle Progress (max 60)
+                let offset = 440 - (440 * (Math.min(totalLogged, 60) / 60));
+                document.getElementById('prog-circle').style.strokeDashoffset = offset;
+                
+                document.getElementById('play-input').value = "";
+            }
         }
     </script>
 </body>

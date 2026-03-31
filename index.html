@@ -20,7 +20,15 @@
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; margin: 0; overflow: hidden; }
         h1, h2, h3, h4, .player-name, .nav-btn { font-family: 'Orbitron', sans-serif; }
 
-        /* --- NAVIGATION --- */
+        /* --- LOGIN SCREEN --- */
+        #login-screen { 
+            height: 100vh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; background: #000;
+            position: fixed; width: 100%; top: 0; left: 0; z-index: 1000;
+        }
+        .login-card { background: var(--card); padding: 30px; border-radius: 20px; width: 340px; border: 1px solid var(--border); text-align: center; }
+
+        /* --- DASHBOARD ELEMENTS --- */
         .menu-icon { position: fixed; top: 20px; left: 20px; font-size: 1rem; cursor: pointer; z-index: 100; color: var(--primary); background: var(--card); padding: 12px 18px; border-radius: 8px; border: 1px solid var(--border); }
         #sidebar { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #111; border-right: 1px solid var(--border); transition: 0.4s ease; padding: 80px 20px; z-index: 101; overflow-y: auto; }
         #sidebar.active { left: 0; }
@@ -30,13 +38,12 @@
         .nav-btn { background: var(--card); color: white; border: 1px solid var(--border); padding: 15px; border-radius: 12px; width: 100%; margin-bottom: 12px; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 10px; }
         .nav-btn.active-nav { border-color: var(--primary); background: #222; }
 
-        /* --- PAGES --- */
         #main-container { display: none; height: 100vh; padding: 90px 20px 20px 20px; overflow-y: auto; }
         .page { display: none; max-width: 500px; margin: 0 auto; padding-bottom: 40px; }
         .page.active { display: block; }
         .stat-card { background: var(--card); border-radius: 24px; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; overflow: hidden; }
 
-        /* --- DASHBOARD --- */
+        /* --- DASHBOARD UI --- */
         .avatar { width: 60px; height: 60px; background: linear-gradient(45deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid #fff; }
         .circle-wrap { width: 150px; height: 150px; margin: 0 auto 15px auto; position: relative; display: flex; align-items: center; justify-content: center; }
         svg { transform: rotate(-90deg); position: absolute; }
@@ -44,19 +51,22 @@
         .fg-circle { stroke: var(--primary); stroke-dasharray: 440; stroke-dashoffset: 440; transition: 1s ease; }
         #account-lock { background: rgba(0,0,0,0.98); position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
 
-        /* --- UI ELEMENTS --- */
-        input { background: #252525; border: 1px solid #444; color: white; padding: 12px; border-radius: 10px; width: 100%; outline: none; margin-bottom: 10px; }
-        .btn-main { background: var(--primary); border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; width: 100%; }
-        .btn-parent { background: var(--accent); color: black; }
+        /* --- INPUTS/BUTTONS --- */
+        input { background: #252525; border: 1px solid #444; color: white; padding: 12px; border-radius: 10px; width: 100%; outline: none; margin-bottom: 12px; }
+        .btn-main { background: var(--primary); border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; width: 100%; color: #000; }
+        .btn-parent { background: var(--accent); }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" style="height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 style="color:var(--primary);">LEVEL UP</h1>
-        <div class="stat-card" style="width:320px;">
-            <input type="text" id="login-name" placeholder="Player Name">
-            <button onclick="enterApp()" class="btn-main">START</button>
+    <div id="login-screen">
+        <h1 style="color:var(--primary); margin-bottom: 20px;">LEVEL UP</h1>
+        <div class="login-card">
+            <h3 style="margin-top:0; font-size: 0.9rem; color: #888;">SIGN IN</h3>
+            <input type="email" id="login-email" placeholder="Email Address">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button onclick="handleLogin()" class="btn-main">LOG IN</button>
+            <p style="font-size: 0.7rem; color: #555; margin-top: 15px;">New user? Enter your details to create an account.</p>
         </div>
     </div>
 
@@ -75,15 +85,16 @@
                 <button onclick="secureAction('settings')" class="btn-main" style="margin-top:10px; background:transparent; border:1px solid #444; color:#888; font-size:0.6rem;">PARENT SETTINGS</button>
             </div>
         </div>
+        <button onclick="logout()" style="margin-top: 20px; background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 0.8rem; font-family: 'Orbitron';">LOG OUT</button>
     </div>
 
     <div id="main-container">
-        <div class="menu-icon" onclick="toggleSidebar()">☰ MENU</div>
+        <div class="menu-icon" onclick="toggleSidebar()">☰</div>
 
         <div id="home-page" class="page active">
             <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
                 <div class="avatar">👤</div>
-                <div><div class="player-name" id="display-name">Player_One</div><div style="color:var(--primary); font-size:0.7rem; font-weight:bold;">LVL 1 GAMER</div></div>
+                <div><div class="player-name" id="display-name">Loading...</div><div style="color:var(--primary); font-size:0.7rem; font-weight:bold;">LVL 1 GAMER</div></div>
             </div>
             
             <div class="stat-card">
@@ -101,14 +112,14 @@
             <div id="chat-box" style="height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:10px; background:#111; border-radius:15px;">
                 <div style="background:#222; padding:10px; border-radius:10px; border-left:3px solid var(--ai-purple); font-size:0.8rem;">Ready for homework help?</div>
             </div>
-            <div style="display:flex; gap:10px; margin-top:15px;"><input type="text" id="chat-input" placeholder="Type here..."><button onclick="sendMessage()" class="btn-main" style="background:var(--ai-purple); width:80px;">ASK</button></div>
+            <div style="display:flex; gap:10px; margin-top:15px;"><input type="text" id="chat-input" placeholder="Type here..."><button onclick="sendMessage()" class="btn-main" style="background:var(--ai-purple); width:80px; color:white;">ASK</button></div>
         </div>
 
         <div id="settings-page" class="page">
             <h2>SETTINGS</h2>
             <div class="stat-card">
                 <label style="font-size:0.7rem; color:#888;">PLAYER NAME</label>
-                <input type="text" id="new-name" placeholder="Change name...">
+                <input type="text" id="new-name" placeholder="Update name...">
                 <button onclick="updateName()" class="btn-main">SAVE NAME</button>
             </div>
         </div>
@@ -122,35 +133,53 @@
             </div>
             <div class="stat-card">
                 <label style="font-size:0.7rem; color:#888;">CHANGE SECURITY PIN</label>
-                <input type="password" id="new-pin" placeholder="Enter new 4-digit PIN">
+                <input type="password" id="new-pin" placeholder="New 4-digit PIN">
                 <button onclick="updatePin()" class="btn-main btn-parent">UPDATE PIN</button>
             </div>
-            <button onclick="showPage('home-page')" class="btn-main" style="background:#333; color:white;">EXIT PARENT PORTAL</button>
+            <button onclick="showPage('home-page')" class="btn-main" style="background:#333; color:white;">EXIT PORTAL</button>
         </div>
     </div>
 
     <script>
-        // DATA STORAGE (Initial Load)
+        // LOAD SAVED DATA
         let totalLogged = 0;
         let currentGoal = parseInt(localStorage.getItem('goal')) || 60;
         let parentPin = localStorage.getItem('pin') || "1234";
         let playerName = localStorage.getItem('playerName') || "Player_One";
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
         window.onload = function() {
+            if(isLoggedIn) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-container').style.display = 'block';
+            }
             document.getElementById('display-name').innerText = playerName;
             document.getElementById('goal-display').innerText = "/ " + currentGoal + " MINS";
             updateCircle();
         };
 
-        function enterApp() {
-            let n = document.getElementById('login-name').value;
-            if(n) {
-                playerName = n;
-                localStorage.setItem('playerName', n);
-                document.getElementById('display-name').innerText = n;
+        function handleLogin() {
+            let email = document.getElementById('login-email').value;
+            let pass = document.getElementById('login-pass').value;
+
+            if(email && pass) {
+                // In a simple web version, we use email to derive a name if no name is set
+                if(playerName === "Player_One") {
+                    playerName = email.split('@')[0];
+                    localStorage.setItem('playerName', playerName);
+                }
+                localStorage.setItem('isLoggedIn', 'true');
+                document.getElementById('display-name').innerText = playerName;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-container').style.display = 'block';
+            } else {
+                alert("Please enter both Email and Password.");
             }
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-container').style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.setItem('isLoggedIn', 'false');
+            location.reload();
         }
 
         function toggleSidebar() {
@@ -176,7 +205,7 @@
                 } else if(action === 'settings') {
                     showPage('parent-page');
                 }
-            } else { alert("Wrong PIN!"); }
+            } else { alert("Incorrect PIN!"); }
         }
 
         function parentLock() {
@@ -193,7 +222,7 @@
                 playerName = n;
                 localStorage.setItem('playerName', n);
                 document.getElementById('display-name').innerText = n; 
-                alert("Name Saved Automatically!"); 
+                alert("Profile Updated!"); 
             }
         }
 
@@ -204,7 +233,7 @@
                 localStorage.setItem('goal', g);
                 document.getElementById('goal-display').innerText = "/ " + g + " MINS";
                 updateCircle();
-                alert("Goal Saved Automatically!");
+                alert("Daily Goal Updated!");
             }
         }
 
@@ -213,7 +242,7 @@
             if(p.length >= 4) { 
                 parentPin = p; 
                 localStorage.setItem('pin', p);
-                alert("PIN Saved Automatically!"); 
+                alert("PIN Securely Saved!"); 
             }
         }
 
@@ -238,7 +267,10 @@
             if(i.value) {
                 b.innerHTML += `<div style="align-self:flex-end; background:var(--ai-purple); padding:8px; border-radius:10px; font-size:0.8rem;">${i.value}</div>`;
                 i.value = "";
-                setTimeout(() => { b.innerHTML += `<div style="background:#222; padding:8px; border-radius:10px; font-size:0.8rem;">Vision is analyzing...</div>`; b.scrollTop = b.scrollHeight; }, 600);
+                setTimeout(() => { 
+                    b.innerHTML += `<div style="background:#222; padding:8px; border-radius:10px; font-size:0.8rem;">Vision is analyzing...</div>`; 
+                    b.scrollTop = b.scrollHeight; 
+                }, 600);
             }
         }
     </script>

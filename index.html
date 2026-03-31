@@ -14,6 +14,7 @@
             --card: #1a1a1a;
             --border: #333;
             --danger: #ff4444;
+            --success: #2ecc71;
         }
 
         * { box-sizing: border-box; }
@@ -36,7 +37,7 @@
         .nav-btn {
             flex: 1; background: var(--card); border: 1px solid var(--border);
             color: #888; padding: 12px; border-radius: 10px; cursor: pointer;
-            font-family: 'Orbitron'; font-size: 0.7rem;
+            font-family: 'Orbitron'; font-size: 0.6rem;
         }
         .nav-btn.active { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 10px rgba(0,255,136,0.2); }
 
@@ -45,19 +46,23 @@
         .page { display: none; }
         .page.active { display: block; }
 
-        /* --- MISSIONS --- */
-        .mission-item { background: #222; padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
-        .fact-tag { color: var(--accent); font-size: 0.7rem; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .challenge-box { background: #000; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; border: 1px dashed #444; }
+        /* --- HISTORY CALENDAR --- */
+        .history-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
+        .day-box { aspect-ratio: 1; border-radius: 6px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; color: #444; border: 1px solid #333; }
+        .day-green { background: var(--success) !important; color: white !important; border: none; box-shadow: 0 0 8px var(--success); }
+        .day-red { background: var(--danger) !important; color: white !important; border: none; box-shadow: 0 0 8px var(--danger); }
 
-        /* --- BUTTONS --- */
-        .btn-main { background: var(--primary); border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; margin-top: 10px; }
+        /* --- MISSION --- */
+        .mission-display { background: #222; padding: 20px; border-radius: 15px; border-left: 4px solid var(--primary); text-align: center; }
+        .fact-tag { color: var(--accent); font-size: 0.7rem; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 10px; }
+        .challenge-box { background: #000; padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 1rem; border: 1px dashed var(--primary); }
+
+        /* --- BUTTONS & INPUTS --- */
+        .btn-main { background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; }
         .side-link { display: block; width: 100%; padding: 15px; background: #1a1a1a; color: white; border: 1px solid #333; border-radius: 10px; margin-bottom: 10px; text-align: left; cursor: pointer; font-family: 'Orbitron'; font-size: 0.75rem; }
-        .side-link:hover { border-color: var(--ai-purple); }
-
-        /* --- LOGIN --- */
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
         input { width: 100%; padding: 12px; background: #252525; border: 1px solid #444; color: white; border-radius: 10px; margin-bottom: 10px; }
+
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
@@ -75,90 +80,119 @@
     <div id="sidebar">
         <h2 style="font-family:'Orbitron'; color:var(--primary); font-size: 1rem;">MENU</h2>
         <hr style="border:0; border-top:1px solid #333; margin-bottom:20px;">
-        
         <button class="side-link" onclick="showPage('vision')">🤖 VISION AI</button>
         <button class="side-link" onclick="parentAccess()">⚙️ PARENT SETTINGS</button>
-        
         <button onclick="logout()" style="position:absolute; bottom:30px; background:none; border:none; color:var(--danger); cursor:pointer; font-family:'Orbitron';">LOG OUT</button>
     </div>
 
     <div class="container" id="main-app" style="display:none;">
         <div class="header">
             <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">☰</button>
-            <h1 style="font-family:'Orbitron'; font-size: 1.1rem; margin:0;">DASHBOARD</h1>
-            <div style="width:30px;"></div> </div>
+            <h1 style="font-family:'Orbitron'; font-size: 0.8rem; margin:0; letter-spacing: 2px;">LVL UP SYSTEM</h1>
+            <div style="width:30px;"></div>
+        </div>
 
         <div class="nav-bar">
             <button class="nav-btn active" id="btn-dash" onclick="showPage('dash')">STATS</button>
-            <button class="nav-btn" id="btn-mission" onclick="showPage('mission')">MISSIONS</button>
-            <button class="nav-btn" id="btn-cal" onclick="showPage('cal')">CAL</button>
+            <button class="nav-btn" id="btn-mission" onclick="showPage('mission')">BOUNTY</button>
+            <button class="nav-btn" id="btn-cal" onclick="showPage('cal')">HISTORY</button>
         </div>
 
         <div id="page-dash" class="page active">
             <div class="card" style="text-align:center;">
-                <h2 id="lvl-display" style="font-family:'Orbitron'; color:var(--primary); font-size:3rem; margin:0;">1</h2>
-                <p style="color:#888; font-size:0.8rem; margin-bottom:20px;">CURRENT LEVEL</p>
-                <div style="background:#333; height:8px; border-radius:10px;"><div id="xp-fill" style="background:var(--primary); height:100%; width:0%; transition:0.5s; border-radius:10px;"></div></div>
+                <h2 id="lvl-display" style="font-family:'Orbitron'; color:var(--primary); font-size:3.5rem; margin:0;">1</h2>
+                <div style="background:#333; height:8px; border-radius:10px; margin: 10px 0;"><div id="xp-fill" style="background:var(--primary); height:100%; width:0%; transition:0.8s; border-radius:10px;"></div></div>
+                <p id="xp-label" style="font-size:0.6rem; color:#555;">0/100 XP</p>
             </div>
+            
             <div class="card">
-                <h3 style="margin-top:0; font-size:0.9rem; color:#888;">TIME EARNED</h3>
-                <h1 id="time-display" style="margin:0; font-family:'Orbitron';">0m</h1>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <p style="color:#888; font-size: 0.7rem; margin:0;">TODAY'S USAGE</p>
+                    <p id="limit-status" style="font-size:0.7rem; font-weight:bold; color:var(--primary);">LIMIT: 80m</p>
+                </div>
+                <h1 id="today-usage-display" style="margin:5px 0; font-family:'Orbitron'; color:white;">0m</h1>
+                <p id="remaining-display" style="font-size:0.65rem; color:#666;">Time remaining: 80m</p>
+                <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
+                <input type="number" id="play-input" placeholder="Add minutes used">
+                <button class="btn-main" onclick="logTime()">LOG PLAYTIME</button>
             </div>
         </div>
 
         <div id="page-mission" class="page">
-            <h3 style="font-family:'Orbitron'; margin-bottom:15px;">DAILY CHALLENGES</h3>
-            
-            <div class="mission-item">
-                <span class="fact-tag">Gaming Fact</span>
-                <p style="font-size:0.85rem; margin:0;">Mario was originally a carpenter named "Jumpman" before he became a plumber!</p>
-                <div class="challenge-box">💪 Challenge: Do 10 Push-ups right now.</div>
-                <button class="btn-main" style="font-size:0.7rem;" onclick="completeMission(20, 10)">CLAIM 10m</button>
+            <div class="mission-display">
+                <span class="fact-tag">Gaming Intel</span>
+                <p id="fact-text" style="font-size:0.9rem; line-height:1.5;">...</p>
+                <div class="challenge-box">
+                    <span id="challenge-text">...</span>
+                </div>
+                <button class="btn-main" onclick="verifyMission()">VERIFY & CLAIM XP</button>
             </div>
+        </div>
 
-            <div class="mission-item">
-                <span class="fact-tag">Gaming Fact</span>
-                <p style="font-size:0.85rem; margin:0;">The PlayStation 2 is the best-selling console of all time, with over 155 million units sold.</p>
-                <div class="challenge-box">🌲 Challenge: Go outside for 10 minutes.</div>
-                <button class="btn-main" style="font-size:0.7rem;" onclick="completeMission(30, 15)">CLAIM 15m</button>
-            </div>
-
-            <div class="mission-item" style="border-left-color: var(--accent);">
-                <span class="fact-tag">Gaming Fact</span>
-                <p style="font-size:0.85rem; margin:0;">The highest possible score in Pac-Man is 3,333,360 points.</p>
-                <div class="challenge-box">☕ Challenge: Get up and take a 30-minute break.</div>
-                <button class="btn-main" style="font-size:0.7rem;" onclick="completeMission(40, 20)">CLAIM 20m</button>
+        <div id="page-cal" class="page">
+            <div class="card">
+                <h3 style="font-family:'Orbitron'; font-size: 0.8rem;">HISTORY LOG</h3>
+                <p style="font-size: 0.6rem; color: #666;">Green = 80m or less | Red = Over 80m</p>
+                <div class="history-grid" id="calendar-grid"></div>
             </div>
         </div>
 
         <div id="page-vision" class="page">
             <div class="card">
                 <h3 style="color:var(--ai-purple); font-family:'Orbitron';">VISION AI</h3>
-                <div id="chat-box" style="height:200px; overflow-y:auto; font-size:0.85rem; color:#888; border-bottom:1px solid #333; margin-bottom:10px; padding-bottom:10px;">
-                    Vision is online. How can I help you study?
+                <div id="chat-box" style="height:200px; overflow-y:auto; font-size:0.85rem; color:#888; margin-bottom:10px; padding:10px; background:#000; border-radius:10px;">
+                    Vision is ready to assist.
                 </div>
-                <input type="text" id="chat-input" placeholder="Ask a question...">
+                <input type="text" id="chat-input" placeholder="Ask for help...">
                 <button class="btn-main" style="background:var(--ai-purple); color:white;" onclick="askVision()">ASK VISION</button>
-            </div>
-        </div>
-
-        <div id="page-cal" class="page">
-            <div class="card" style="text-align:center;">
-                <h3>📅 LOGS</h3>
-                <p style="color:#555;">Calendar tracking active.</p>
             </div>
         </div>
     </div>
 
     <script>
+        // CONFIG
+        const DAILY_LIMIT = 80; // 1 hour 20 minutes in minutes
+
+        const facts = [
+            "Mario's first appearance was as 'Jumpman' in Donkey Kong.",
+            "The first Nintendo console was the Color TV-Game 6.",
+            "Tetris was the first video game played in space.",
+            "Sonic the Hedgehog was originally going to be an armadillo.",
+            "Minecraft's Creepers were a coding accident meant to be pigs.",
+            "The Konami Code works in hundreds of games beyond Contra.",
+            "Esports became a varsity sport in some high schools in 2018.",
+            "Pac-Man's shape was inspired by a pizza with a slice missing.",
+            "The PlayStation 2 is still the best-selling console of all time.",
+            "Legend of Zelda's Link is inspired by Peter Pan."
+        ];
+
+        const challenges = [
+            "Do 10 push-ups.",
+            "Go outside for 10 minutes.",
+            "Clean your gaming desk.",
+            "Drink 2 glasses of water.",
+            "Do 20 jumping jacks.",
+            "Help with one household chore.",
+            "Read a book for 10 minutes.",
+            "Do a 40-second plank.",
+            "Tidy your room for 5 minutes.",
+            "Stretch for 5 minutes."
+        ];
+
         let xp = parseInt(localStorage.getItem('xp')) || 0;
         let lvl = parseInt(localStorage.getItem('lvl')) || 1;
-        let earnedTime = parseInt(localStorage.getItem('earnedTime')) || 0;
+        let history = JSON.parse(localStorage.getItem('gameHistory')) || {};
+        
+        // Track current day's total minutes
+        let todayStr = new Date().toLocaleDateString();
+        let todayMins = parseInt(localStorage.getItem('todayMins_' + todayStr)) || 0;
 
         window.onload = () => {
             if(localStorage.getItem('isLoggedIn') === 'true') {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
+                newMission();
+                renderCalendar();
             }
             updateUI();
         };
@@ -178,49 +212,115 @@
             document.querySelector('.sidebar-overlay').classList.toggle('active');
         }
 
+        function newMission() {
+            document.getElementById('fact-text').innerText = facts[Math.floor(Math.random() * facts.length)];
+            document.getElementById('challenge-text').innerText = challenges[Math.floor(Math.random() * challenges.length)];
+        }
+
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
             if(document.getElementById('btn-' + pageId)) document.getElementById('btn-' + pageId).classList.add('active');
+            if(pageId === 'mission') newMission();
+            if(pageId === 'cal') renderCalendar();
             if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
         }
 
-        function completeMission(xpGain, timeGain) {
-            let pin = prompt("PARENT VERIFICATION\nEnter PIN to confirm you finished the challenge:");
+        function logTime() {
+            const input = document.getElementById('play-input');
+            const newMins = parseInt(input.value);
+
+            if (newMins > 0) {
+                todayMins += newMins;
+                
+                // Determine color based on limit
+                if (todayMins <= DAILY_LIMIT) {
+                    history[todayStr] = 'green';
+                } else {
+                    history[todayStr] = 'red';
+                }
+
+                input.value = "";
+                save();
+                updateUI();
+                renderCalendar();
+                
+                if(todayMins > DAILY_LIMIT) {
+                    alert("Warning: You are now OVER the 80-minute limit!");
+                }
+            }
+        }
+
+        function verifyMission() {
+            let pin = prompt("PARENT VERIFICATION\nEnter PIN to confirm mission:");
             if(pin === "1234") {
-                xp += xpGain;
-                earnedTime += timeGain;
+                xp += 35;
                 if(xp >= 100) { xp -= 100; lvl++; alert("LEVEL UP!"); }
                 save();
                 updateUI();
-                alert("Quest Complete!");
+                alert("Verified! XP Earned.");
+                newMission();
             } else { alert("Incorrect PIN."); }
         }
 
-        function askVision() {
-            let input = document.getElementById('chat-input');
-            let box = document.getElementById('chat-box');
-            if(input.value) {
-                box.innerHTML += `<p style="color:var(--ai-purple); margin-top:10px;"><b>You:</b> ${input.value}</p>`;
-                input.value = "";
-                setTimeout(() => {
-                    box.innerHTML += `<p><b>Vision:</b> Checking database... I've found an answer that will help you level up your knowledge.</p>`;
-                    box.scrollTop = box.scrollHeight;
-                }, 600);
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = "";
+            for(let i = 13; i >= 0; i--) {
+                let d = new Date();
+                d.setDate(d.getDate() - i);
+                let dateStr = d.toLocaleDateString();
+                let dayNum = d.getDate();
+                
+                let box = document.createElement('div');
+                box.className = 'day-box';
+                box.innerText = dayNum;
+                
+                if(history[dateStr] === 'green') box.classList.add('day-green');
+                if(history[dateStr] === 'red') box.classList.add('day-red');
+                
+                grid.appendChild(box);
             }
         }
 
         function save() {
             localStorage.setItem('xp', xp);
             localStorage.setItem('lvl', lvl);
-            localStorage.setItem('earnedTime', earnedTime);
+            localStorage.setItem('gameHistory', JSON.stringify(history));
+            localStorage.setItem('todayMins_' + todayStr, todayMins);
         }
 
         function updateUI() {
             document.getElementById('xp-fill').style.width = xp + "%";
+            document.getElementById('xp-label').innerText = xp + "/100 XP";
             document.getElementById('lvl-display').innerText = lvl;
-            document.getElementById('time-display').innerText = earnedTime + "m";
+            
+            document.getElementById('today-usage-display').innerText = todayMins + "m";
+            
+            let remaining = DAILY_LIMIT - todayMins;
+            const remainingEl = document.getElementById('remaining-display');
+            
+            if(remaining >= 0) {
+                remainingEl.innerText = "Time remaining: " + remaining + "m";
+                remainingEl.style.color = "#666";
+            } else {
+                remainingEl.innerText = "Over limit by: " + Math.abs(remaining) + "m";
+                remainingEl.style.color = "var(--danger)";
+            }
+        }
+
+        function askVision() {
+            let input = document.getElementById('chat-input');
+            let box = document.getElementById('chat-box');
+            if(input.value) {
+                box.innerHTML += `<p style="color:var(--ai-purple);"><b>You:</b> ${input.value}</p>`;
+                input.value = "";
+                setTimeout(() => {
+                    box.innerHTML += `<p><b>Vision:</b> Processing... analyzing... Keep pushing toward your goals.</p>`;
+                    box.scrollTop = box.scrollHeight;
+                }, 600);
+            }
         }
 
         function parentAccess() {

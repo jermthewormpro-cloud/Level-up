@@ -65,9 +65,11 @@
         .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
         .key { width: 70px; height: 70px; border-radius: 50%; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; cursor: pointer; font-size: 1.2rem; }
         .key:active { background: var(--primary); color: #000; }
+        .key.backspace { border-color: var(--danger); color: var(--danger); font-size: 1.5rem; }
 
         /* --- UI ELEMENTS --- */
         .btn-main { background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; margin-top: 10px; }
+        input { width: 100%; padding: 12px; background: #252525; border: 1px solid #444; color: white; border-radius: 10px; margin-bottom: 10px; outline: none; }
         .history-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .day-box { aspect-ratio: 1; border-radius: 8px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1px solid #333; }
         .day-green { background: var(--success) !important; color: white; border: none; }
@@ -88,14 +90,14 @@
             <div class="key" onclick="pressKey(1)">1</div><div class="key" onclick="pressKey(2)">2</div><div class="key" onclick="pressKey(3)">3</div>
             <div class="key" onclick="pressKey(4)">4</div><div class="key" onclick="pressKey(5)">5</div><div class="key" onclick="pressKey(6)">6</div>
             <div class="key" onclick="pressKey(7)">7</div><div class="key" onclick="pressKey(8)">8</div><div class="key" onclick="pressKey(9)">9</div>
-            <div></div><div class="key" onclick="pressKey(0)">0</div>
+            <div class="key backspace" onclick="pressBackspace()">⌫</div><div class="key" onclick="pressKey(0)">0</div>
         </div>
     </div>
 
     <div id="login-screen">
         <div class="card" style="width:300px; text-align:center;">
             <h1 style="font-family:'Orbitron'; color:var(--primary); font-size:1.2rem;">LEVEL UP</h1>
-            <input type="password" id="login-pass" placeholder="Master Password" style="width:100%; padding:12px; background:#222; border:1px solid #444; color:white; border-radius:10px; margin-bottom:10px;">
+            <input type="password" id="login-pass" placeholder="Master Password">
             <button onclick="handleLogin()" class="btn-main">SYSTEM BOOT</button>
         </div>
     </div>
@@ -125,7 +127,7 @@
         <div id="page-dash" class="page active">
             <div class="card" style="text-align:center;">
                 <h2 id="lvl-display" style="font-family:'Orbitron'; color:var(--primary); font-size:3.5rem; margin:0;">1</h2>
-                <div style="background:#333; height:6px; border-radius:10px; margin: 15px 0;"><div id="xp-fill" style="background:var(--primary); height:100%; width:35%;"></div></div>
+                <div style="background:#333; height:6px; border-radius:10px; margin: 15px 0;"><div id="xp-fill" style="background:var(--primary); height:100%; width:0%;"></div></div>
                 <p id="xp-label" style="font-size:0.6rem; color:#666;">XP PROGRESS</p>
             </div>
             <div class="card">
@@ -134,7 +136,7 @@
                     <p id="remaining-display" style="font-size:0.7rem; font-weight:bold; color:var(--primary);">80m Left</p>
                 </div>
                 <hr style="border:0; border-top:1px solid #333; margin:15px 0;">
-                <input type="number" id="play-input" placeholder="Minutes used" style="width:100%; padding:12px; background:#252525; border:1px solid #444; color:white; border-radius:10px; margin-bottom:10px;">
+                <input type="number" id="play-input" placeholder="Minutes used">
                 <button class="btn-main" onclick="logTime()">UPDATE LOG</button>
             </div>
         </div>
@@ -142,7 +144,7 @@
         <div id="page-mission" class="page">
             <div class="card" style="border-left:4px solid var(--primary);">
                 <span style="color:var(--accent); font-size:0.6rem; font-weight:bold;">DAILY FACT</span>
-                <p id="fact-text" style="font-size:0.9rem; margin:10px 0;">Loading gaming intel...</p>
+                <p id="fact-text" style="font-size:0.9rem; margin:10px 0;">Loading intel...</p>
                 <div style="background:#000; padding:15px; border-radius:10px; border:1px dashed var(--primary); margin:15px 0;">
                     <span id="challenge-text" style="font-weight:600;">Quest loading...</span>
                 </div>
@@ -167,9 +169,16 @@
 
         <div id="page-parent" class="page">
             <div class="card">
-                <h3 style="font-family:'Orbitron'; color:var(--accent);">PARENT SETTINGS</h3>
+                <h3 style="font-family:'Orbitron'; color:var(--accent); margin-top:0;">PARENT SETTINGS</h3>
                 <button class="btn-main" style="background:#444; color:white;" onclick="resetToday()">RESET TODAY'S TIME</button>
                 <button class="btn-main" style="background:#444; color:white;" onclick="clearHistory()">WIPE ALL HISTORY</button>
+                
+                <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+                
+                <h4 style="font-size:0.7rem; color:#888; font-family:'Orbitron';">CHANGE PARENT PIN</h4>
+                <input type="password" id="new-pin-input" maxlength="4" placeholder="Enter new 4-digit PIN">
+                <button class="btn-main" style="background:var(--accent); color:black;" onclick="changePin()">UPDATE PIN</button>
+                
                 <button class="btn-main" onclick="showPage('dash')">EXIT SETTINGS</button>
             </div>
         </div>
@@ -183,8 +192,9 @@
         let xp = parseInt(localStorage.getItem('xp')) || 0;
         let lvl = parseInt(localStorage.getItem('lvl')) || 1;
         let history = JSON.parse(localStorage.getItem('gameHistory')) || {};
+        let parentPin = localStorage.getItem('parentPin') || "1234";
         let todayMins = parseInt(localStorage.getItem('todayMins_' + new Date().toLocaleDateString())) || 0;
-        let currentPin = "";
+        let currentPinAttempt = "";
 
         window.onload = () => {
             if(localStorage.getItem('isLoggedIn') === 'true') {
@@ -211,37 +221,58 @@
             if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
         }
 
+        /* --- PIN LOGIC --- */
         function openParent() { 
-            currentPin = "";
+            currentPinAttempt = "";
             updatePinDots();
             document.getElementById('parent-modal').classList.add('open'); 
         }
         function closeParent() { document.getElementById('parent-modal').classList.remove('open'); }
 
         function pressKey(num) {
-            if(currentPin.length < 4) {
-                currentPin += num;
+            if(currentPinAttempt.length < 4) {
+                currentPinAttempt += num;
                 updatePinDots();
-                if(currentPin === "1234") {
+                if(currentPinAttempt === parentPin) {
                     setTimeout(() => {
                         closeParent();
                         showPage('parent');
-                    }, 300);
-                } else if (currentPin.length === 4) {
-                    currentPin = "";
-                    updatePinDots();
-                    alert("Incorrect PIN");
+                    }, 200);
+                } else if (currentPinAttempt.length === 4) {
+                    setTimeout(() => {
+                        alert("Incorrect PIN");
+                        currentPinAttempt = "";
+                        updatePinDots();
+                    }, 200);
                 }
             }
+        }
+
+        function pressBackspace() {
+            currentPinAttempt = currentPinAttempt.slice(0, -1);
+            updatePinDots();
         }
 
         function updatePinDots() {
             const dots = document.querySelectorAll('.pin-dot');
             dots.forEach((dot, i) => {
-                dot.className = i < currentPin.length ? 'pin-dot filled' : 'pin-dot';
+                dot.className = i < currentPinAttempt.length ? 'pin-dot filled' : 'pin-dot';
             });
         }
 
+        function changePin() {
+            const newPin = document.getElementById('new-pin-input').value;
+            if(newPin.length === 4 && !isNaN(newPin)) {
+                parentPin = newPin;
+                localStorage.setItem('parentPin', parentPin);
+                document.getElementById('new-pin-input').value = "";
+                alert("PIN successfully changed!");
+            } else {
+                alert("Please enter a valid 4-digit number.");
+            }
+        }
+
+        /* --- CORE LOGIC --- */
         function logTime() {
             let input = document.getElementById('play-input');
             let val = parseInt(input.value);
@@ -254,7 +285,7 @@
         }
 
         function resetToday() { todayMins = 0; save(); updateUI(); alert("Time reset!"); }
-        function clearHistory() { history = {}; save(); renderCalendar(); alert("History wiped!"); }
+        function clearHistory() { if(confirm("Wipe all history?")){history = {}; save(); renderCalendar(); alert("Wiped!");} }
 
         function save() {
             localStorage.setItem('xp', xp); localStorage.setItem('lvl', lvl);
@@ -296,9 +327,10 @@
             let box = document.getElementById('chat-box');
             if(!input.value) return;
             box.innerHTML += `<div class="message user-msg">${input.value}</div>`;
+            let userVal = input.value;
             input.value = "";
             setTimeout(() => {
-                box.innerHTML += `<div class="message ai-msg"><span class="ai-glow">VISION</span>Keep grinding. Every task completed brings you closer to Level ${lvl + 1}.</div>`;
+                box.innerHTML += `<div class="message ai-msg"><span class="ai-glow">VISION</span>Analyzing data... continue your progress to unlock more insights.</div>`;
                 box.scrollTop = box.scrollHeight;
             }, 600);
         }

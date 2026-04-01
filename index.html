@@ -68,7 +68,8 @@
         .key.backspace { border-color: var(--danger); color: var(--danger); font-size: 1.5rem; }
 
         /* --- UI ELEMENTS --- */
-        .btn-main { background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; margin-top: 10px; }
+        .btn-main { background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; margin-top: 10px; transition: 0.2s; }
+        .btn-main:active { transform: scale(0.98); opacity: 0.8; }
         input { width: 100%; padding: 12px; background: #252525; border: 1px solid #444; color: white; border-radius: 10px; margin-bottom: 10px; outline: none; }
         .history-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .day-box { aspect-ratio: 1; border-radius: 8px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1px solid #333; }
@@ -95,9 +96,10 @@
     </div>
 
     <div id="login-screen">
-        <div class="card" style="width:300px; text-align:center;">
-            <h1 style="font-family:'Orbitron'; color:var(--primary); font-size:1.2rem;">LEVEL UP</h1>
-            <input type="password" id="login-pass" placeholder="Master Password">
+        <div class="card" style="width:320px; text-align:center;">
+            <h1 style="font-family:'Orbitron'; color:var(--primary); font-size:1.4rem; margin-bottom: 20px;">LEVEL UP</h1>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-pass" placeholder="Password">
             <button onclick="handleLogin()" class="btn-main">SYSTEM BOOT</button>
         </div>
     </div>
@@ -206,8 +208,19 @@
             updateUI();
         };
 
-        function handleLogin() { localStorage.setItem('isLoggedIn', 'true'); location.reload(); }
+        function handleLogin() { 
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            if(email && pass) {
+                localStorage.setItem('isLoggedIn', 'true'); 
+                location.reload(); 
+            } else {
+                alert("Please enter both email and password.");
+            }
+        }
+        
         function logout() { localStorage.setItem('isLoggedIn', 'false'); location.reload(); }
+        
         function toggleSidebar() { 
             document.getElementById('sidebar').classList.toggle('open');
             document.querySelector('.sidebar-overlay').classList.toggle('active');
@@ -327,10 +340,9 @@
             let box = document.getElementById('chat-box');
             if(!input.value) return;
             box.innerHTML += `<div class="message user-msg">${input.value}</div>`;
-            let userVal = input.value;
             input.value = "";
             setTimeout(() => {
-                box.innerHTML += `<div class="message ai-msg"><span class="ai-glow">VISION</span>Analyzing data... continue your progress to unlock more insights.</div>`;
+                box.innerHTML += `<div class="message ai-msg"><span class="ai-glow">VISION</span>Analyzing progress... keep working toward Level ${lvl + 1}.</div>`;
                 box.scrollTop = box.scrollHeight;
             }, 600);
         }

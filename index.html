@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level Up</title>
+    <title>Level Up: Protocol</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00ff88;
             --accent: #00d4ff;
-            --bg: #0d0d0d;
-            --card: #1a1a1a;
-            --border: #333;
+            --bg: #0a0a0a;
+            --card: #161616;
+            --border: #2a2a2a;
             --danger: #ff4444;
             --success: #2ecc71;
             --warning: #f1c40f;
@@ -20,64 +20,57 @@
         * { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; margin: 0; overflow: hidden; }
         
-        /* --- SIDEBAR --- */
-        #sidebar {
-            position: fixed; top: 0; left: -280px; width: 260px; height: 100%;
-            background: #111; border-right: 1px solid var(--border);
-            transition: 0.3s ease; z-index: 2000; padding: 25px;
-        }
+        /* --- AUTH --- */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .auth-toggle { color: var(--accent); font-size: 0.7rem; cursor: pointer; text-decoration: underline; margin-top: 15px; display: inline-block; }
+
+        /* --- NAV --- */
+        #sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #111; border-right: 1px solid var(--border); transition: 0.3s ease; z-index: 2000; padding: 25px; }
         #sidebar.open { left: 0; }
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1999; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1999; }
         .sidebar-overlay.active { display: block; }
 
         /* --- LAYOUT --- */
-        .container { width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: flex; flex-direction: column; }
+        .container { width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: none; flex-direction: column; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; }
         .nav-bar { display: flex; gap: 5px; margin-bottom: 20px; flex-shrink: 0; }
-        .nav-btn {
-            flex: 1; background: var(--card); border: 1px solid var(--border);
-            color: #888; padding: 8px 4px; border-radius: 10px; cursor: pointer;
-            font-family: 'Orbitron'; font-size: 0.5rem;
-        }
-        .nav-btn.active { border-color: var(--primary); color: var(--primary); background: #222; }
+        .nav-btn { flex: 1; background: var(--card); border: 1px solid var(--border); color: #666; padding: 10px 4px; border-radius: 10px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.55rem; transition: 0.2s; }
+        .nav-btn.active { border-color: var(--primary); color: var(--primary); background: #1a1a1a; box-shadow: 0 0 10px rgba(0,255,136,0.1); }
 
-        /* --- PAGES --- */
         .page { display: none; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
         .page.active { display: block; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
 
-        /* --- SHOP & REWARDS --- */
-        .reward-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #222; border-radius: 12px; margin-bottom: 10px; border: 1px solid #333; }
-        .reward-info h4 { margin: 0; font-size: 0.9rem; color: var(--accent); }
-        .reward-info p { margin: 0; font-size: 0.7rem; color: #888; }
-        .btn-delete { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 5px 10px; border-radius: 5px; font-size: 0.6rem; cursor: pointer; margin-top: 5px; }
+        .btn-main { background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; margin-top: 10px; text-transform: uppercase; }
+        input { width: 100%; padding: 14px; background: #222; border: 1px solid #333; color: white; border-radius: 12px; margin-bottom: 12px; outline: none; }
 
-        /* --- PARENT MODAL --- */
-        #parent-modal {
-            position: fixed; top: 100%; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 4000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 40px 20px; display: flex; flex-direction: column; align-items: center;
-        }
+        /* --- PIN MODAL --- */
+        #parent-modal { position: fixed; top: 100%; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; transition: 0.4s ease; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
         #parent-modal.open { top: 0; }
         .pin-dot { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--primary); margin: 0 10px; }
         .pin-dot.filled { background: var(--primary); }
         .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
-        .key { width: 70px; height: 70px; border-radius: 50%; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; cursor: pointer; font-size: 1.2rem; }
-        .key:active { background: var(--primary); color: #000; }
-        .key.backspace { border-color: var(--danger); color: var(--danger); font-size: 1.5rem; }
+        .key { width: 70px; height: 70px; border-radius: 50%; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; cursor: pointer; }
 
-        /* --- UI ELEMENTS --- */
-        .btn-main { background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; margin-top: 10px; }
-        input { width: 100%; padding: 12px; background: #252525; border: 1px solid #444; color: white; border-radius: 10px; margin-bottom: 10px; outline: none; }
-        .history-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .day-box { aspect-ratio: 1; border-radius: 8px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1px solid #333; }
-        .day-green { background: var(--success) !important; }
-        .day-red { background: var(--danger) !important; }
-        
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center; }
+        /* --- LISTS --- */
+        .task-list { display: grid; gap: 10px; }
+        .task-btn { background: #222; border: 1px solid #333; color: #ddd; padding: 12px; border-radius: 12px; text-align: left; cursor: pointer; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+        .task-btn:hover { border-color: var(--accent); }
+        .reward-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #1a1a1a; border-radius: 15px; margin-bottom: 10px; border: 1px solid #2a2a2a; }
     </style>
 </head>
 <body>
+
+    <div id="login-screen">
+        <div class="card" style="width:340px; text-align:center; border: 1px solid var(--primary);">
+            <h1 id="auth-title" style="font-family:'Orbitron'; color:var(--primary); font-size:1.4rem;">LEVEL UP</h1>
+            <p style="font-size: 0.6rem; color: #666; margin-bottom: 25px;">SECURE ACCESS PROTOCOL</p>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button id="auth-btn" onclick="handleAuth()" class="btn-main">INITIALIZE</button>
+            <span id="toggle-link" class="auth-toggle" onclick="toggleAuthMode()">Create Account</span>
+        </div>
+    </div>
 
     <div id="parent-modal">
         <button onclick="closeParent()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:1.5rem;">✕</button>
@@ -89,31 +82,22 @@
             <div class="key" onclick="pressKey(1)">1</div><div class="key" onclick="pressKey(2)">2</div><div class="key" onclick="pressKey(3)">3</div>
             <div class="key" onclick="pressKey(4)">4</div><div class="key" onclick="pressKey(5)">5</div><div class="key" onclick="pressKey(6)">6</div>
             <div class="key" onclick="pressKey(7)">7</div><div class="key" onclick="pressKey(8)">8</div><div class="key" onclick="pressKey(9)">9</div>
-            <div class="key backspace" onclick="pressBackspace()">⌫</div><div class="key" onclick="pressKey(0)">0</div>
-        </div>
-    </div>
-
-    <div id="login-screen">
-        <div class="card" style="width:320px; text-align:center;">
-            <h1 style="font-family:'Orbitron'; color:var(--primary); font-size:1.4rem; margin-bottom: 20px;">LEVEL UP</h1>
-            <input type="email" id="login-email" placeholder="Email">
-            <input type="password" id="login-pass" placeholder="Password">
-            <button onclick="handleLogin()" class="btn-main">SYSTEM BOOT</button>
+            <div class="key" style="border:none;"></div><div class="key" onclick="pressKey(0)">0</div><div class="key" onclick="pressBackspace()">⌫</div>
         </div>
     </div>
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div id="sidebar">
-        <h2 style="font-family:'Orbitron'; color:var(--primary); font-size: 1rem;">MENU</h2>
-        <button class="btn-main" style="background:var(--accent); font-size:0.6rem;" onclick="openParent('settings')">🛡️ PARENT PORTAL</button>
-        <button onclick="logout()" style="position:absolute; bottom:30px; background:none; border:none; color:var(--danger); cursor:pointer; font-family:'Orbitron';">SHUT DOWN</button>
+        <h2 style="font-family:'Orbitron'; color:var(--primary); font-size: 1rem;">COMMAND</h2>
+        <button class="btn-main" style="background:var(--accent); font-size:0.6rem;" onclick="openParent('settings')">🛡️ PARENT SETTINGS</button>
+        <button onclick="logout()" style="position:absolute; bottom:30px; width: 210px; background:#222; border:1px solid var(--danger); color:var(--danger); padding: 10px; border-radius: 10px; cursor:pointer;">LOGOUT</button>
     </div>
 
-    <div class="container" id="main-app" style="display:none;">
+    <div class="container" id="main-app">
         <div class="header">
             <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:1.5rem;">☰</button>
-            <h1 style="font-family:'Orbitron'; font-size: 0.7rem; color:var(--primary);">TOTAL XP: <span id="total-xp-display">0</span></h1>
-            <h1 style="font-family:'Orbitron'; font-size: 0.7rem; color:var(--accent);">LVL: <span id="header-lvl">1</span></h1>
+            <h1 style="font-family:'Orbitron'; font-size: 0.7rem; color:var(--primary);">BANK: <span id="total-xp-display">0</span> XP</h1>
+            <h1 style="font-family:'Orbitron'; font-size: 0.7rem; color:var(--accent);">LVL <span id="header-lvl">1</span></h1>
         </div>
 
         <div class="nav-bar">
@@ -121,108 +105,139 @@
             <button class="nav-btn" id="btn-mission" onclick="showPage('mission')">BOUNTY</button>
             <button class="nav-btn" id="btn-shop" onclick="showPage('shop')">SHOP</button>
             <button class="nav-btn" id="btn-vision" onclick="showPage('vision')">VISION</button>
-            <button class="nav-btn" id="btn-cal" onclick="showPage('cal')">HISTORY</button>
         </div>
 
         <div id="page-dash" class="page active">
             <div class="card" style="text-align:center;">
                 <h2 id="lvl-display" style="font-family:'Orbitron'; color:var(--primary); font-size:3.5rem; margin:0;">1</h2>
-                <div style="background:#333; height:6px; border-radius:10px; margin: 15px 0;"><div id="xp-fill" style="background:var(--primary); height:100%; width:0%;"></div></div>
-                <p style="font-size:0.6rem; color:#666;">LVL XP PROGRESS</p>
+                <div style="background:#222; height:8px; border-radius:10px; margin: 15px 0; overflow:hidden;"><div id="xp-fill" style="background:var(--primary); height:100%; width:0%; transition:0.5s;"></div></div>
+                <p style="font-size:0.6rem; color:#666;">RANK PROGRESS</p>
             </div>
             <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 id="today-usage-display" style="margin:0; font-family:'Orbitron';">0m Used</h3>
-                    <p id="remaining-display" style="font-size:0.7rem; font-weight:bold;">80m Left</p>
-                </div>
-                <input type="number" id="play-input" placeholder="Minutes used" style="margin-top:15px;">
-                <button class="btn-main" onclick="logTime()">UPDATE LOG</button>
+                <h3 id="today-usage-display" style="margin:0; font-family:'Orbitron'; font-size: 0.9rem;">0m Used</h3>
+                <p id="remaining-display" style="font-size:0.8rem; font-family: 'Orbitron';">80m Left</p>
+                <input type="number" id="play-input" placeholder="Minutes used" style="margin-top:20px;">
+                <button class="btn-main" onclick="logTime()">LOG SESSION</button>
             </div>
         </div>
 
         <div id="page-mission" class="page">
-            <div class="card" style="border-left:4px solid var(--primary);">
-                <span style="color:var(--accent); font-size:0.6rem; font-weight:bold;">ACTIVE QUEST</span>
-                <div style="background:#000; padding:15px; border-radius:10px; border:1px dashed var(--primary); margin:15px 0;">
-                    <span id="challenge-text" style="font-weight:600;">Quest loading...</span>
+            <div class="card" style="border-left:4px solid var(--primary); margin-bottom: 30px;">
+                <span style="color:var(--accent); font-size:0.6rem; font-weight:bold; font-family:'Orbitron';">ACTIVE PRIORITY MISSION</span>
+                <div style="background:#000; padding:20px; border-radius:15px; border:1px dashed #444; margin:15px 0; text-align: center;">
+                    <span id="challenge-text" style="font-weight:600; font-size: 1.1rem; color: #fff;">No parent mission set.</span>
                 </div>
-                <p style="font-size:0.7rem; color:var(--primary); text-align:center;">Value: <span id="current-bounty-xp">35</span> XP & +5m Time</p>
+                <p style="text-align: center; color: var(--primary); font-family: 'Orbitron'; font-size: 0.8rem;">REWARD: <span id="current-bounty-xp">0</span> XP</p>
                 <button class="btn-main" onclick="openParent('bounty')">VERIFY & CLAIM</button>
             </div>
+            
+            <h3 style="font-family:'Orbitron'; font-size:0.7rem; color:#888; margin-bottom:15px;">STANDARD OBJECTIVES</h3>
+            <div id="standard-tasks" class="task-list">
+                </div>
         </div>
 
         <div id="page-shop" class="page">
-            <h3 style="font-family:'Orbitron'; font-size:0.9rem; color:var(--warning);">REWARDS SHOP</h3>
+            <h3 style="font-family:'Orbitron'; font-size:0.9rem; color:var(--warning);">SHOP</h3>
             <div id="reward-list"></div>
         </div>
 
         <div id="page-vision" class="page">
-            <div class="card" id="chat-box" style="height:300px; overflow-y:auto; font-size:0.8rem;"></div>
-            <input type="text" id="chat-input" placeholder="Message Vision...">
-            <button class="btn-main" onclick="askVision()">SEND</button>
-        </div>
-
-        <div id="page-cal" class="page">
-            <div class="card">
-                <h3 style="font-family:'Orbitron'; font-size:0.8rem; margin-top:0;">PROGRESS HISTORY</h3>
-                <div class="history-grid" id="calendar-grid"></div>
+            <div class="card" id="chat-box" style="height:350px; overflow-y:auto; background:#000; padding: 10px; font-size: 0.85rem;"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="chat-input" placeholder="Query Vision..." style="margin-bottom:0;">
+                <button class="btn-main" style="width:70px; margin-top:0; background:var(--accent)" onclick="askVision()">GO</button>
             </div>
         </div>
 
         <div id="page-parent" class="page">
             <div class="card">
-                <h3 style="font-family:'Orbitron'; color:var(--accent); margin-top:0;">PARENT PORTAL</h3>
-                
-                <h4 style="font-size:0.7rem; color:#888; font-family:'Orbitron';">1. SET BOUNTY (TASK)</h4>
+                <h3 style="font-family:'Orbitron'; color:var(--accent); margin-top:0;">PARENT COMMAND</h3>
+                <h4 style="font-size:0.6rem; color:#888;">DEPLOY CUSTOM MISSION</h4>
                 <input type="text" id="custom-task-input" placeholder="Task description">
-                <input type="number" id="custom-task-xp" placeholder="XP Reward Amount (e.g. 50)">
-                <button class="btn-main" onclick="addCustomTask()">ASSIGN TASK</button>
-
-                <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
-
-                <h4 style="font-size:0.7rem; color:#888; font-family:'Orbitron';">2. ADD SHOP REWARD</h4>
-                <input type="text" id="reward-name-input" placeholder="Reward name">
-                <input type="number" id="reward-cost-input" placeholder="XP Cost to buy">
-                <button class="btn-main" onclick="addReward()">ADD TO SHOP</button>
-
-                <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+                <input type="number" id="custom-task-xp" placeholder="XP Value">
+                <button class="btn-main" onclick="addCustomTask()">DEPLOY TO CHILD</button>
                 
-                <button class="btn-main" style="background:#444; color:white;" onclick="resetToday()">RESET TODAY'S TIME</button>
-                <button class="btn-main" onclick="showPage('dash')">EXIT PORTAL</button>
+                <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
+                
+                <h4 style="font-size:0.6rem; color:#888;">ADD SHOP ITEM</h4>
+                <input type="text" id="reward-name-input" placeholder="Reward Name">
+                <input type="number" id="reward-cost-input" placeholder="XP Cost">
+                <button class="btn-main" onclick="addReward()">ADD TO SHOP</button>
+                <button class="btn-main" style="background:#222; color:white; margin-top:20px;" onclick="showPage('dash')">EXIT PORTAL</button>
             </div>
         </div>
     </div>
 
     <script>
+        // DATA
+        const standardMissions = [
+            { name: "Do 15 push-ups", xp: 20 },
+            { name: "Walk outside (10m)", xp: 25 },
+            { name: "Drink 2 glasses of water", xp: 15 },
+            { name: "Clean gaming area", xp: 30 },
+            { name: "20 jumping jacks", xp: 15 },
+            { name: "Help with a chore", xp: 40 },
+            { name: "Stretch neck/back (5m)", xp: 15 },
+            { name: "Read 5 pages", xp: 25 },
+            { name: "Eat a healthy snack", xp: 15 },
+            { name: "Organize shoes/closet", xp: 30 },
+            { name: "3 things I'm grateful for", xp: 10 },
+            { name: "Do 15 squats", xp: 20 },
+            { name: "Finish a water bottle", xp: 15 },
+            { name: "Put away clean laundry", xp: 35 },
+            { name: "Tidy room (10m)", xp: 30 },
+            { name: "Practice hobby (15m)", xp: 40 },
+            { name: "1-minute plank", xp: 25 },
+            { name: "Wipe down gear", xp: 15 },
+            { name: "5m screen-free break", xp: 20 },
+            { name: "Check on family member", xp: 20 }
+        ];
+
+        let isSignUpMode = false;
         const BASE_LIMIT = 80;
         let xp = parseInt(localStorage.getItem('xp')) || 0;
         let totalXp = parseInt(localStorage.getItem('totalXp')) || 0;
         let lvl = parseInt(localStorage.getItem('lvl')) || 1;
-        let history = JSON.parse(localStorage.getItem('gameHistory')) || {};
         let rewards = JSON.parse(localStorage.getItem('rewards')) || [];
-        let parentPin = localStorage.getItem('parentPin') || "1234";
-        let bountyXp = parseInt(localStorage.getItem('bountyXp')) || 35;
-        
+        let bountyXp = parseInt(localStorage.getItem('bountyXp')) || 0;
+        let currentTask = localStorage.getItem('currentTask') || "No parent mission set.";
         let todayStr = new Date().toLocaleDateString();
-        let dailyBonus = parseInt(localStorage.getItem('dailyBonus')) || 0;
         let todayMins = parseInt(localStorage.getItem('todayMins_' + todayStr)) || 0;
         let currentPinAttempt = "";
         let pinPurpose = "";
         let pendingRewardIndex = null;
 
+        // AUTH
         window.onload = () => {
             if(localStorage.getItem('isLoggedIn') === 'true') {
-                document.getElementById('main-app').style.display = 'flex';
                 document.getElementById('login-screen').style.display = 'none';
-                newMission(); renderCalendar(); renderRewards();
+                document.getElementById('main-app').style.display = 'flex';
+                updateUI(); renderRewards(); renderStandardTasks();
             }
-            updateUI();
         };
 
-        function handleLogin() { localStorage.setItem('isLoggedIn', 'true'); location.reload(); }
-        function logout() { localStorage.setItem('isLoggedIn', 'false'); location.reload(); }
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active'); }
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? "CREATE ACCOUNT" : "LEVEL UP";
+            document.getElementById('toggle-link').innerText = isSignUpMode ? "Login instead" : "Create Account";
+        }
 
+        function handleAuth() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            if(isSignUpMode) {
+                localStorage.setItem('u_email', email); localStorage.setItem('u_pass', pass);
+                alert("Account created!"); toggleAuthMode();
+            } else {
+                if(email === localStorage.getItem('u_email') && pass === localStorage.getItem('u_pass')) {
+                    localStorage.setItem('isLoggedIn', 'true'); location.reload();
+                } else { alert("Invalid login."); }
+            }
+        }
+
+        function logout() { localStorage.setItem('isLoggedIn', 'false'); location.reload(); }
+
+        // NAVIGATION
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -231,13 +246,11 @@
             if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
         }
 
-        /* --- PIN LOGIC --- */
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active'); }
+
+        // PIN
         function openParent(purpose, data = null) {
-            pinPurpose = purpose;
-            pendingRewardIndex = data;
-            currentPinAttempt = "";
-            document.getElementById('modal-title').innerText = (purpose === 'bounty') ? "VERIFY BOUNTY" : (purpose === 'redeem' ? "CONFIRM PURCHASE" : "ADMIN ACCESS");
-            updatePinDots();
+            pinPurpose = purpose; pendingRewardIndex = data; currentPinAttempt = "";
             document.getElementById('parent-modal').classList.add('open');
         }
 
@@ -247,108 +260,81 @@
             if(currentPinAttempt.length < 4) {
                 currentPinAttempt += num;
                 updatePinDots();
-                if(currentPinAttempt === parentPin) {
+                if(currentPinAttempt === "1234") {
                     setTimeout(() => {
                         closeParent();
                         if(pinPurpose === 'bounty') claimBounty();
                         else if(pinPurpose === 'redeem') finalizeRedeem();
                         else showPage('parent');
                     }, 200);
-                } else if(currentPinAttempt.length === 4) {
-                    setTimeout(() => { alert("Incorrect PIN"); currentPinAttempt = ""; updatePinDots(); }, 200);
-                }
+                } else if(currentPinAttempt.length === 4) { currentPinAttempt = ""; updatePinDots(); }
             }
         }
 
         function pressBackspace() { currentPinAttempt = currentPinAttempt.slice(0, -1); updatePinDots(); }
         function updatePinDots() { const dots = document.querySelectorAll('.pin-dot'); dots.forEach((dot, i) => dot.className = i < currentPinAttempt.length ? 'pin-dot filled' : 'pin-dot'); }
 
-        /* --- PARENT CONTROLS --- */
-        function addCustomTask() {
-            const task = document.getElementById('custom-task-input').value;
-            const customXp = parseInt(document.getElementById('custom-task-xp').value);
-            if(task && customXp) {
-                bountyXp = customXp;
-                localStorage.setItem('bountyXp', bountyXp);
-                document.getElementById('challenge-text').innerText = task;
-                document.getElementById('current-bounty-xp').innerText = bountyXp;
-                alert("New Bounty Assigned!");
-                showPage('dash');
-            }
+        // MISSIONS
+        function renderStandardTasks() {
+            const container = document.getElementById('standard-tasks');
+            container.innerHTML = "";
+            standardMissions.forEach(t => {
+                container.innerHTML += `
+                    <button class="task-btn" onclick="setTask('${t.name}', ${t.xp})">
+                        ${t.name} <span>+${t.xp} XP</span>
+                    </button>`;
+            });
         }
 
+        function setTask(name, xpVal) {
+            currentTask = name; bountyXp = xpVal;
+            localStorage.setItem('currentTask', name); localStorage.setItem('bountyXp', xpVal);
+            updateUI(); alert("Mission Locked In!");
+        }
+
+        function addCustomTask() {
+            const name = document.getElementById('custom-task-input').value;
+            const val = parseInt(document.getElementById('custom-task-xp').value);
+            if(name && val) { setTask(name, val); showPage('mission'); }
+        }
+
+        function claimBounty() {
+            if(bountyXp === 0) return;
+            xp += bountyXp; totalXp += bountyXp;
+            if(xp >= 100) { xp -= 100; lvl++; alert("RANK UP!"); }
+            save(); updateUI(); alert("Bounty Verification Successful!");
+        }
+
+        // SHOP
         function addReward() {
             const name = document.getElementById('reward-name-input').value;
             const cost = parseInt(document.getElementById('reward-cost-input').value);
-            if(name && cost) {
-                rewards.push({ name, cost });
-                localStorage.setItem('rewards', JSON.stringify(rewards));
-                renderRewards();
-                alert("Shop updated!");
-            }
+            if(name && cost) { rewards.push({name, cost}); localStorage.setItem('rewards', JSON.stringify(rewards)); renderRewards(); }
         }
 
-        function deleteReward(index) {
-            if(confirm("Remove this reward?")) {
-                rewards.splice(index, 1);
-                localStorage.setItem('rewards', JSON.stringify(rewards));
-                renderRewards();
-            }
-        }
-
-        /* --- SHOP LOGIC --- */
         function renderRewards() {
             const list = document.getElementById('reward-list');
             list.innerHTML = "";
             rewards.forEach((r, i) => {
-                list.innerHTML += `
-                    <div class="reward-item">
-                        <div class="reward-info">
-                            <h4>${r.name}</h4>
-                            <p>${r.cost} XP</p>
-                            ${document.getElementById('page-parent').classList.contains('active') ? `<button class="btn-delete" onclick="deleteReward(${i})">DELETE</button>` : ''}
-                        </div>
-                        <button class="nav-btn" style="flex:none; width:80px; color:var(--primary)" onclick="openParent('redeem', ${i})">BUY</button>
-                    </div>`;
+                list.innerHTML += `<div class="reward-item"><div><h4>${r.name}</h4><p style="font-size:0.7rem; color:#666;">${r.cost} XP</p></div><button class="nav-btn" style="flex:none; width:70px;" onclick="openParent('redeem', ${i})">BUY</button></div>`;
             });
         }
 
         function finalizeRedeem() {
-            const reward = rewards[pendingRewardIndex];
-            if(totalXp >= reward.cost) {
-                totalXp -= reward.cost;
-                save(); updateUI();
-                alert(`REDEEMED: ${reward.name}`);
-            } else {
-                alert("Not enough Total XP!");
-            }
+            const r = rewards[pendingRewardIndex];
+            if(totalXp >= r.cost) { totalXp -= r.cost; save(); updateUI(); alert("Purchase successful!"); }
+            else { alert("Insufficient XP bank balance."); }
         }
 
-        /* --- CORE LOGIC --- */
-        function claimBounty() {
-            xp += bountyXp; totalXp += bountyXp; dailyBonus += 5;
-            localStorage.setItem('dailyBonus', dailyBonus);
-            if(xp >= 100) { xp -= 100; lvl++; alert("LEVEL UP!"); }
-            save(); updateUI();
-            alert(`Claimed ${bountyXp} XP!`);
-        }
-
+        // CORE
         function logTime() {
-            let val = parseInt(document.getElementById('play-input').value);
-            if(val > 0) {
-                todayMins += val;
-                history[todayStr] = (todayMins <= (BASE_LIMIT + dailyBonus)) ? 'green' : 'red';
-                document.getElementById('play-input').value = "";
-                save(); updateUI(); renderCalendar();
-            }
+            let v = parseInt(document.getElementById('play-input').value);
+            if(v > 0) { todayMins += v; document.getElementById('play-input').value = ""; save(); updateUI(); }
         }
-
-        function resetToday() { todayMins = 0; save(); updateUI(); alert("Time reset!"); }
 
         function save() {
             localStorage.setItem('xp', xp); localStorage.setItem('totalXp', totalXp);
-            localStorage.setItem('lvl', lvl); localStorage.setItem('gameHistory', JSON.stringify(history));
-            localStorage.setItem('todayMins_' + todayStr, todayMins);
+            localStorage.setItem('lvl', lvl); localStorage.setItem('todayMins_' + todayStr, todayMins);
         }
 
         function updateUI() {
@@ -357,32 +343,23 @@
             document.getElementById('total-xp-display').innerText = totalXp;
             document.getElementById('xp-fill').style.width = Math.min(xp, 100) + "%";
             document.getElementById('today-usage-display').innerText = todayMins + "m Used";
+            document.getElementById('challenge-text').innerText = currentTask;
             document.getElementById('current-bounty-xp').innerText = bountyXp;
-            let rem = (BASE_LIMIT + dailyBonus) - todayMins;
-            document.getElementById('remaining-display').innerText = rem >= 0 ? rem + "m Left" : "LIMIT EXCEEDED";
+            let rem = BASE_LIMIT - todayMins;
+            document.getElementById('remaining-display').innerText = rem >= 0 ? rem + "m Left" : "OVER LIMIT";
             document.getElementById('remaining-display').style.color = rem >= 0 ? "var(--primary)" : "var(--danger)";
-        }
-
-        function newMission() { if(document.getElementById('challenge-text').innerText === "Quest loading...") document.getElementById('challenge-text').innerText = "Check with parent for your first task!"; }
-        
-        function renderCalendar() {
-            const grid = document.getElementById('calendar-grid');
-            grid.innerHTML = "";
-            for(let i = 13; i >= 0; i--) {
-                let d = new Date(); d.setDate(d.getDate() - i);
-                let box = document.createElement('div');
-                box.className = 'day-box'; box.innerText = d.getDate();
-                if(history[d.toLocaleDateString()] === 'green') box.classList.add('day-green');
-                if(history[d.toLocaleDateString()] === 'red') box.classList.add('day-red');
-                grid.appendChild(box);
-            }
         }
 
         function askVision() {
             const box = document.getElementById('chat-box');
-            box.innerHTML += `<div>User: ${document.getElementById('chat-input').value}</div>`;
-            document.getElementById('chat-input').value = "";
-            setTimeout(() => { box.innerHTML += `<div style="color:var(--primary)">Vision: System stable. Progress is being logged.</div>`; }, 500);
+            const input = document.getElementById('chat-input');
+            if(!input.value) return;
+            box.innerHTML += `<p style="color:#666; margin: 5px 0;">> ${input.value}</p>`;
+            input.value = "";
+            setTimeout(() => { 
+                box.innerHTML += `<p style="color:var(--primary); margin: 5px 0;">VISION: Keep grinding. Productivity leads to playtime.</p>`; 
+                box.scrollTop = box.scrollHeight; 
+            }, 500);
         }
     </script>
 </body>

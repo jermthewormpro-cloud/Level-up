@@ -13,42 +13,49 @@
             --card: #161616;
             --border: #2a2a2a;
             --danger: #ff4444;
+            --locked: #444;
         }
 
         * { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: white; margin: 0; overflow: hidden; }
         
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-
         /* --- SIDEBAR --- */
         #sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #111; border-right: 1px solid var(--border); transition: 0.3s ease; z-index: 2000; padding: 25px; display: flex; flex-direction: column; }
         #sidebar.open { left: 0; }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1999; }
         .sidebar-overlay.active { display: block; }
+        
+        .side-btn { background: #1a1a1a; border: 1px solid var(--border); color: #ccc; padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; text-align: left; font-family: 'Orbitron'; font-size: 0.7rem; width: 100%; transition: 0.2s; }
+        .side-btn:hover { border-color: var(--primary); color: white; }
+
+        /* --- SHOP MODAL --- */
+        #shop-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; padding: 20px; overflow-y: auto; }
+        .shop-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+        .shop-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .shop-card.locked { opacity: 0.6; border-style: dashed; }
+        .item-info h4 { margin: 0; color: var(--accent); font-size: 0.9rem; }
+        .item-info p { margin: 5px 0 0; font-size: 0.65rem; color: #888; }
+        .lock-badge { font-size: 0.55rem; color: var(--danger); font-family: 'Orbitron'; margin-top: 4px; display: block; }
 
         /* --- MAIN UI --- */
-        .container { width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: none; flex-direction: column; }
+        .container { width: 100%; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: flex; flex-direction: column; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .nav-bar { display: flex; gap: 5px; margin-bottom: 20px; }
         .nav-btn { flex: 1; background: var(--card); border: 1px solid var(--border); color: #666; padding: 10px 4px; border-radius: 10px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.55rem; }
         .nav-btn.active { border-color: var(--primary); color: var(--primary); background: #1a1a1a; }
-
         .page { display: none; flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
         .page.active { display: block; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-
         .btn-main { background: var(--primary); border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; margin-top: 10px; text-transform: uppercase; font-size: 0.7rem; }
         input { width: 100%; padding: 12px; background: #222; border: 1px solid #333; color: white; border-radius: 10px; margin-bottom: 10px; outline: none; }
 
         /* --- CALENDAR --- */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
-        .cal-day-label { font-size: 0.5rem; text-align: center; color: #555; font-family: 'Orbitron'; }
-        .cal-day { aspect-ratio: 1/1; background: #222; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; color: #444; position: relative; }
+        .cal-day { aspect-ratio: 1/1; background: #222; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; color: #444; border: 1px solid transparent; }
         .cal-pass { background: rgba(0, 255, 136, 0.15); color: var(--primary); border: 1px solid var(--primary); }
         .cal-fail { background: rgba(255, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); }
-        .cal-today { border: 1px solid var(--accent); color: white; box-shadow: 0 0 10px rgba(0, 212, 255, 0.3); }
-
-        /* --- PIN PAD --- */
+        
+        /* --- ADMIN/PIN --- */
         #parent-modal { position: fixed; top: 100%; left: 0; width: 100%; height: 100%; background: #000; z-index: 4000; transition: 0.4s ease; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
         #parent-modal.open { top: 0; }
         .pin-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--primary); margin: 0 8px; }
@@ -59,13 +66,16 @@
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="card" style="width:320px; text-align:center; border: 1px solid var(--primary);">
-            <h1 style="font-family:'Orbitron'; color:var(--primary); font-size:1.2rem;">LEVEL UP</h1>
-            <input type="email" id="login-email" placeholder="Email">
-            <input type="password" id="login-pass" placeholder="Password">
-            <button onclick="handleAuth()" class="btn-main">INITIALIZE</button>
+    <div id="shop-modal">
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-family:'Orbitron'; color:var(--primary); font-size: 1.2rem;">REWARD SHOP</h2>
+            <button onclick="toggleShop()" style="background:none; border:none; color:white; font-size:1.5rem;">✕</button>
         </div>
+        <div class="card" style="padding:10px; text-align:center; margin-top:10px;">
+            <span style="font-size:0.7rem; color:#888; font-family:'Orbitron';">GREEN DAYS THIS MONTH: </span>
+            <span id="green-days-count" style="color:var(--primary); font-family:'Orbitron'; font-weight:bold;">0</span>
+        </div>
+        <div id="shop-grid" class="shop-grid"></div>
     </div>
 
     <div id="parent-modal">
@@ -84,11 +94,12 @@
 
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div id="sidebar">
-        <div style="font-family: 'Orbitron'; color: var(--primary); font-size: 0.8rem; margin-bottom: 15px;">REWARD SHOP</div>
-        <div id="sidebar-shop-list"></div>
+        <h2 style="font-family:'Orbitron'; color:var(--primary); font-size: 0.9rem; margin-bottom: 20px;">MENU</h2>
+        <button class="side-btn" onclick="toggleShop()">🛒 REWARD SHOP</button>
+        <button class="side-btn" onclick="openParent('settings')">🛡️ PARENT PORTAL</button>
+        
         <div style="margin-top: auto;">
-            <button class="btn-main" style="background:var(--accent); margin-bottom: 10px;" onclick="openParent('settings')">🛡️ ADMIN PANEL</button>
-            <button onclick="logout()" style="width: 100%; background:transparent; border:1px solid var(--danger); color:var(--danger); padding: 8px; border-radius: 8px; font-size: 0.6rem; cursor:pointer;">LOGOUT</button>
+            <button onclick="logout()" style="width: 100%; background:transparent; border:1px solid var(--danger); color:var(--danger); padding: 8px; border-radius: 8px; font-size: 0.6rem; cursor:pointer; font-family:'Orbitron';">TERMINATE SESSION</button>
         </div>
     </div>
 
@@ -134,116 +145,129 @@
         <div id="page-history" class="page">
             <div class="card">
                 <h3 id="current-month-display" style="font-family:'Orbitron'; font-size:0.8rem; color:var(--accent); margin:0;">TRACKER</h3>
-                <div class="calendar-grid">
-                    <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div>
-                </div>
-                <div id="calendar-days" class="calendar-grid"></div>
+                <div class="calendar-grid" id="calendar-days"></div>
             </div>
-            <p style="font-size:0.5rem; color:#444; text-align:center;">Colors based on Daily Earned Allowance</p>
-        </div>
-
-        <div id="page-vision" class="page">
-            <div class="card" id="chat-box" style="height:300px; overflow-y:auto; background:#000; font-size: 0.8rem;"></div>
-            <input type="text" id="chat-input" placeholder="Query Vision...">
-            <button class="btn-main" style="background:var(--accent)" onclick="askVision()">SEND</button>
         </div>
 
         <div id="page-parent" class="page">
             <div class="card">
                 <h3 style="font-family:'Orbitron'; color:var(--accent); margin-top:0; font-size:0.9rem;">ADMIN</h3>
+                <h4 style="font-size:0.6rem; color:#888;">ADD TASK TO POOL:</h4>
                 <input type="text" id="custom-task-input" placeholder="Task Name">
-                <input type="number" id="custom-task-xp" placeholder="XP/Time Bonus">
-                <button class="btn-main" onclick="addCustomTask()">ADD TO POOL</button>
+                <input type="number" id="custom-task-xp" placeholder="XP Value">
+                <button class="btn-main" onclick="addCustomTask()">DEPLOY</button>
                 <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
-                <input type="text" id="shop-item-name" placeholder="Reward Name">
+                <h4 style="font-size:0.6rem; color:#888;">ADD TO SHOP (WITH GREEN LOCK):</h4>
+                <input type="text" id="shop-item-name" placeholder="Item Name">
                 <input type="number" id="shop-item-cost" placeholder="XP Cost">
+                <input type="number" id="shop-item-lock" placeholder="Green Days Required (0 for none)">
                 <button class="btn-main" onclick="addShopItem()">UPDATE SHOP</button>
             </div>
         </div>
     </div>
 
     <script>
-        const initialMissions = [{ name: "15 push-ups", xp: 20 }, { name: "Clean desk", xp: 30 }, { name: "Read 10 mins", xp: 25 }];
-        let taskPool = JSON.parse(localStorage.getItem('taskPool')) || initialMissions;
-        let shopItems = JSON.parse(localStorage.getItem('shopItems')) || [{name: "Extra Dessert", cost: 150}];
+        const initialTasks = [{ name: "15 push-ups", xp: 20 }, { name: "Clean room", xp: 30 }];
+        let taskPool = JSON.parse(localStorage.getItem('taskPool')) || initialTasks;
+        
+        // Items stored as {name, cost, greenLock}
+        let shopItems = JSON.parse(localStorage.getItem('shopItems')) || [
+            {name: "1hr Extra Time", cost: 100, greenLock: 0},
+            {name: "New Game Download", cost: 500, greenLock: 5}
+        ];
         
         let xp = parseInt(localStorage.getItem('xp')) || 0;
         let totalXp = parseInt(localStorage.getItem('totalXp')) || 0;
         let lvl = parseInt(localStorage.getItem('lvl')) || 1;
-        let bountyXp = parseInt(localStorage.getItem('bountyXp')) || 0;
-        let currentTask = localStorage.getItem('currentTask') || "";
+        let bountyXp = 0;
+        let currentTask = "";
         
-        // Dynamic History: Stores { "YYYY-MM-DD": { used: 45, allowed: 80 } }
         let statsHistory = JSON.parse(localStorage.getItem('statsHistory')) || {};
         let todayDate = new Date().toLocaleDateString('en-CA');
-
-        if (!statsHistory[todayDate]) {
-            statsHistory[todayDate] = { used: 0, allowed: 80 };
-        }
+        if (!statsHistory[todayDate]) statsHistory[todayDate] = { used: 0, allowed: 80 };
 
         let currentPinAttempt = "";
         let pinPurpose = "";
         let pendingShopIndex = null;
 
         window.onload = () => {
-            if(localStorage.getItem('isLoggedIn') === 'true') {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-app').style.display = 'flex';
-                if (!currentTask) autoGenerateTask();
-                updateUI(); renderShop(); renderCalendar();
-            }
+            autoGenerateTask();
+            updateUI();
+            renderCalendar();
+            renderShop();
         };
-
-        function handleAuth() {
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-pass').value;
-            if(!localStorage.getItem('u_email')) {
-                localStorage.setItem('u_email', email); localStorage.setItem('u_pass', pass);
-            } else if(email === localStorage.getItem('u_email') && pass === localStorage.getItem('u_pass')) {
-                localStorage.setItem('isLoggedIn', 'true'); location.reload();
-            }
-        }
-
-        function logout() { localStorage.setItem('isLoggedIn', 'false'); location.reload(); }
-
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            document.getElementById('btn-' + pageId).classList.add('active');
-            if(pageId === 'history') renderCalendar();
-            if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
-        }
 
         function toggleSidebar() { 
             document.getElementById('sidebar').classList.toggle('open'); 
             document.querySelector('.sidebar-overlay').classList.toggle('active'); 
         }
 
-        function renderCalendar() {
-            const now = new Date();
-            const month = now.getMonth();
-            const year = now.getFullYear();
-            document.getElementById('current-month-display').innerText = now.toLocaleString('default', { month: 'long' }).toUpperCase();
+        function toggleShop() {
+            const modal = document.getElementById('shop-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+            if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
+            renderShop();
+        }
 
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
+        function getGreenDaysCount() {
+            let count = 0;
+            const currentMonth = new Date().getMonth();
+            for (let date in statsHistory) {
+                let d = new Date(date);
+                if (d.getMonth() === currentMonth) {
+                    if (statsHistory[date].used > 0 && statsHistory[date].used <= statsHistory[date].allowed) {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        function renderShop() {
+            const greenDays = getGreenDaysCount();
+            document.getElementById('green-days-count').innerText = greenDays;
+            const grid = document.getElementById('shop-grid');
+            grid.innerHTML = "";
+
+            shopItems.forEach((item, i) => {
+                const isLocked = greenDays < item.greenLock;
+                grid.innerHTML += `
+                <div class="shop-card ${isLocked ? 'locked' : ''}">
+                    <div class="item-info">
+                        <h4>${item.name}</h4>
+                        <p>${item.cost} XP</p>
+                        ${item.greenLock > 0 ? `<span class="lock-badge">Requires ${item.greenLock} Green Days</span>` : ''}
+                    </div>
+                    <button class="btn-main" style="width:80px; margin:0;" 
+                        onclick="${isLocked ? `alert('Locked! Earn more green days.')` : `openParent('buy', ${i})`}">
+                        ${isLocked ? '🔒' : 'BUY'}
+                    </button>
+                </div>`;
+            });
+        }
+
+        function finalizePurchase() {
+            const item = shopItems[pendingShopIndex];
+            if(totalXp >= item.cost) {
+                totalXp -= item.cost;
+                save(); updateUI();
+                alert(`Unlocked: ${item.name}!`);
+                toggleShop();
+            } else { alert("Insufficient XP."); }
+        }
+
+        function renderCalendar() {
             const container = document.getElementById('calendar-days');
             container.innerHTML = "";
-
-            for(let i = 0; i < firstDay; i++) container.innerHTML += `<div></div>`;
+            const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
 
             for(let d = 1; d <= daysInMonth; d++) {
-                const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                let statusClass = "";
-                const dayStats = statsHistory[dateKey];
-                
-                if (dayStats && dayStats.used > 0) {
-                    statusClass = dayStats.used <= dayStats.allowed ? "cal-pass" : "cal-fail";
+                const dateKey = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                let status = "";
+                if (statsHistory[dateKey] && statsHistory[dateKey].used > 0) {
+                    status = statsHistory[dateKey].used <= statsHistory[dateKey].allowed ? "cal-pass" : "cal-fail";
                 }
-                if (dateKey === todayDate) statusClass += " cal-today";
-
-                container.innerHTML += `<div class="cal-day ${statusClass}">${d}</div>`;
+                container.innerHTML += `<div class="cal-day ${status}">${d}</div>`;
             }
         }
 
@@ -257,23 +281,18 @@
         }
 
         function claimBounty() {
-            if(bountyXp === 0) return;
-            // Complete task adds XP and +15m to daily allowance
             xp += bountyXp; totalXp += bountyXp;
             statsHistory[todayDate].allowed += 15; 
-            
             if(xp >= 100) { xp -= 100; lvl++; }
-            autoGenerateTask();
-            save(); updateUI();
-            alert("Success: +XP and +15m Allowance.");
+            autoGenerateTask(); save(); updateUI();
+            alert("Bounty Claimed!");
         }
 
         function autoGenerateTask() {
-            const randomTask = taskPool[Math.floor(Math.random() * taskPool.length)];
-            currentTask = randomTask.name;
-            bountyXp = randomTask.xp;
-            localStorage.setItem('currentTask', currentTask);
-            localStorage.setItem('bountyXp', bountyXp);
+            const random = taskPool[Math.floor(Math.random() * taskPool.length)];
+            currentTask = random.name; bountyXp = random.xp;
+            document.getElementById('challenge-text').innerText = currentTask;
+            document.getElementById('current-bounty-xp').innerText = bountyXp;
         }
 
         function openParent(purpose, data = null) {
@@ -301,33 +320,31 @@
         function pressBackspace() { currentPinAttempt = currentPinAttempt.slice(0, -1); updatePinDots(); }
         function updatePinDots() { const dots = document.querySelectorAll('.pin-dot'); dots.forEach((dot, i) => dot.className = i < currentPinAttempt.length ? 'pin-dot filled' : 'pin-dot'); }
 
-        function finalizePurchase() {
-            const item = shopItems[pendingShopIndex];
-            if(totalXp >= item.cost) {
-                totalXp -= item.cost;
-                save(); updateUI();
-                alert(`Unlocked: ${item.name}!`);
-            } else { alert("Insufficient XP."); }
-        }
-
-        function renderShop() {
-            const list = document.getElementById('sidebar-shop-list');
-            list.innerHTML = "";
-            shopItems.forEach((item, i) => {
-                list.innerHTML += `<div class="shop-item"><span>${item.name} (${item.cost})</span><button onclick="openParent('buy', ${i})" style="background:var(--primary); border:none; border-radius:4px; padding:2px 8px; font-size:0.6rem; cursor:pointer;">BUY</button></div>`;
-            });
+        function addShopItem() {
+            const name = document.getElementById('shop-item-name').value;
+            const cost = parseInt(document.getElementById('shop-item-cost').value);
+            const lock = parseInt(document.getElementById('shop-item-lock').value) || 0;
+            if(name && cost) {
+                shopItems.push({ name, cost, greenLock: lock });
+                localStorage.setItem('shopItems', JSON.stringify(shopItems));
+                alert("Shop updated.");
+            }
         }
 
         function addCustomTask() {
             const name = document.getElementById('custom-task-input').value;
             const val = parseInt(document.getElementById('custom-task-xp').value);
-            if(name && val) { taskPool.push({ name, xp: val }); localStorage.setItem('taskPool', JSON.stringify(taskPool)); alert("Task added."); }
+            if(name && val) {
+                taskPool.push({ name, xp: val });
+                localStorage.setItem('taskPool', JSON.stringify(taskPool));
+                alert("Task added.");
+            }
         }
 
-        function addShopItem() {
-            const name = document.getElementById('shop-item-name').value;
-            const cost = parseInt(document.getElementById('shop-item-cost').value);
-            if(name && cost) { shopItems.push({ name, cost }); localStorage.setItem('shopItems', JSON.stringify(shopItems)); renderShop(); alert("Shop updated."); }
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
         }
 
         function save() {
@@ -342,20 +359,9 @@
             document.getElementById('header-lvl').innerText = lvl;
             document.getElementById('total-xp-display').innerText = totalXp;
             document.getElementById('xp-fill').style.width = Math.min(xp, 100) + "%";
-            
             const today = statsHistory[todayDate];
             document.getElementById('today-usage-display').innerText = today.used + "m Used Today";
             document.getElementById('dynamic-limit-display').innerText = "Allowance: " + today.allowed + "m";
-            document.getElementById('challenge-text').innerText = currentTask;
-            document.getElementById('current-bounty-xp').innerText = bountyXp;
-        }
-
-        function askVision() {
-            const box = document.getElementById('chat-box');
-            const input = document.getElementById('chat-input');
-            box.innerHTML += `<p style="color:#666">> ${input.value}</p>`;
-            input.value = "";
-            setTimeout(() => { box.innerHTML += `<p style="color:var(--primary)">VISION: Allowance updated. Complete missions to expand your limits.</p>`; box.scrollTop = box.scrollHeight; }, 500);
         }
     </script>
 </body>

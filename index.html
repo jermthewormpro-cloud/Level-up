@@ -68,8 +68,7 @@
         .key.backspace { border-color: var(--danger); color: var(--danger); font-size: 1.5rem; }
 
         /* --- UI ELEMENTS --- */
-        .btn-main { background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; margin-top: 10px; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); opacity: 0.8; }
+        .btn-main { background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Orbitron'; color: #000; margin-top: 10px; }
         input { width: 100%; padding: 12px; background: #252525; border: 1px solid #444; color: white; border-radius: 10px; margin-bottom: 10px; outline: none; }
         .history-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .day-box { aspect-ratio: 1; border-radius: 8px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1px solid #333; }
@@ -83,7 +82,7 @@
 
     <div id="parent-modal">
         <button onclick="closeParent()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:1.5rem;">✕</button>
-        <h2 style="font-family:'Orbitron'; color:var(--primary);">ADMIN ACCESS</h2>
+        <h2 id="modal-title" style="font-family:'Orbitron'; color:var(--primary);">ADMIN ACCESS</h2>
         <div style="display:flex; margin: 20px 0;" id="pin-display">
             <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
         </div>
@@ -108,7 +107,7 @@
     <div id="sidebar">
         <h2 style="font-family:'Orbitron'; color:var(--primary); font-size: 1rem;">MENU</h2>
         <hr style="border:0; border-top:1px solid #333; margin-bottom:20px;">
-        <button class="btn-main" style="background:var(--accent); font-size:0.6rem;" onclick="openParent()">🛡️ PARENT PORTAL</button>
+        <button class="btn-main" style="background:var(--accent); font-size:0.6rem;" onclick="openParent('settings')">🛡️ PARENT PORTAL</button>
         <button onclick="logout()" style="position:absolute; bottom:30px; background:none; border:none; color:var(--danger); cursor:pointer; font-family:'Orbitron';">SHUT DOWN</button>
     </div>
 
@@ -150,7 +149,8 @@
                 <div style="background:#000; padding:15px; border-radius:10px; border:1px dashed var(--primary); margin:15px 0;">
                     <span id="challenge-text" style="font-weight:600;">Quest loading...</span>
                 </div>
-                <button class="btn-main" onclick="openParent()">VERIFY TO CLAIM XP</button>
+                <p style="font-size:0.6rem; color:var(--primary); text-align:center; margin-bottom:5px;">REWARD: 35 XP & +5m Playtime</p>
+                <button class="btn-main" onclick="openParent('bounty')">VERIFY & CLAIM</button>
             </div>
         </div>
 
@@ -187,7 +187,7 @@
     </div>
 
     <script>
-        let DAILY_LIMIT = 80;
+        const BASE_LIMIT = 80;
         const facts = ["Tetris was the first game in space.", "Minecraft's Creeper was a coding error.", "Pac-Man was originally 'Puck-Man'.", "Mario was first named 'Jumpman'."];
         const challenges = ["10 Push-ups", "10m Outdoor Walk", "Drink 1 glass of water", "Clean gaming area"];
 
@@ -195,8 +195,19 @@
         let lvl = parseInt(localStorage.getItem('lvl')) || 1;
         let history = JSON.parse(localStorage.getItem('gameHistory')) || {};
         let parentPin = localStorage.getItem('parentPin') || "1234";
-        let todayMins = parseInt(localStorage.getItem('todayMins_' + new Date().toLocaleDateString())) || 0;
+        
+        let todayStr = new Date().toLocaleDateString();
+        // If it's a new day, we reset the daily bonus minutes
+        let storedDate = localStorage.getItem('lastDate');
+        if(storedDate !== todayStr) {
+            localStorage.setItem('dailyBonus', 0);
+            localStorage.setItem('lastDate', todayStr);
+        }
+
+        let dailyBonus = parseInt(localStorage.getItem('dailyBonus')) || 0;
+        let todayMins = parseInt(localStorage.getItem('todayMins_' + todayStr)) || 0;
         let currentPinAttempt = "";
+        let pinPurpose = ""; // 'settings' or 'bounty'
 
         window.onload = () => {
             if(localStorage.getItem('isLoggedIn') === 'true') {
@@ -209,13 +220,9 @@
         };
 
         function handleLogin() { 
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-pass').value;
-            if(email && pass) {
+            if(document.getElementById('login-email').value && document.getElementById('login-pass').value) {
                 localStorage.setItem('isLoggedIn', 'true'); 
                 location.reload(); 
-            } else {
-                alert("Please enter both email and password.");
             }
         }
         
@@ -235,8 +242,10 @@
         }
 
         /* --- PIN LOGIC --- */
-        function openParent() { 
+        function openParent(purpose) { 
+            pinPurpose = purpose;
             currentPinAttempt = "";
+            document.getElementById('modal-title').innerText = purpose === 'bounty' ? "VERIFY BOUNTY" : "ADMIN ACCESS";
             updatePinDots();
             document.getElementById('parent-modal').classList.add('open'); 
         }
@@ -249,7 +258,11 @@
                 if(currentPinAttempt === parentPin) {
                     setTimeout(() => {
                         closeParent();
-                        showPage('parent');
+                        if(pinPurpose === 'bounty') {
+                            claimBounty();
+                        } else {
+                            showPage('parent');
+                        }
                     }, 200);
                 } else if (currentPinAttempt.length === 4) {
                     setTimeout(() => {
@@ -259,6 +272,18 @@
                     }, 200);
                 }
             }
+        }
+
+        function claimBounty() {
+            xp += 35;
+            dailyBonus += 5;
+            localStorage.setItem('dailyBonus', dailyBonus);
+            if(xp >= 100) { xp -= 100; lvl++; alert("RANK UP! You reached LVL " + lvl); }
+            save();
+            updateUI();
+            newMission();
+            alert("Bounty Claimed! +35 XP and +5m Playtime added for today.");
+            showPage('dash');
         }
 
         function pressBackspace() {
@@ -280,8 +305,6 @@
                 localStorage.setItem('parentPin', parentPin);
                 document.getElementById('new-pin-input').value = "";
                 alert("PIN successfully changed!");
-            } else {
-                alert("Please enter a valid 4-digit number.");
             }
         }
 
@@ -291,27 +314,29 @@
             let val = parseInt(input.value);
             if(val > 0) {
                 todayMins += val;
-                history[new Date().toLocaleDateString()] = (todayMins <= DAILY_LIMIT) ? 'green' : 'red';
+                let currentTotalLimit = BASE_LIMIT + dailyBonus;
+                history[todayStr] = (todayMins <= currentTotalLimit) ? 'green' : 'red';
                 input.value = "";
                 save(); updateUI(); renderCalendar();
             }
         }
 
         function resetToday() { todayMins = 0; save(); updateUI(); alert("Time reset!"); }
-        function clearHistory() { if(confirm("Wipe all history?")){history = {}; save(); renderCalendar(); alert("Wiped!");} }
+        function clearHistory() { if(confirm("Wipe history?")){history = {}; save(); renderCalendar();} }
 
         function save() {
             localStorage.setItem('xp', xp); localStorage.setItem('lvl', lvl);
             localStorage.setItem('gameHistory', JSON.stringify(history));
-            localStorage.setItem('todayMins_' + new Date().toLocaleDateString(), todayMins);
+            localStorage.setItem('todayMins_' + todayStr, todayMins);
         }
 
         function updateUI() {
+            let currentTotalLimit = BASE_LIMIT + dailyBonus;
             document.getElementById('lvl-display').innerText = lvl;
             document.getElementById('header-lvl').innerText = lvl;
             document.getElementById('xp-fill').style.width = xp + "%";
             document.getElementById('today-usage-display').innerText = todayMins + "m Used";
-            let rem = DAILY_LIMIT - todayMins;
+            let rem = currentTotalLimit - todayMins;
             document.getElementById('remaining-display').innerText = rem >= 0 ? rem + "m Left" : "OVER LIMIT";
             document.getElementById('remaining-display').style.color = rem >= 0 ? "var(--primary)" : "var(--danger)";
         }
@@ -342,7 +367,7 @@
             box.innerHTML += `<div class="message user-msg">${input.value}</div>`;
             input.value = "";
             setTimeout(() => {
-                box.innerHTML += `<div class="message ai-msg"><span class="ai-glow">VISION</span>Analyzing progress... keep working toward Level ${lvl + 1}.</div>`;
+                box.innerHTML += `<div class="message ai-msg"><span class="ai-glow">VISION</span>Mission parameters active. Keep up the momentum.</div>`;
                 box.scrollTop = box.scrollHeight;
             }, 600);
         }
